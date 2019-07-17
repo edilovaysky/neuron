@@ -1,0 +1,1 @@
+export { PicIcon } from './PicIcon';

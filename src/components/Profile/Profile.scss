@@ -1,0 +1,22 @@
+.profile {
+  padding: 5rem 0;
+}
+
+.profile::after {
+  content: '';
+  display: block;
+  clear: both;
+}
+/* Media Query */
+
+@media screen and (max-width: 40rem) {
+  .profile {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 4rem 0;
+  }
+
+  .profile::after {
+    display: none;
+  }
+}

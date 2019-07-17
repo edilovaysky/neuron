@@ -1,0 +1,15 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: rgba($color: #000000, $alpha: 0.7);
+  width: 100vw;
+  height: 100vh;
+  z-index: 100;
+
+  .modal {
+    margin: 50px auto;
+    width: calc(100% - 300px);
+    background-color: #fff;
+  }
+}
