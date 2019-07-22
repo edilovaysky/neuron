@@ -17,8 +17,17 @@
 }
 
 .auth h3 {
+  margin: 0.5em;
   text-align: center;
   font-size: 1.3em;
+}
+
+.auth select {
+  min-width: 20rem;
+  height: 3rem;
+  border: 0.1rem solid #dbdbdb;
+  border-radius: 0.3rem;
+  margin: 0.2rem;
 }
 
 .auth input {

@@ -1,22 +1,21 @@
 import './Profile.scss';
 
 import React, { Component } from 'react';
-import { profile } from '../userprofile';
-import { ProfileImg } from '../ProfileImg';
+//import { ProfileImg } from '../ProfileImg';
 import { ProfileSettings } from '../ProfileSettings';
-import { ProfileStats } from '../ProfileStats';
-import { ProfileBio } from '../ProfileBio';
 
 export class Profile extends Component {
+  state = {
+    name: localStorage.getItem('name'),
+  };
   render() {
-    const { image, name, id } = this.props;
+    const { image, id } = this.props;
+    const { name } = this.state;
     return (
       <div className="container">
         <div className="profile">
-          <ProfileImg image={image} id={id} />
+          {/* <ProfileImg image={image} id={id} /> */}
           <ProfileSettings name={name} id={id} />
-          {/* <ProfileStats {...profile} />
-          <ProfileBio {...profile} /> */}
         </div>
       </div>
     );

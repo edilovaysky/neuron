@@ -1,0 +1,1 @@
+export { AuthPupil } from './AuthPupil';
