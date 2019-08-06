@@ -1,54 +1,37 @@
 import 'assets/global.scss';
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import ReactDom from 'react-dom';
 import { BrowserRouter, Switch, Route, Link, Redirect } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+
+import { connect } from 'react-redux';
 
 import { Auth } from 'components/Auth';
 import { Registration } from 'components/Registration';
-import { GalleryContainer } from 'containers/GalleryContainer';
 import { Profile } from 'components/Profile';
+import { store, persistor } from './store';
 
 class App extends Component {
-  state = {
-    token: localStorage.getItem('token'),
-    id: '',
-    name: '',
-  };
-
-  handleSuccess = token => {
-    this.setState({ token }, () => {
-      localStorage.setItem('token', token);
-    });
-  };
-
-  handleUser = (_id, status, lastName, firstName) => {
+  componentWillMount() {
     this.setState({
-      id: _id,
-      lastName: lastName,
-      name: firstName,
-      status: status,
+      token: this.props.user.token,
     });
-  };
+  }
 
-  /*   handleSignOut = event => {
-    this.setState({ token: '', name: '' }, () => {
-      localStorage.setItem('token', '');
-      localStorage.setItem('name', '');
-      localStorage.setItem('id', '');
-    });
-    event.preventDefault();
-  }; */
+  handleSuccess = () => {
+    this.setState({ token: this.props.user.token });
+    console.log(this.state);
+  };
 
   render() {
-    const { token, id, image, name, isModalVisible } = this.state;
-    //console.log(this.state);
+    const { token } = this.state;
     return (
-      <Fragment>
-        {/* token && <button onClick={this.handleSignOut}>Sign Out</button> */}
+      <>
         <header>
           <div className="navbar">
-            {!token || token == '' ? (
+            {!token || token == '' || token == null ? (
               <Redirect from="/prevateroom" to="/auth" />
             ) : (
               <Link to="/prevatearea">ЛИЧНЫЙ КАБИНЕТ </Link>
@@ -62,42 +45,44 @@ class App extends Component {
           </div>
           {token && <Profile />}
         </header>
-        {!token || token == '' ? (
+        {!token || token == '' || token == null ? (
           <Route
             path="/reg"
-            render={() => (
-              <Registration
-                onSuccess={this.handleSuccess}
-                handleUser={this.handleUser}
-              />
-            )}
+            render={() => <Registration onSuccess={this.handleSuccess} />}
             exact
           />
         ) : (
           <Redirect from="/reg" to="/prevatearea" />
         )}
-        {!token || token == '' ? (
+        {!token || token == '' || token == null ? (
           <Route
             path="/auth"
-            render={() => (
-              <Auth
-                onSuccess={this.handleSuccess}
-                handleUser={this.handleUser}
-              />
-            )}
+            render={() => <Auth onSuccess={this.handleSuccess} />}
             exact
           />
         ) : (
           <Redirect from="/auth" to="/prevatearea" />
         )}
-      </Fragment>
+      </>
     );
   }
 }
 
+function mapStateToProps(state, props) {
+  return {
+    user: state.userAuth.entries,
+  };
+}
+
+App = connect(mapStateToProps)(App);
+
 ReactDom.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>,
   document.getElementById('root')
 );

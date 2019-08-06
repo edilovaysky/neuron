@@ -1,19 +1,19 @@
 import './Auth.scss';
 
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
 
 import { load } from 'actions/auth';
 
-class AuthUnmounted extends Component {
+class AuthUnmount extends Component {
   handleSignIn = () => {
-    const { authUser, onSuccess } = this.props;
-    authUser(this.state.firstName, this.state.lastName, this.state.password);
-    setTimeout(() => {
-      onSuccess();
-    }, 1000);
+    console.log(this.state.password);
+    const firstName = this.state.firstName;
+    const lastName = this.state.lastName;
+    const password = this.state.password;
+    this.props.loadUser(firstName, lastName, password);
   };
 
   handleTextChange = ({ target: { name, value } }) => {
@@ -24,7 +24,7 @@ class AuthUnmounted extends Component {
   render() {
     const { firstName, lastName, password } = this.props;
     return (
-      <>
+      <Fragment>
         <div className="auth-wrap">
           <div className="auth">
             <h3>Авторизация</h3>
@@ -58,30 +58,30 @@ class AuthUnmounted extends Component {
             <button onClick={this.handleSignIn}>Войти</button>
           </div>
         </div>
-      </>
+      </Fragment>
     );
   }
 }
 
-AuthUnmounted.propTypes = {
-  username: PropTypes.string,
-  password: PropTypes.string,
+const mapStateToProps = (state, props) => {
+  return {
+    user: state.user.entries,
+    loading: state.user.loading,
+  };
 };
-function mapStateToProps(state, props) {
-  console.log(state);
-  return {
-    user: state.userAuth.entries,
-  };
-}
 
-function mapDispatchToProps(dispatch, props) {
+const mapDispatchToProps = (dispatch, props) => {
   return {
-    authUser: (firstName, lastName, password) =>
-      dispatch(load(firstName, lastName, password)),
+    loadUser: () => load(dispatch),
   };
-}
+};
 
 export const Auth = connect(
   mapStateToProps,
   mapDispatchToProps
-)(AuthUnmounted);
+)(AuthUnmount);
+
+Auth.propTypes = {
+  username: PropTypes.string,
+  password: PropTypes.string,
+};

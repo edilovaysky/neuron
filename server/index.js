@@ -39,6 +39,7 @@ app.use(cors());
 
 app.post('/auth', async (req, res) => {
   const { firstName, lastName, password } = req.body;
+  console.log(req.body);
 
   let user = await User.findOne({
     firstName: firstName,
@@ -54,7 +55,7 @@ app.post('/auth', async (req, res) => {
       },
       secret
     );
-    delete user.lastName;
+    delete user.password;
     res.json({ token, user });
   } else {
     res.status(401).json({ message: 'Wrong credentials' });
