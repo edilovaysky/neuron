@@ -1,11 +1,11 @@
 import { createAction } from 'redux-actions';
 
-export const loadStart = createAction('[Auth], Load start');
-export const dataReceived = createAction('[Auth], Data received');
-export const errorOccured = createAction('[Auth], Error occured');
+export const authStart = createAction('[Auth], Auth start');
+export const authDataReceived = createAction('[Auth], authData received');
+export const authErrorOccured = createAction('[Auth], authError occured');
 
 export const load = (firstName, lastName, password) => (dispatch, getState) => {
-  dispatch(loadStart());
+  dispatch(authStart());
   fetch('http://localhost:8888/auth', {
     method: 'POST',
     headers: {
@@ -15,9 +15,15 @@ export const load = (firstName, lastName, password) => (dispatch, getState) => {
   })
     .then(respons => respons.json())
     .then(data => {
-      dispatch(dataReceived(data));
+      dispatch(authDataReceived(data));
     })
     .catch(() => {
-      dispatch(errorOccured());
+      dispatch(authErrorOccured());
     });
+};
+
+export const unAuth = () => (dispatch, getState) => {
+  dispatch(authStart());
+  const data = {};
+  dispatch(authDataReceived(data));
 };

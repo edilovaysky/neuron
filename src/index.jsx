@@ -32,9 +32,9 @@ class App extends Component {
         <header>
           <div className="navbar">
             {!token || token == '' || token == null ? (
-              <Redirect from="/prevateroom" to="/auth" />
+              <Redirect from="/my-office" to="/auth" />
             ) : (
-              <Link to="/prevatearea">ЛИЧНЫЙ КАБИНЕТ </Link>
+              <Link to="/my-office">ЛИЧНЫЙ КАБИНЕТ </Link>
             )}
             <br />
             <br />
@@ -43,7 +43,7 @@ class App extends Component {
             <br />
             <Link to="/reg">РЕГИСТРАЦИЯ</Link>
           </div>
-          {token && <Profile />}
+          {token && <Route path="/my-office" component={Profile} />}
         </header>
         {!token || token == '' || token == null ? (
           <Route
@@ -52,7 +52,7 @@ class App extends Component {
             exact
           />
         ) : (
-          <Redirect from="/reg" to="/prevatearea" />
+          <Redirect from="/reg" to="/my-office" />
         )}
         {!token || token == '' || token == null ? (
           <Route
@@ -61,7 +61,7 @@ class App extends Component {
             exact
           />
         ) : (
-          <Redirect from="/auth" to="/prevatearea" />
+          <Redirect from="/auth" to="/my-office" />
         )}
       </>
     );

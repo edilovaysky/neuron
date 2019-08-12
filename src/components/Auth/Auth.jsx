@@ -11,9 +11,9 @@ class AuthUnmounted extends Component {
   handleSignIn = () => {
     const { authUser, onSuccess } = this.props;
     authUser(this.state.firstName, this.state.lastName, this.state.password);
-    setTimeout(() => {
+    /*  setTimeout(() => {
       onSuccess();
-    }, 1000);
+    }, 1000); */
   };
 
   handleTextChange = ({ target: { name, value } }) => {

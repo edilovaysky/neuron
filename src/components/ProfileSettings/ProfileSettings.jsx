@@ -1,11 +1,11 @@
 import './ProfileSettings.scss';
 
 import React, { Component } from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-import { cleanStorage } from 'actions/unauth';
+import { unAuth } from 'actions/auth';
 
 export class ProfileSettings extends Component {
   componentWillMount() {
@@ -16,12 +16,16 @@ export class ProfileSettings extends Component {
       status: this.props.user.user.status,
     });
   }
+  componentDidMount() {}
 
   handleSignOut = event => {
+    console.log(this.props);
     const { userUnauth } = this.props;
     userUnauth(this.state.token);
     event.preventDefault();
-    return <Redirect to="/auth" />;
+    /*  setTimeout(() => {
+      return this.props.history.replace('/auth');
+    }, 2000); */
   };
   render() {
     const { name, status } = this.state;
@@ -53,7 +57,7 @@ function mapStateToProps(state, props) {
 }
 function mapDispatchToProps(dispatch, props) {
   return {
-    userUnauth: () => dispatch(cleanStorage()),
+    userUnauth: () => dispatch(unAuth()),
   };
 }
 

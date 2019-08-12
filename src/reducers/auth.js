@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions';
 
-import { loadStart, dataReceived, errorOccured } from 'actions/auth';
+import { authStart, authDataReceived, authErrorOccured } from 'actions/auth';
 
 const initialState = {
   loading: false,
@@ -8,15 +8,15 @@ const initialState = {
   entries: {},
 };
 
-export const reducer = handleActions(
+export const authReducer = handleActions(
   {
-    [loadStart]: state => {
+    [authStart]: state => {
       return {
         ...state,
         loading: true,
       };
     },
-    [dataReceived]: (state, action) => {
+    [authDataReceived]: (state, action) => {
       const data = action.payload;
       return {
         ...state,
@@ -24,7 +24,7 @@ export const reducer = handleActions(
         entries: data,
       };
     },
-    [errorOccured]: state => {
+    [authErrorOccured]: state => {
       return {
         ...state,
         loading: false,
