@@ -8,9 +8,10 @@ import { PersistGate } from 'redux-persist/integration/react';
 
 import { connect } from 'react-redux';
 
+import { AuthMenu } from 'components/AuthMenu';
 import { Auth } from 'components/Auth';
 import { Registration } from 'components/Registration';
-import { Profile } from 'components/Profile';
+import { Office } from 'components/Office';
 import { store, persistor } from './store';
 
 class App extends Component {
@@ -22,47 +23,47 @@ class App extends Component {
 
   handleSuccess = () => {
     this.setState({ token: this.props.user.token });
-    console.log(this.state);
+  };
+
+  handleSignOut = () => {
+    this.setState({ token: this.props.user.token });
   };
 
   render() {
     const { token } = this.state;
     return (
       <>
-        <header>
-          <div className="navbar">
-            {!token || token == '' || token == null ? (
-              <Redirect from="/my-office" to="/auth" />
-            ) : (
-              <Link to="/my-office">ЛИЧНЫЙ КАБИНЕТ </Link>
-            )}
-            <br />
-            <br />
-            <Link to="/auth">АВТОРИЗАЦИЯ</Link>
-            <br />
-            <br />
-            <Link to="/reg">РЕГИСТРАЦИЯ</Link>
-          </div>
-          {token && <Route path="/my-office" component={Profile} />}
-        </header>
-        {!token || token == '' || token == null ? (
-          <Route
-            path="/reg"
-            render={() => <Registration onSuccess={this.handleSuccess} />}
-            exact
-          />
-        ) : (
-          <Redirect from="/reg" to="/my-office" />
-        )}
-        {!token || token == '' || token == null ? (
-          <Route
-            path="/auth"
-            render={() => <Auth onSuccess={this.handleSuccess} />}
-            exact
-          />
-        ) : (
-          <Redirect from="/auth" to="/my-office" />
-        )}
+        <div className="navbar">
+          {!token || token == '' || token == null ? <AuthMenu /> : <></>}
+        </div>
+        <Switch>
+          {token && (
+            <Route
+              path="/my-office"
+              render={() => <Office onSignOut={this.handleSignOut} />}
+              exact
+            />
+          )}
+
+          {!token || token == '' || token == null ? (
+            <Route
+              path="/reg"
+              render={() => <Registration onSuccess={this.handleSuccess} />}
+              exact
+            />
+          ) : (
+            <Redirect from="/reg" to="/my-office" />
+          )}
+          {!token || token == '' || token == null ? (
+            <Route
+              path="/auth"
+              render={() => <Auth onSuccess={this.handleSuccess} />}
+              exact
+            />
+          ) : (
+            <Redirect from="/auth" to="/my-office" />
+          )}
+        </Switch>
       </>
     );
   }

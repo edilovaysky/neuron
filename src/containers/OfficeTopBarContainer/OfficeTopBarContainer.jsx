@@ -1,4 +1,4 @@
-import './ProfileSettings.scss';
+import './OfficeTopBarContainer.scss';
 
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import { unAuth } from 'actions/auth';
 
-export class ProfileSettings extends Component {
+class ProfileSettings extends Component {
   componentWillMount() {
     this.setState({
       name: `${this.props.user.user.firstName}  ${
@@ -19,29 +19,35 @@ export class ProfileSettings extends Component {
   componentDidMount() {}
 
   handleSignOut = event => {
+    const { onSignOut } = this.props;
     console.log(this.props);
     const { userUnauth } = this.props;
-    userUnauth(this.state.token);
+    userUnauth(this.props.user.user.token);
     event.preventDefault();
-    /*  setTimeout(() => {
-      return this.props.history.replace('/auth');
-    }, 2000); */
+    setTimeout(() => {
+      onSignOut();
+    }, 0);
   };
   render() {
     const { name, status } = this.state;
     const mapping = {
-      admin: 'Администратор',
-      teacher: 'Учитель',
-      pupil: 'Ученик',
+      admin: 'aдмин',
+      teacher: 'учитель',
+      user: 'ученик',
     };
     return (
-      <div className="profile-user-settings">
-        {status && <p>*{mapping[status]}</p>}
-        {name && <h1 className="profile-user-name"> {name}</h1>}
-        <button className="btn profile-edit-btn">РЕДАКТИРОВАТЬ</button>
-        <button className="btn profile-edit-btn" onClick={this.handleSignOut}>
-          ВЫХОД
-        </button>
+      <div className="top-nav-bar">
+        <h5>личный кабинет</h5>
+        <div className="top-nav-bar-status">
+          {status && <p>*{mapping[status]}</p>}
+        </div>
+        {name && <h3> {name}</h3>}
+        <div className="top-nav-bar-btn-section">
+          {/*  <button className="top-btn">РЕДАКТИРОВАТЬ</button> */}
+          <button className="top-btn" onClick={this.handleSignOut}>
+            ВЫХОД
+          </button>
+        </div>
       </div>
     );
   }
@@ -61,7 +67,7 @@ function mapDispatchToProps(dispatch, props) {
   };
 }
 
-ProfileSettings = connect(
+export const OfficeTopBarContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(ProfileSettings);

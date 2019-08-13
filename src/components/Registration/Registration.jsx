@@ -100,7 +100,7 @@ export class Registration extends Component {
               placeholder="Введите ваш пароль"
             />
             <br />
-            <button onClick={this.handleRegIn}>Reg In</button>
+            <button onClick={this.handleRegIn}>отправить</button>
           </div>
         </div>
       </Fragment>

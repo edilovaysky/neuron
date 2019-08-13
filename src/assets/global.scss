@@ -8,13 +8,13 @@
   box-sizing: border-box;
 }
 
-body {
+/* body {
   font-family: 'Open Sans', Arial, sans-serif;
   min-height: 100vh;
   background-color: #fafafa;
   color: #262626;
   padding-bottom: 3rem;
-}
+} */
 
 img {
   display: block;
@@ -32,4 +32,43 @@ img {
   width: 1px;
   overflow: hidden;
   clip: rect(1px, 1px, 1px, 1px);
+}
+html {
+  margin: 0 auto;
+}
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+body h1 {
+  font-size: 3em;
+  font-weight: 900;
+  margin: 0.4em 0;
+}
+body h2 {
+  font-size: 2.8em;
+  font-weight: 700;
+  margin: 0.4em 0;
+}
+body h3 {
+  font-size: 2.6em;
+  font-weight: 600;
+  margin: 0.4em 0;
+}
+body h4 {
+  font-size: 2.4em;
+  font-weight: 500;
+  margin: 0.4em 0;
+}
+body h5 {
+  font-size: 2.2em;
+  font-weight: 400;
+  margin: 0.4em 0;
+}
+
+body p {
+  font-size: 1.8em;
+  font-weight: 400;
+  margin: 0.4em 0;
 }

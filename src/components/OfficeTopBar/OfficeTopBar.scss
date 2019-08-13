@@ -1,0 +1,42 @@
+.top-nav-bar {
+  justify-content: space-around;
+  display: flex;
+  width: 100%;
+  min-height: 5%;
+  margin-left: 1em;
+}
+.top-nav-bar h5 {
+  color: #31b2e8;
+  width: 12%;
+  margin-left: 6%;
+}
+.top-nav-bar h3 {
+  width: 44%;
+  font-size: 3.2rem;
+  font-weight: 300;
+}
+
+.top-nav-bar-btn-section {
+  width: 23%;
+  justify-content: center;
+  display: flex;
+  padding: 0;
+  margin: 1em;
+}
+.top-btn {
+  color: #31b2e8;
+  display: inline-block;
+  text-align: center;
+  min-height: 90%;
+  font-size: 1.4rem;
+  background-color: #fff;
+  line-height: 1;
+  border: 0.1rem solid #dbdbdb;
+  border-radius: 0.3rem;
+  padding: 0 2.4rem;
+  margin-left: 1rem;
+  cursor: pointer;
+}
+.top-btn:hover {
+  background-color: #fafafa;
+}
