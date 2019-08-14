@@ -3,30 +3,33 @@ import './OfficeSideBar.scss';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+import { UserSideBar } from './UserSideBar';
+import { TeacherSideBar } from './TeacherSideBar';
+import { AdminSideBar } from './AdminSideBar copy';
+
 export class OfficeSideBar extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      status: this.props,
+    };
+  }
+  defineSideBar = () => {
+    const { status } = this.state.status;
+    if (status == 'user') {
+      return UserSideBar();
+    }
+    if (status == 'teacher') {
+      return TeacherSideBar();
+    }
+    if (status == 'admin') {
+      return AdminSideBar();
+    } else {
+      return null;
+    }
+  };
+
   render() {
-    return (
-      <>
-        <div className="side-nav-bar">
-          <ul>
-            <li className="logo">
-              <img src="../../../src/assets/logo.png" alt="Neuron-logo" />
-            </li>
-            <li className="side-btn">
-              <a href="/my-office">мои классы</a>
-            </li>
-            <li className="side-btn">
-              <a href="my-office">мои курсы</a>
-            </li>
-            <li className="side-btn">
-              <a href="my-office">мой тьютор</a>
-            </li>
-            <li className="side-btn">
-              <a href="my-office">мой репититор</a>
-            </li>
-          </ul>
-        </div>
-      </>
-    );
+    return this.defineSideBar();
   }
 }

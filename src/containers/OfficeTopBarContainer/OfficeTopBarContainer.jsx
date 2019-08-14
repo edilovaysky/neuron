@@ -1,5 +1,3 @@
-import './OfficeTopBarContainer.scss';
-
 import React, { Component } from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import { connect } from 'react-redux';

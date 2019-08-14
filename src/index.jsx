@@ -34,7 +34,11 @@ class App extends Component {
     return (
       <>
         <div className="navbar">
-          {!token || token == '' || token == null ? <AuthMenu /> : <></>}
+          {!token || token == '' || token == null ? (
+            <AuthMenu />
+          ) : (
+            <Redirect from="*" to="/my-office" />
+          )}
         </div>
         <Switch>
           {token && (

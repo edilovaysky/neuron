@@ -1,7 +1,7 @@
 .side-nav-bar {
   position: fixed;
   top: 0;
-  width: 7em;
+  width: 10em;
   height: 100%;
   background-color: aliceblue;
   box-shadow: 5px 0px 9px 5px rgba(0, 0, 0, 0.13);
@@ -20,13 +20,13 @@
 .side-nav-bar ul li {
   display: inline-block;
   text-align: center;
-  width: 7.7em;
+  width: 10.7em;
   min-height: 100%;
   padding: 1em;
 }
 
 .side-btn {
-  margin-top: 0.2em;
+  margin-top: 0.3em;
   background-color: rgb(221, 239, 255);
   box-shadow: 1px 0px 0px 1px rgba(0, 0, 0, 0.09);
   -webkit-box-shadow: 1px 0px 0px 1px rgba(0, 0, 0, 0.09);
@@ -34,7 +34,6 @@
 }
 .side-btn:hover {
   background-color: #89d9fb;
-  width: 7.7em;
   cursor: pointer;
 }
 
@@ -51,6 +50,17 @@
 }
 
 .side-nav-bar ul li a {
-  color: darkblue;
+  color: #000000;
   text-decoration: none;
+  font-size: 1.3em;
+  font-weight: 500;
+}
+@media screen and (max-width: 420px) {
+  .side-nav-bar {
+    width: 6em;
+  }
+  .side-nav-bar ul li {
+    width: 7.8em;
+    font-size: 0.8em;
+  }
 }

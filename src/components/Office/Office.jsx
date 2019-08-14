@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import { OfficeTopBar } from 'components/OfficeTopBar';
-import { OfficeSideBar } from 'components/OfficeSideBar';
+import { OfficeSideBarContainer } from 'containers/OfficeSideBarContainer';
 import { OfficeBody } from 'components/OfficeBody';
 
 export class Office extends Component {
@@ -13,7 +13,7 @@ export class Office extends Component {
     return (
       <div className="office">
         <OfficeTopBar onSignOut={onSignOut} />
-        <OfficeSideBar />
+        <OfficeSideBarContainer />
         <OfficeBody />
       </div>
     );
