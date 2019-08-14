@@ -9,7 +9,7 @@ export class OfficeBody extends Component {
       <>
         <div className="office-body">
           <section className="office-body-layout">
-            <div>layout of office-body</div>
+            <div>Some layouts</div>
           </section>
         </div>
       </>

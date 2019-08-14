@@ -1,0 +1,1 @@
+export { OfficeSideBarContainer } from './OfficeSideBarContainer';
