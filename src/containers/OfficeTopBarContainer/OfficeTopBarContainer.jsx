@@ -32,6 +32,7 @@ class ProfileSettings extends Component {
       admin: 'aдмин',
       teacher: 'учитель',
       user: 'ученик',
+      esquire: 'super',
     };
     return (
       <div className="top-nav-bar">

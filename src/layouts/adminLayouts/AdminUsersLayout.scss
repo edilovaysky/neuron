@@ -1,0 +1,23 @@
+.layout-wraper {
+  display: block;
+}
+.layout-menu {
+  margin: 5em 0 0 7em;
+  width: 90%;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.layout-menu li {
+  font-size: 1.5em;
+  border-bottom: 0.2em solid rgb(153, 149, 149);
+  margin: 0 0 0 1em;
+  padding: 0 0 0.3em 0;
+  cursor: pointer;
+}
+li.active {
+  border-bottom: 0.3em solid #31b8e2;
+  font-weight: 600;
+  color: #31e8b2;
+}

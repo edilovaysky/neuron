@@ -1,6 +1,6 @@
 import './Registration.scss';
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -13,8 +13,6 @@ export class Registration extends Component {
   };
   handleRegIn = () => {
     const { status, firstName, lastName, password } = this.state;
-    const { onSuccess, handleUser } = this.props;
-    console.log(this.state);
     if (
       !status == '' &&
       !firstName == '' &&
@@ -38,18 +36,10 @@ export class Registration extends Component {
             throw new Error('Wrong credentials');
           }
           console.log('succesful registration');
+          alert('Регистрация прошла успешно.');
           return response.json();
         })
-        .then(data => {
-          onSuccess(data.token);
-          handleUser(
-            data._id,
-            data.status,
-            data.firstName,
-            data.lastName,
-            data.password
-          );
-        });
+        .then(data => {});
     }
   };
 
@@ -59,19 +49,25 @@ export class Registration extends Component {
     });
   };
   render() {
-    const { status, firstName, lastName, password } = this.state;
+    const { firstName, lastName, password } = this.state;
+    const { adminStatus } = this.props;
     return (
-      <Fragment>
-        <h1 className="auth-h1">Добро пожаловать на страницу регистрации</h1>
+      <>
         <div className="auth-wrap">
           <div className="auth">
             <h3>Регистрация пользователей</h3>
+            <i>Все поля обязательны к заполнению.</i>
             <select name="status" onChange={this.handleTextChange}>
-              <option disabled>Выберите статус регистрации</option>
+              <option defaultValue>
+                выберите статус регистрации пользователя
+              </option>
               <option value="user">Ученик</option>
               <option value="teacher">Учитель</option>
-              <option value="admin">Администратор</option>
+              {adminStatus == 'esquire' && (
+                <option value="admin">Администратор</option>
+              )}
             </select>
+
             <br />
             <input
               required
@@ -103,7 +99,7 @@ export class Registration extends Component {
             <button onClick={this.handleRegIn}>отправить</button>
           </div>
         </div>
-      </Fragment>
+      </>
     );
   }
 }

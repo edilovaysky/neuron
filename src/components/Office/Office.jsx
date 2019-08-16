@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 
 import { OfficeTopBar } from 'components/OfficeTopBar';
 import { OfficeSideBarContainer } from 'containers/OfficeSideBarContainer';
-import { OfficeBody } from 'components/OfficeBody';
 
 export class Office extends Component {
   render() {
@@ -14,7 +13,6 @@ export class Office extends Component {
       <div className="office">
         <OfficeTopBar onSignOut={onSignOut} />
         <OfficeSideBarContainer />
-        <OfficeBody />
       </div>
     );
   }

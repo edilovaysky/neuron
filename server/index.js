@@ -39,7 +39,6 @@ app.use(cors());
 
 app.post('/auth', async (req, res) => {
   const { firstName, lastName, password } = req.body;
-  console.log(req.body);
 
   let user = await User.findOne({
     firstName: firstName,
@@ -65,6 +64,7 @@ app.post('/auth', async (req, res) => {
 app.post('/reg', async (req, res) => {
   let user = new User(req.body);
   user = await user.save();
+  console.log(user);
   res.send(user);
 });
 

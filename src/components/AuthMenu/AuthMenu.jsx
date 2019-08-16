@@ -13,11 +13,6 @@ export class AuthMenu extends Component {
               <p>авторизация</p>
             </Link>
           </li>
-          <li>
-            <Link to="/reg">
-              <p>регистрация</p>
-            </Link>
-          </li>
         </ul>
       </div>
     );
