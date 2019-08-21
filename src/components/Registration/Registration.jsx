@@ -10,9 +10,26 @@ export class Registration extends Component {
     firstName: '',
     lastName: '',
     password: '',
+    patronymic: '',
+    city: '',
+    dateOfBirth: '',
+    parentName: '',
+    tel: '',
+    email: '',
   };
   handleRegIn = () => {
-    const { status, firstName, lastName, password } = this.state;
+    const {
+      status,
+      firstName,
+      lastName,
+      password,
+      patronymic,
+      city,
+      dateOfBirth,
+      parentName,
+      tel,
+      email,
+    } = this.state;
     if (
       !status == '' &&
       !firstName == '' &&
@@ -29,6 +46,12 @@ export class Registration extends Component {
           firstName,
           lastName,
           password,
+          patronymic,
+          city,
+          dateOfBirth,
+          parentName,
+          tel,
+          email,
         }),
       })
         .then(response => {
@@ -47,9 +70,21 @@ export class Registration extends Component {
     this.setState({
       [name]: value,
     });
+    console.log({ [name]: value });
   };
   render() {
-    const { firstName, lastName, password } = this.state;
+    const {
+      status,
+      firstName,
+      lastName,
+      password,
+      patronymic,
+      city,
+      dateOfBirth,
+      parentName,
+      tel,
+      email,
+    } = this.state;
     const { adminStatus } = this.props;
     return (
       <>
@@ -67,33 +102,95 @@ export class Registration extends Component {
                 <option value="admin">Администратор</option>
               )}
             </select>
-
             <br />
+            <span>Имя:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="firstName"
               type="text"
               value={firstName}
-              placeholder="Введите ваше Имя"
+              placeholder="Имя"
             />
             <br />
+            <span>Отчество:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="patronymic"
+              type="text"
+              value={patronymic}
+              placeholder="Отчество"
+            />
+            <br />
+            <span>Фамилия:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="lastName"
               type="text"
               value={lastName}
-              placeholder="Введите вашу Фамилию"
+              placeholder="Фамилия"
             />
             <br />
+            <span>дата рождения:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="dateOfBirth"
+              type="text"
+              value={dateOfBirth}
+              placeholder="дата рождения в формате дд.мм.гггг"
+            />
+            <br />
+            <span>место проживания:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="city"
+              type="text"
+              value={city}
+              placeholder="место проживания"
+            />
+            <br />
+            <span>ФИО родителя или родителей:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="parentName"
+              type="text"
+              value={parentName}
+              placeholder="ФИО родителя"
+            />
+            <br />
+            <span>телефон:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="tel"
+              type="tel"
+              value={tel}
+              placeholder="телефон"
+            />
+            <br />
+            <span>email родителей:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="email"
+              type="email"
+              value={email}
+              placeholder="email"
+            />
+            <br />
+            <span>пароль для входа в личный кабинет:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="password"
               type="password"
               value={password}
-              placeholder="Введите ваш пароль"
+              placeholder="пароль"
             />
             <br />
             <button onClick={this.handleRegIn}>отправить</button>

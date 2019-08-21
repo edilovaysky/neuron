@@ -8,6 +8,8 @@ const jwt = require('jsonwebtoken');
 
 const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
 
+mongoose.set('useFindAndModify', false);
+
 mongoose.connect(
   `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${
     process.env.DB_NAME
@@ -65,7 +67,33 @@ app.post('/reg', async (req, res) => {
   let user = new User(req.body);
   user = await user.save();
   console.log(user);
-  res.send(user);
+  res.json(user);
+});
+
+app.get('/users', async (req, res) => {
+  const { status } = req.query;
+  const users = await User.find({ status: status }).sort({ lastName: 1 });
+  users.map(user => {
+    user.password = null;
+  });
+  res.json({ users });
+});
+
+app.get('/find-users', async (req, res) => {
+  const { status, lastName } = req.query;
+  const foundUsers = await User.find({
+    lastName: lastName,
+    status: status,
+  }).sort({ firstName: 1 });
+  foundUsers.map(found => {
+    found.password = null;
+  });
+  res.json({ foundUsers });
+});
+
+app.put('/users/:id', async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body);
+  res.json({ user });
 });
 
 app.all('/api*', verifyToken);

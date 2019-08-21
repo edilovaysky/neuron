@@ -1,9 +1,13 @@
 import './AdminUsersLayout.scss';
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { Registration } from 'components/Registration';
+import { Users } from 'components/Users';
+import { Teachers } from 'components/Teachers';
+import { AdminInstruction } from '../texts/AdminInstruction';
+
+import { loadUsers } from 'actions/fetchUsers';
 
 class AdminUsersLayouts extends Component {
   state = {
@@ -12,7 +16,7 @@ class AdminUsersLayouts extends Component {
     allusers: '',
     allteachers: '',
     reg: '',
-    deletes: '',
+    fetchStatus: '',
   };
   handleMenu = event => {
     const value = event.target.id;
@@ -22,7 +26,7 @@ class AdminUsersLayouts extends Component {
         allusers: '',
         allteachers: '',
         reg: '',
-        deletes: '',
+        fetchStatus: '',
       });
     }
     if (value == 'allusers') {
@@ -31,7 +35,7 @@ class AdminUsersLayouts extends Component {
         allusers: 'active',
         allteachers: '',
         reg: '',
-        deletes: '',
+        fetchStatus: 'user',
       });
     }
     if (value == 'allteachers') {
@@ -40,7 +44,7 @@ class AdminUsersLayouts extends Component {
         allusers: '',
         allteachers: 'active',
         reg: '',
-        deletes: '',
+        fetchStatus: 'teacher',
       });
     }
     if (value == 'reg') {
@@ -49,31 +53,25 @@ class AdminUsersLayouts extends Component {
         allusers: '',
         allteachers: '',
         reg: 'active',
-        deletes: '',
+        fetchStatus: '',
       });
     }
-    if (value == 'deletes') {
-      this.setState({
-        instructions: '',
-        allusers: '',
-        allteachers: '',
-        reg: '',
-        deletes: 'active',
-      });
-    }
+    setTimeout(() => {
+      //const { fetchStatus } = this.state;
+      this.handleFetchStatus();
+    }, 0);
 
     event.preventDefault();
-    console.log();
+  };
+  handleFetchStatus = () => {
+    const { fetchStatus } = this.state;
+    const { handleFetchUsers } = this.props;
+    handleFetchUsers(fetchStatus);
   };
   render() {
-    const {
-      status,
-      instructions,
-      allusers,
-      allteachers,
-      reg,
-      deletes,
-    } = this.state;
+    const { status, instructions, allusers, allteachers, reg } = this.state;
+    const users = this.props.users;
+    console.log(users);
     return (
       <>
         <p>Страница управления пользователями</p>
@@ -98,12 +96,12 @@ class AdminUsersLayouts extends Component {
           <li id="reg" className={`${reg}`} onClick={this.handleMenu}>
             регистрация
           </li>
-          <li id="deletes" className={`${deletes}`} onClick={this.handleMenu}>
-            удаление
-          </li>
         </ul>
         <div className="layout-wraper">
           {reg == 'active' && <Registration adminStatus={status} />}
+          {instructions == 'active' && <AdminInstruction />}
+          {allusers == 'active' && <Users users={users} />}
+          {allteachers == 'active' && <Users users={users} />}
         </div>
       </>
     );
@@ -113,6 +111,17 @@ class AdminUsersLayouts extends Component {
 function mapStateToProps(state, props) {
   return {
     user: state.userAuth.entries,
+    users: state.fetchUsers.entries.users,
   };
 }
-export const AdminUsersLayout = connect(mapStateToProps)(AdminUsersLayouts);
+
+function mapDispatchToProps(dispatch, props) {
+  return {
+    handleFetchUsers: fetchStatus => dispatch(loadUsers(fetchStatus)),
+  };
+}
+
+export const AdminUsersLayout = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(AdminUsersLayouts);
