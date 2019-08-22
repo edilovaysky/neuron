@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 import { Registration } from 'components/Registration';
 import { Users } from 'components/Users';
-import { Teachers } from 'components/Teachers';
 import { AdminInstruction } from '../texts/AdminInstruction';
 
 import { loadUsers } from 'actions/fetchUsers';
