@@ -68,7 +68,6 @@ AuthUnmounted.propTypes = {
   password: PropTypes.string,
 };
 function mapStateToProps(state, props) {
-  console.log(state);
   return {
     user: state.userAuth.entries,
   };

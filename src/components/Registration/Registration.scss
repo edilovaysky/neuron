@@ -1,45 +1,75 @@
-.auth-h1 {
+.reg-h1 {
   text-align: center;
   font-size: 1.7em;
 }
 
-.auth-wrap {
+.reg-wrap {
+  margin: 3em 0 0 0;
   display: flex;
   justify-content: space-around;
 }
 
-.auth {
-  width: 10%;
+.reg {
+  width: 50%;
   display: flex;
+  flex-direction: column;
   justify-content: space-around;
   flex-wrap: wrap;
   margin-top: 0.5rem;
 }
 
-.auth h3 {
+.reg h3 {
   margin: 0.5em;
   text-align: center;
   font-size: 1.3em;
 }
+.reg span {
+  margin: 0 0 0.5em 0;
+  cursor: default;
+}
 
-.auth select {
+.reg span i {
+  display: inline-block;
+  min-width: 3em;
+  font-size: 0.7em;
+  border: 0.02em solid #38ad2e;
+  padding: 0.3em 1em;
+}
+/* .reg span:hover {
+  cursor: pointer;
+} */
+
+.reg i {
+  font-style: italic;
+  color: #38ad2e;
+  font-weight: 500;
+  margin: 0.5em 0;
+}
+
+.reg select {
   min-width: 20rem;
   height: 3rem;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
   margin: 0.2rem;
 }
+.reg-class-teacher-list:hover {
+  cursor: pointer;
+}
+.reg-class-user:hover {
+  cursor: pointer;
+}
 
-.auth input {
-  min-width: 20rem;
+.reg input {
+  width: 100%;
   height: 3rem;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
   margin: 0.2rem;
 }
 
-.auth button {
-  width: 20rem;
+.reg button {
+  width: 100%;
   display: inline-block;
   font: inherit;
   background: none;
@@ -47,7 +77,7 @@
   padding: 0;
   cursor: pointer;
   font-size: 1.4rem;
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.8;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;

@@ -1,6 +1,6 @@
 import './Registration.scss';
 
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
 
@@ -10,11 +10,34 @@ export class Registration extends Component {
     firstName: '',
     lastName: '',
     password: '',
+    patronymic: '',
+    city: '',
+    dateOfBirth: '',
+    parentName: '',
+    tel: '',
+    email: '',
   };
   handleRegIn = () => {
-    const { status, firstName, lastName, password } = this.state;
-    const { onSuccess, handleUser } = this.props;
-    console.log(this.state);
+    let {
+      status,
+      firstName,
+      lastName,
+      password,
+      patronymic,
+      city,
+      dateOfBirth,
+      parentName,
+      tel,
+      email,
+    } = this.state;
+    firstName = firstName.replace(/\s/g, '');
+    lastName = lastName.replace(/\s/g, '');
+    password = password.replace(/\s/g, '');
+    patronymic = patronymic.replace(/\s/g, '');
+    city = city.replace(/\s/g, '');
+    dateOfBirth = dateOfBirth.replace(/\s/g, '');
+    tel = tel.replace(/\s/g, '');
+    email = email.replace(/\s/g, '');
     if (
       !status == '' &&
       !firstName == '' &&
@@ -31,6 +54,12 @@ export class Registration extends Component {
           firstName,
           lastName,
           password,
+          patronymic,
+          city,
+          dateOfBirth,
+          parentName,
+          tel,
+          email,
         }),
       })
         .then(response => {
@@ -38,18 +67,10 @@ export class Registration extends Component {
             throw new Error('Wrong credentials');
           }
           console.log('succesful registration');
+          alert('Регистрация прошла успешно.');
           return response.json();
         })
-        .then(data => {
-          onSuccess(data.token);
-          handleUser(
-            data._id,
-            data.status,
-            data.firstName,
-            data.lastName,
-            data.password
-          );
-        });
+        .then(data => {});
     }
   };
 
@@ -57,53 +78,133 @@ export class Registration extends Component {
     this.setState({
       [name]: value,
     });
+    console.log({ [name]: value });
   };
   render() {
-    const { status, firstName, lastName, password } = this.state;
+    const {
+      status,
+      firstName,
+      lastName,
+      password,
+      patronymic,
+      city,
+      dateOfBirth,
+      parentName,
+      tel,
+      email,
+    } = this.state;
+    const { adminStatus } = this.props;
     return (
-      <Fragment>
-        <h1 className="auth-h1">Добро пожаловать на страницу регистрации</h1>
-        <div className="auth-wrap">
-          <div className="auth">
+      <>
+        <div className="reg-wrap">
+          <div className="reg">
             <h3>Регистрация пользователей</h3>
+            <i>Все поля обязательны к заполнению.</i>
             <select name="status" onChange={this.handleTextChange}>
-              <option disabled>Выберите статус регистрации</option>
+              <option defaultValue>
+                выберите статус регистрации пользователя
+              </option>
               <option value="user">Ученик</option>
               <option value="teacher">Учитель</option>
-              <option value="admin">Администратор</option>
+              {adminStatus == 'esquire' && (
+                <option value="admin">Администратор</option>
+              )}
             </select>
             <br />
+            <span>Имя:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="firstName"
               type="text"
               value={firstName}
-              placeholder="Введите ваше Имя"
+              placeholder="Имя"
             />
             <br />
+            <span>Отчество:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="patronymic"
+              type="text"
+              value={patronymic}
+              placeholder="Отчество"
+            />
+            <br />
+            <span>Фамилия:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="lastName"
               type="text"
               value={lastName}
-              placeholder="Введите вашу Фамилию"
+              placeholder="Фамилия"
             />
             <br />
+            <span>дата рождения:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="dateOfBirth"
+              type="text"
+              value={dateOfBirth}
+              placeholder="дата рождения в формате дд.мм.гггг"
+            />
+            <br />
+            <span>место проживания:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="city"
+              type="text"
+              value={city}
+              placeholder="место проживания"
+            />
+            <br />
+            <span>ФИО родителя или родителей:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="parentName"
+              type="text"
+              value={parentName}
+              placeholder="ФИО родителя"
+            />
+            <br />
+            <span>телефон:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="tel"
+              type="tel"
+              value={tel}
+              placeholder="телефон"
+            />
+            <br />
+            <span>email родителей:</span>
+            <input
+              required
+              onChange={this.handleTextChange}
+              name="email"
+              type="email"
+              value={email}
+              placeholder="email"
+            />
+            <br />
+            <span>пароль для входа в личный кабинет:</span>
             <input
               required
               onChange={this.handleTextChange}
               name="password"
               type="password"
               value={password}
-              placeholder="Введите ваш пароль"
+              placeholder="пароль"
             />
             <br />
             <button onClick={this.handleRegIn}>отправить</button>
           </div>
         </div>
-      </Fragment>
+      </>
     );
   }
 }

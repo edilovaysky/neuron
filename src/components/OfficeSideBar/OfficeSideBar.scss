@@ -1,3 +1,13 @@
+@keyframes width-move {
+  from {
+    width: 9em;
+    animation-timing-function: ease-out;
+    animation-duration: 2s;
+  }
+  to {
+    width: 12em;
+  }
+}
 .side-nav-bar {
   position: fixed;
   top: 0;
@@ -18,27 +28,30 @@
   margin-top: 1em;
 }
 .side-nav-bar ul li {
-  display: inline-block;
+  display: block;
   text-align: center;
-  width: 10.7em;
+  width: 9em;
   min-height: 100%;
-  padding: 1em;
+  padding: 1.5em 0;
+  font-size: 1.2em;
 }
 
-.side-btn {
+.side-btn- {
   margin-top: 0.3em;
   background-color: rgb(221, 239, 255);
   box-shadow: 1px 0px 0px 1px rgba(0, 0, 0, 0.09);
   -webkit-box-shadow: 1px 0px 0px 1px rgba(0, 0, 0, 0.09);
   -moz-box-shadow: 1px 0px 0px 1px rgba(0, 0, 0, 0.09);
 }
-.side-btn:hover {
+.side-btn-:hover {
+  animation: width-move 300ms;
+  width: 12em;
   background-color: #89d9fb;
   cursor: pointer;
 }
 
-.side-btn:active {
-  background-color: #70d1fa;
+.side-btn-active {
+  background-color: #56b4dd;
 }
 .side-btn:focus {
   background-color: #70d1fa;
@@ -49,12 +62,6 @@
   height: 4.6em;
 }
 
-.side-nav-bar ul li a {
-  color: #000000;
-  text-decoration: none;
-  font-size: 1.3em;
-  font-weight: 500;
-}
 @media screen and (max-width: 420px) {
   .side-nav-bar {
     width: 6em;

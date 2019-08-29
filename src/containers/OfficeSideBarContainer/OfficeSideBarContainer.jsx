@@ -7,10 +7,11 @@ class SideBarContainer extends Component {
     this.setState({ status: this.props.user.user.status });
   }
   render() {
+    const { onSuccess } = this.props;
     const status = this.state.status;
     return (
       <>
-        <OfficeSideBar status={status} />
+        <OfficeSideBar status={status} onSuccess={onSuccess} />
       </>
     );
   }

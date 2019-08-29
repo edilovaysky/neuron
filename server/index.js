@@ -8,10 +8,10 @@ const jwt = require('jsonwebtoken');
 
 const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
 
+mongoose.set('useFindAndModify', false);
+
 mongoose.connect(
-  `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${
-    process.env.DB_NAME
-  }`,
+  `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
   { useNewUrlParser: true }
 );
 
@@ -33,13 +33,13 @@ const verifyToken = (req, res, next) => {
 };
 
 const User = require('./models/user');
+const Class = require('./models/class');
 
 app.use(express.json());
 app.use(cors());
 
 app.post('/auth', async (req, res) => {
   const { firstName, lastName, password } = req.body;
-  console.log(req.body);
 
   let user = await User.findOne({
     firstName: firstName,
@@ -65,7 +65,93 @@ app.post('/auth', async (req, res) => {
 app.post('/reg', async (req, res) => {
   let user = new User(req.body);
   user = await user.save();
-  res.send(user);
+  res.json(user);
+});
+
+app.post('/reg-class', async (req, res) => {
+  console.log(req.body);
+  let newClass = new Class(req.body);
+  newClass = await newClass.save();
+  res.json(newClass);
+});
+
+app.get('/users', async (req, res) => {
+  const { status } = req.query;
+  const users = await User.find({ status: status }).sort({ lastName: 1 });
+  users.map(user => {
+    user.password = null;
+  });
+  res.json({ users });
+});
+
+app.get('/classes', async (req, res) => {
+  const studyClasses = await Class.find().sort({ name: 1 });
+  res.json({ studyClasses });
+});
+
+app.get('/find-class', async (req, res) => {
+  const { name } = req.query;
+  const studyClasses = await Class.find({ name: name }).sort({ name: 1 });
+  res.json({ studyClasses });
+});
+app.get('/pupil/:id', async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.params.id);
+  res.json({ user });
+});
+
+app.get('/find-users', async (req, res) => {
+  const { status, lastName } = req.query;
+  const foundUsers = await User.find({
+    lastName: lastName,
+    status: status,
+  }).sort({ firstName: 1 });
+  foundUsers.map(found => {
+    found.password = null;
+  });
+  res.json({ foundUsers });
+});
+
+app.get('/user/:id', async (req, res) => {
+  let user = await User.findById(req.params.id);
+  user = user.toObject();
+  //удаляем пароль
+  delete user.password;
+  res.json(user);
+});
+
+app.put('/users/:id', async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.params.id, req.body);
+  res.json({ user });
+});
+
+app.put('/classes/:id', async (req, res) => {
+  let user = { user: req.body.pupil };
+  const updateClass = await Class.findByIdAndUpdate(req.params.id, {
+    $push: { pupil: user },
+  }).catch(() => {
+    console.log('class to add user or user was not chosen');
+    return 'Вы не выбрали класс или ученика';
+  });
+  res.json({ updateClass });
+});
+app.put('/class/:id', async (req, res) => {
+  let user = { user: req.body.user };
+  let teacher = req.body.teacher;
+  let updateClass;
+  if (!teacher == '') {
+    updateClass = await Class.findByIdAndUpdate(req.params.id, {
+      teacher: teacher,
+    });
+  }
+  if (!user == '') {
+    updateClass = await Class.findByIdAndUpdate(req.params.id, {
+      $pull: { pupil: user },
+    }).catch(err => {
+      console.log("we don't want to delete any user from this class");
+    });
+  }
+
+  res.json({ updateClass });
 });
 
 app.all('/api*', verifyToken);
