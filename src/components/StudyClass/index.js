@@ -1,0 +1,1 @@
+export { StudyClass } from './StudyClass';

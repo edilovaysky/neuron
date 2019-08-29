@@ -17,29 +17,33 @@ export class User extends Component {
     this.setState({ edit: !this.state.edit });
   };
   render() {
-    const { lastName, firstName, patronymic } = this.props;
+    const { lastName, firstName, patronymic, page } = this.props;
     const { display, edit } = this.state;
     return (
       <>
-        <div className="card-wraper">
-          <div className="card-header">
-            <p onClick={this.handleDisplay}>
-              {lastName} {firstName} {patronymic}
-            </p>
-          </div>
-          {display && (
-            <div className="card-body">
-              <p>дата рождения: {this.props.dateOfBirth}</p>
-              <p>место проживания: {this.props.city}</p>
-              <p>ФИО родителя: {this.props.parentName}</p>
-              <p>телефон: {this.props.tel}</p>
-              <p>e-mail: {this.props.email}</p>
-              <button onClick={this.handleEdit}>редактировать</button>
-              <button>документы пользователя</button>
-              {edit && <Editing userToEdit={this.props} />}
+        {this.props.page == 'otherPages' && (
+          <div className="card-wraper">
+            <div className="card-header">
+              <p onClick={this.handleDisplay}>
+                {lastName} {firstName} {patronymic}
+              </p>
             </div>
-          )}
-        </div>
+            {display && (
+              <div className="card-body">
+                <p>дата рождения: {this.props.dateOfBirth}</p>
+                <p>место проживания: {this.props.city}</p>
+                {this.props.status == 'user' && (
+                  <p>ФИО родителя: {this.props.parentName}</p>
+                )}
+                <p>телефон: {this.props.tel}</p>
+                <p>e-mail: {this.props.email}</p>
+                <button onClick={this.handleEdit}>редактировать</button>
+                <button>документы пользователя</button>
+                {edit && <Editing userToEdit={this.props} />}
+              </div>
+            )}
+          </div>
+        )}
       </>
     );
   }

@@ -18,7 +18,7 @@ export class Registration extends Component {
     email: '',
   };
   handleRegIn = () => {
-    const {
+    let {
       status,
       firstName,
       lastName,
@@ -30,6 +30,14 @@ export class Registration extends Component {
       tel,
       email,
     } = this.state;
+    firstName = firstName.replace(/\s/g, '');
+    lastName = lastName.replace(/\s/g, '');
+    password = password.replace(/\s/g, '');
+    patronymic = patronymic.replace(/\s/g, '');
+    city = city.replace(/\s/g, '');
+    dateOfBirth = dateOfBirth.replace(/\s/g, '');
+    tel = tel.replace(/\s/g, '');
+    email = email.replace(/\s/g, '');
     if (
       !status == '' &&
       !firstName == '' &&
@@ -88,8 +96,8 @@ export class Registration extends Component {
     const { adminStatus } = this.props;
     return (
       <>
-        <div className="auth-wrap">
-          <div className="auth">
+        <div className="reg-wrap">
+          <div className="reg">
             <h3>Регистрация пользователей</h3>
             <i>Все поля обязательны к заполнению.</i>
             <select name="status" onChange={this.handleTextChange}>

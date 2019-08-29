@@ -24,7 +24,7 @@ export class Editing extends Component {
   handleEdit = () => {
     const { userToEdit } = this.props;
     const id = userToEdit._id;
-    const {
+    let {
       status,
       firstName,
       lastName,
@@ -35,6 +35,19 @@ export class Editing extends Component {
       tel,
       email,
     } = this.state;
+    firstName = firstName.replace(/\s/g, '');
+    lastName = lastName.replace(/\s/g, '');
+    patronymic = patronymic.replace(/\s/g, '');
+    if (city) {
+      city = city.replace(/\s/g, '');
+    }
+    if (tel) {
+      tel = tel.replace(/\s/g, '');
+    }
+    if (email) {
+      email = email.replace(/\s/g, '');
+    }
+
     fetch(`http://localhost:8888/users/${id}`, {
       method: 'PUT',
       headers: {
@@ -79,11 +92,16 @@ export class Editing extends Component {
       email,
     } = this.state;
     const { userToEdit } = this.props;
+
     return (
       <>
-        <div className="auth-wrap">
-          <div className="auth">
-            <h3>редактирование пользователей</h3>
+        <div className="editing-wrap">
+          <div className="editing">
+            {userToEdit.status == 'admin' ||
+              (userToEdit.status == 'esquire' && (
+                <h3>редактирование пользователей</h3>
+              ))}
+            {userToEdit.status == 'user' && <h3>редактирование данных</h3>}
             <i>заполните подлежащие редактированию поля</i>
             <span>Имя:</span>
             <input
@@ -121,7 +139,7 @@ export class Editing extends Component {
               onChange={this.handleTextChange}
               name="dateOfBirth"
               type="text"
-              value={dateOfBirth}
+              value={dateOfBirth || ''}
               placeholder={userToEdit.dateOfBirth}
             />
             <br />
@@ -131,19 +149,23 @@ export class Editing extends Component {
               onChange={this.handleTextChange}
               name="city"
               type="text"
-              value={city}
+              value={city || ''}
               placeholder={userToEdit.city}
             />
             <br />
-            <span>ФИО родителя или родителей:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="parentName"
-              type="text"
-              value={parentName}
-              placeholder={userToEdit.parentName}
-            />
+            {userToEdit.status == 'user' && (
+              <span>ФИО родителя или родителей:</span>
+            )}
+            {userToEdit.status == 'user' && (
+              <input
+                required
+                onChange={this.handleTextChange}
+                name="parentName"
+                type="text"
+                value={parentName || ''}
+                placeholder={userToEdit.parentName}
+              />
+            )}
             <br />
             <span>телефон родителя:</span>
             <input
@@ -151,7 +173,7 @@ export class Editing extends Component {
               onChange={this.handleTextChange}
               name="tel"
               type="tel"
-              value={tel}
+              value={tel || ''}
               placeholder={userToEdit.tel}
             />
             <br />
@@ -161,7 +183,7 @@ export class Editing extends Component {
               onChange={this.handleTextChange}
               name="email"
               type="email"
-              value={email}
+              value={email || ''}
               placeholder={userToEdit.email}
             />
             <br />

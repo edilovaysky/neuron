@@ -16,6 +16,14 @@
 .card-header p:hover {
   font-weight: 600;
 }
+.card-body p {
+  display: block;
+}
+.card-body ol li {
+  list-style-type: decimal;
+  font-size: 1em;
+  margin-left: 5em;
+}
 
 .card-body button {
   width: 40%;

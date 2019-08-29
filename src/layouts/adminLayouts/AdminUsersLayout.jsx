@@ -16,6 +16,7 @@ class AdminUsersLayouts extends Component {
     allteachers: '',
     reg: '',
     fetchStatus: '',
+    alladmins: '',
   };
   handleMenu = event => {
     const value = event.target.id;
@@ -26,6 +27,7 @@ class AdminUsersLayouts extends Component {
         allteachers: '',
         reg: '',
         fetchStatus: '',
+        alladmins: '',
       });
     }
     if (value == 'allusers') {
@@ -35,6 +37,7 @@ class AdminUsersLayouts extends Component {
         allteachers: '',
         reg: '',
         fetchStatus: 'user',
+        alladmins: '',
       });
     }
     if (value == 'allteachers') {
@@ -44,6 +47,7 @@ class AdminUsersLayouts extends Component {
         allteachers: 'active',
         reg: '',
         fetchStatus: 'teacher',
+        alladmins: '',
       });
     }
     if (value == 'reg') {
@@ -53,10 +57,20 @@ class AdminUsersLayouts extends Component {
         allteachers: '',
         reg: 'active',
         fetchStatus: '',
+        alladmins: '',
+      });
+    }
+    if (value == 'alladmins') {
+      this.setState({
+        instructions: '',
+        allusers: '',
+        allteachers: '',
+        reg: '',
+        fetchStatus: 'admin',
+        alladmins: 'active',
       });
     }
     setTimeout(() => {
-      //const { fetchStatus } = this.state;
       this.handleFetchStatus();
     }, 0);
 
@@ -68,9 +82,17 @@ class AdminUsersLayouts extends Component {
     handleFetchUsers(fetchStatus);
   };
   render() {
-    const { status, instructions, allusers, allteachers, reg } = this.state;
+    const {
+      status,
+      instructions,
+      allusers,
+      allteachers,
+      alladmins,
+      reg,
+      fetchStatus,
+    } = this.state;
     const users = this.props.users;
-    console.log(users);
+    const page = 'otherPages';
     return (
       <>
         <p>Страница управления пользователями</p>
@@ -92,6 +114,15 @@ class AdminUsersLayouts extends Component {
           >
             все учителя
           </li>
+          {status == 'esquire' && (
+            <li
+              id="alladmins"
+              className={`${alladmins}`}
+              onClick={this.handleMenu}
+            >
+              все администраторы
+            </li>
+          )}
           <li id="reg" className={`${reg}`} onClick={this.handleMenu}>
             регистрация
           </li>
@@ -99,8 +130,15 @@ class AdminUsersLayouts extends Component {
         <div className="layout-wraper">
           {reg == 'active' && <Registration adminStatus={status} />}
           {instructions == 'active' && <AdminInstruction />}
-          {allusers == 'active' && <Users users={users} />}
-          {allteachers == 'active' && <Users users={users} />}
+          {allusers == 'active' && (
+            <Users users={users} status={fetchStatus} page={page} />
+          )}
+          {allteachers == 'active' && (
+            <Users users={users} status={fetchStatus} page={page} />
+          )}
+          {alladmins == 'active' && (
+            <Users users={users} status={fetchStatus} page={page} />
+          )}
         </div>
       </>
     );

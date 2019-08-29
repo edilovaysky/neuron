@@ -17,6 +17,7 @@ module.exports = {
       actions: path.resolve(__dirname, 'src', 'actions'),
       reducers: path.resolve(__dirname, 'src', 'reducers'),
       layouts: path.resolve(__dirname, 'src', 'layouts'),
+      helpers: path.resolve(__dirname, 'src', 'helpers'),
     },
   },
   module: {
@@ -49,6 +50,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src', 'index.html'),
       filename: 'index.html',
+      favicon: path.resolve(__dirname, 'src', 'favicon.ico'),
     }),
   ],
 };

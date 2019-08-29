@@ -5,6 +5,9 @@ export const authDataReceived = createAction('[Auth], authData received');
 export const authErrorOccured = createAction('[Auth], authError occured');
 
 export const load = (firstName, lastName, password) => (dispatch, getState) => {
+  firstName = firstName.replace(/\s/g, '');
+  lastName = lastName.replace(/\s/g, '');
+  password = password.replace(/\s/g, '');
   dispatch(authStart());
   fetch('http://localhost:8888/auth', {
     method: 'POST',

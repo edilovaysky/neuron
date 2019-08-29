@@ -13,6 +13,7 @@ import { AdminClassesLayout } from 'layouts/adminLayouts/AdminClassesLayout';
 import { AdminCoursesLayout } from 'layouts/adminLayouts/AdminCoursesLayout';
 import { AdminTutorsLayout } from 'layouts/adminLayouts/AdminTutorsLayout';
 import { AdminUsersLayout } from 'layouts/adminLayouts/AdminUsersLayout';
+import { UserProfileLayout } from 'layouts/userLayouts/UserProfileLayout';
 
 export class OfficeBody extends Component {
   render() {
@@ -30,6 +31,7 @@ export class OfficeBody extends Component {
             {layout == 'all-courses' && <AdminCoursesLayout />}
             {layout == 'all-users' && <AdminUsersLayout />}
             {layout == 'all-tutors' && <AdminTutorsLayout />}
+            {layout == 'user-profile' && <UserProfileLayout />}
           </section>
         </div>
       </>
