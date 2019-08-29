@@ -34,6 +34,7 @@ const verifyToken = (req, res, next) => {
 
 const User = require('./models/user');
 const Class = require('./models/class');
+const Course = require('./models/course');
 
 app.use(express.json());
 app.use(cors());
