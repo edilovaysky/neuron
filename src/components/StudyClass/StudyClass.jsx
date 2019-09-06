@@ -24,6 +24,9 @@ export class StudyClass extends Component {
     this.setState({ display: !this.state.display });
     let { pupil_id, teacher_id } = this.state;
     let id = teacher_id;
+    if (!this.state.display) {
+      this.setState({ fetchUser: [] });
+    }
     fetch(`http://localhost:8888/user/${id}`, {
       headers: {
         'Content-Type': 'application/json',

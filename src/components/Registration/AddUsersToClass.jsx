@@ -23,8 +23,7 @@ class AddUserToClass extends Component {
     let { id, pupil } = this.state;
 
     this.props.classes.studyClasses[0].pupil.map(item => {
-      console.log(item._id);
-      if (pupil == item.user) {
+      if (id == item._id && pupil == item.user) {
         alert('Выбраный ученик уже добавлен в этот класс');
         return (pupil = '');
       }

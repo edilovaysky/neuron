@@ -25,7 +25,7 @@ export class Users extends Component {
       <div className="users-wrap">
         <FindUser users={users} page={page} status={status} />
         <h3 onClick={this.handleDisplay}>Пользователи</h3>
-        {display && <>{users} }</>}
+        {display && <>{users} </>}
       </div>
     );
   }
