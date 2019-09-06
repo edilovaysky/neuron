@@ -24,7 +24,7 @@
   font-size: 1.3em;
 }
 .reg span {
-  margin: 0 0 0.5em 0;
+  margin: 1em 0 1em 0;
   cursor: default;
 }
 
@@ -56,6 +56,40 @@
 .reg-class-teacher-list:hover {
   cursor: pointer;
 }
+
+.click-span:hover {
+  cursor: pointer;
+}
+
+.reg ol {
+  counter-reset: li; /* Инициализируем счетчик */
+  padding: 0; /* Удаляем  установленное по умолчанию левое поле*/
+  list-style: none; /* Отменяем нумерацию установленную по умолчанию */
+}
+.reg ol li {
+  position: relative; /* Создаем контекст для позиционирования элементов */
+  margin: 0 0 6px 2em; /* Даем каждому элементу списка отступ слева, что бы освободить пространство для нумерации */
+  padding: 4px 8px;
+  border-top: 2px solid #666;
+  background: #f6f6f6;
+}
+.reg ol li:before {
+  content: counter(li); /* В качестве данных используем счетчик */
+  counter-increment: li; /* Увеличиваем значение счетчика на 1 */
+  /* Позиционируем и оформляем цифры */
+  position: absolute;
+  top: -2px;
+  left: -2em;
+  width: 2em;
+  padding: 4px 0;
+  border-top: 2px solid #666;
+  color: #fff;
+  background: #666;
+  font-weight: bold;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  text-align: center;
+}
+
 .reg-class-user:hover {
   cursor: pointer;
 }
@@ -83,4 +117,15 @@
   border-radius: 0.3rem;
   padding: 0 2.4rem;
   margin: 0.2rem 0 0 0.15rem;
+}
+.button-block {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  min-height: 2em;
+}
+.button-block button {
+  display: inline-block;
+  max-width: 20em;
+  min-height: 2em;
 }

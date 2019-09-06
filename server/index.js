@@ -35,6 +35,10 @@ const verifyToken = (req, res, next) => {
 const User = require('./models/user');
 const Class = require('./models/class');
 const Course = require('./models/course');
+const Subject = require('./models/subject');
+const Theme = require('./models/theme');
+const Lesson = require('./models/lesson');
+const Hw = require('./models/homework');
 
 app.use(express.json());
 app.use(cors());
@@ -70,10 +74,34 @@ app.post('/reg', async (req, res) => {
 });
 
 app.post('/reg-class', async (req, res) => {
-  console.log(req.body);
   let newClass = new Class(req.body);
   newClass = await newClass.save();
   res.json(newClass);
+});
+
+app.post('/reg-course', async (req, res) => {
+  let course = new Course(req.body);
+  course = await course.save();
+  res.json(course);
+});
+
+app.post('/reg-theme', async (req, res) => {
+  let theme = new Theme(req.body);
+  theme = await theme.save();
+  res.json(theme);
+});
+
+app.post('/reg-lesson', async (req, res) => {
+  let lesson = new Lesson(req.body);
+  lesson = await lesson.save();
+  res.json(lesson);
+});
+
+app.post('/reg-subject', async (req, res) => {
+  let subject = new Subject(req.body);
+  subject = await subject.save();
+  res.json(subject);
+  console.log(subject);
 });
 
 app.get('/users', async (req, res) => {
@@ -90,11 +118,38 @@ app.get('/classes', async (req, res) => {
   res.json({ studyClasses });
 });
 
+app.get('/courses', async (req, res) => {
+  const course = await Course.find().sort({ studyYear: 1 });
+  res.json({ course });
+});
+
+app.get('/subject', async (req, res) => {
+  const subject = await Subject.find().sort({ subject: 1 });
+  res.json({ subject });
+});
+
+app.get('/theme', async (req, res) => {
+  const theme = await Theme.find().sort({ name: 1 });
+  res.json({ theme });
+});
+
+app.get('/lesson', async (req, res) => {
+  const lesson = await Lesson.find().sort({ name: 1 });
+  res.json({ lesson });
+});
+
 app.get('/find-class', async (req, res) => {
   const { name } = req.query;
   const studyClasses = await Class.find({ name: name }).sort({ name: 1 });
   res.json({ studyClasses });
 });
+
+app.get('/find-course', async (req, res) => {
+  const { subject } = req.query;
+  const courses = await Course.find({ subject: subject });
+  res.json({ courses });
+});
+
 app.get('/pupil/:id', async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id);
   res.json({ user });
@@ -118,6 +173,21 @@ app.get('/user/:id', async (req, res) => {
   //удаляем пароль
   delete user.password;
   res.json(user);
+});
+
+app.get('/subject/:id', async (req, res) => {
+  const subject = await Subject.findById(req.params.id);
+  res.json({ subject });
+});
+
+app.get('/theme/:id', async (req, res) => {
+  const theme = await Theme.findById(req.params.id);
+  res.json({ theme });
+});
+
+app.get('/lesson/:id', async (req, res) => {
+  const lesson = await Lesson.findById(req.params.id);
+  res.json({ lesson });
 });
 
 app.put('/users/:id', async (req, res) => {
@@ -153,6 +223,66 @@ app.put('/class/:id', async (req, res) => {
   }
 
   res.json({ updateClass });
+});
+
+app.put('/courses/:id', async (req, res) => {
+  const subject = req.body.subject;
+  course = await Course.findByIdAndUpdate(req.params.id, {
+    $push: { subject: subject },
+  }).catch(err => {
+    console.log('course to edit or subject to add was not chosen');
+  });
+  res.json({ course });
+});
+
+app.put('/courses/delete/:id', async (req, res) => {
+  const subject = req.body.subject;
+  course = await Course.findByIdAndUpdate(req.params.id, {
+    $pull: { subject: subject },
+  }).catch(err => {
+    console.log('course to edit or subject to delete was not chosen');
+  });
+  res.json({ course });
+});
+
+app.put('/subjects/:id', async (req, res) => {
+  const theme = req.body.theme;
+  subject = await Subject.findByIdAndUpdate(req.params.id, {
+    $push: { themes: theme },
+  }).catch(err => {
+    console.log('subject to edit or theme to add was not chosen');
+  });
+  res.json({ subject });
+});
+
+app.put('/subjects/delete/:id', async (req, res) => {
+  const theme = req.body.theme;
+  subject = await Subject.findByIdAndUpdate(req.params.id, {
+    $pull: { themes: theme },
+  }).catch(err => {
+    console.log('subject to edit or theme to delete was not chosen');
+  });
+  res.json({ subject });
+});
+
+app.put('/themes/:id', async (req, res) => {
+  const lesson = req.body.lesson;
+  theme = await Theme.findByIdAndUpdate(req.params.id, {
+    $push: { lessons: lesson },
+  }).catch(err => {
+    console.log('theme to edit or lesson to add was not chosen');
+  });
+  res.json({ theme });
+});
+
+app.put('/themes/delete/:id', async (req, res) => {
+  const lesson = req.body.lesson;
+  theme = await Theme.findByIdAndUpdate(req.params.id, {
+    $pull: { lessons: lesson },
+  }).catch(err => {
+    console.log('Theme to edit or lesson to delete was not chosen');
+  });
+  res.json({ theme });
 });
 
 app.all('/api*', verifyToken);

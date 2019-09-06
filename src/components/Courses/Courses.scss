@@ -1,0 +1,34 @@
+.classes-wrap {
+  margin: 3em 0;
+}
+.classes-wrap input {
+  padding-left: 0.5em;
+  min-width: 20rem;
+  height: 3rem;
+  border: 0.1rem solid #dbdbdb;
+  border-radius: 0.3rem;
+  margin: 0.2rem;
+}
+.classes-wrap button {
+  width: 10%;
+  height: 2.1em;
+  font: inherit;
+  background: none;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.8;
+  border: 0.1rem solid #dbdbdb;
+  border-radius: 0.3rem;
+  padding: 0 2.4rem;
+  margin: 0.2rem 0 0 0.15rem;
+}
+.classes-wrap h3 {
+  font-weight: 400;
+  cursor: pointer;
+}
+.classes-wrap h3:hover {
+  font-weight: 600;
+}
