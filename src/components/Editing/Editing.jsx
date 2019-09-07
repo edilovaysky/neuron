@@ -18,6 +18,7 @@ export class Editing extends Component {
       parentName: userToEdit.parentName,
       tel: userToEdit.tel,
       email: userToEdit.email,
+      gen: userToEdit.gen,
     };
   }
 
@@ -34,6 +35,7 @@ export class Editing extends Component {
       parentName,
       tel,
       email,
+      gen,
     } = this.state;
     firstName = firstName.replace(/\s/g, '');
     lastName = lastName.replace(/\s/g, '');
@@ -63,6 +65,7 @@ export class Editing extends Component {
         parentName,
         tel,
         email,
+        gen,
       }),
     }).then(response => {
       if (!response.ok) {
@@ -90,6 +93,7 @@ export class Editing extends Component {
       parentName,
       tel,
       email,
+      gen,
     } = this.state;
     const { userToEdit } = this.props;
 
@@ -133,6 +137,12 @@ export class Editing extends Component {
               placeholder={userToEdit.lastName}
             />
             <br />
+            <span>укажите пол</span>
+            <select name="gen" onChange={this.handleTextChange}>
+              <option defaultValue>пол</option>
+              <option value="m">муж</option>
+              <option value="f">жен</option>
+            </select>
             <span>Дата рождения:</span>
             <input
               required

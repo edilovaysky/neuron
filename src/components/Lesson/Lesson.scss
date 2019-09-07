@@ -1,36 +1,19 @@
 .inlist {
+  font-style: normal;
   font-size: 1em;
+  font-weight: 300;
+}
+.inlist:hover {
+  cursor: pointer;
   font-weight: 600;
 }
-ol {
-  list-style-type: decimal;
-  font-size: 1em;
-  margin-left: 1em;
-}
-ul {
-  font-size: 1em;
+
+.lesson-list {
   margin-left: 1em;
 }
 
-li {
-  font-size: 1.5em;
-}
-
-.card-body button {
-  width: 40%;
-  color: #31b2e8;
-  display: inline-block;
-  text-align: center;
-  min-height: 90%;
-  font-size: 1.4rem;
-  background-color: #fff;
-  line-height: 1;
-  border: 0.1rem solid #dbdbdb;
-  border-radius: 0.3rem;
-  padding: 0 2.4rem;
-  margin-left: 1rem;
-  cursor: pointer;
-}
-.card-body button:hover {
-  background-color: #fafafa;
+.lesson-list-item {
+  font-size: 100%;
+  list-style: disc;
+  list-style-position: inside;
 }

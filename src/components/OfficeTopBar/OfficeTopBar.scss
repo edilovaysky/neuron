@@ -9,11 +9,24 @@
   color: #31b2e8;
   width: 12%;
   margin-left: 7em;
+  text-shadow: 3px 2px 0px rgba(150, 150, 156, 0.3);
+  font-weight: 700;
 }
 .top-nav-bar h3 {
   width: 44%;
   font-size: 3.2rem;
   font-weight: 300;
+  text-shadow: 3px 2px 0px rgba(150, 150, 156, 0.5);
+}
+
+.top-nav-bar-status p {
+  margin: 1em 0.5em 0 0;
+  font-size: 1.4em;
+}
+
+.top-nav-bar-status p:hover {
+  cursor: default;
+  font-weight: 500;
 }
 
 .top-nav-bar-btn-section {
@@ -29,13 +42,15 @@
   text-align: center;
   min-height: 90%;
   font-size: 1.4rem;
+  font-weight: 600;
   background-color: #fff;
   line-height: 1;
-  border: 0.1rem solid #dbdbdb;
+  border: 0.2rem solid #dbdbdb;
   border-radius: 0.3rem;
   padding: 0 2.4rem;
   margin-left: 1rem;
   cursor: pointer;
+  text-shadow: 3px 2px 0px rgba(150, 150, 156, 0.3);
 }
 .top-btn:hover {
   background-color: #fafafa;

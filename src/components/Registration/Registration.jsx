@@ -16,6 +16,7 @@ export class Registration extends Component {
     parentName: '',
     tel: '',
     email: '',
+    gen: '',
   };
   handleRegIn = () => {
     let {
@@ -29,6 +30,7 @@ export class Registration extends Component {
       parentName,
       tel,
       email,
+      gen,
     } = this.state;
     firstName = firstName.replace(/\s/g, '');
     lastName = lastName.replace(/\s/g, '');
@@ -60,6 +62,7 @@ export class Registration extends Component {
           parentName,
           tel,
           email,
+          gen,
         }),
       })
         .then(response => {
@@ -92,6 +95,7 @@ export class Registration extends Component {
       parentName,
       tel,
       email,
+      gen,
     } = this.state;
     const { adminStatus } = this.props;
     return (
@@ -141,6 +145,12 @@ export class Registration extends Component {
               placeholder="Фамилия"
             />
             <br />
+            <span>укажите пол</span>
+            <select name="gen" onChange={this.handleTextChange}>
+              <option defaultValue>пол</option>
+              <option value="m">муж</option>
+              <option value="f">жен</option>
+            </select>
             <span>дата рождения:</span>
             <input
               required

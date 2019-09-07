@@ -12,6 +12,7 @@ const userSchema = new Schema({
   tel: { type: String },
   email: { type: String },
   city: { type: String },
+  gen: { type: String },
 });
 
 module.exports = mongoose.model('User', userSchema, 'users');

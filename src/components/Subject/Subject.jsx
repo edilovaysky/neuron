@@ -40,9 +40,12 @@ export class Subject extends Component {
     const { displaySub, subjects } = this.state;
     let subject;
     if (subjects) {
+      subjects.sort((a, b) => {
+        a.subject.subject > b.subject.subject;
+      });
       subject = subjects.map((i, index) => {
         return (
-          <li key={index}>
+          <li key={index} className="subject-list-item">
             {i.subject.subject}
             <Theme themeIds={i.subject.themes} />
           </li>
@@ -54,7 +57,7 @@ export class Subject extends Component {
       <>
         <div className="card-body">
           <p onClick={this.fetchSubject}>предметы</p>
-          {displaySub && <ul>{subject}</ul>}
+          {displaySub && <ul className="subject-list">{subject}</ul>}
         </div>
       </>
     );

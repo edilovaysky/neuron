@@ -1,3 +1,8 @@
+/*   **********************************************************
+ *****       NEURON SERVER          ***********************
+ **********************************************************
+ */
+
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
@@ -5,8 +10,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
-
-const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
 
 mongoose.set('useFindAndModify', false);
 
@@ -16,6 +19,21 @@ mongoose.connect(
 );
 
 const app = express();
+
+const User = require('./models/user');
+const Class = require('./models/class');
+const Course = require('./models/course');
+const Subject = require('./models/subject');
+const Theme = require('./models/theme');
+const Lesson = require('./models/lesson');
+const Hw = require('./models/homework');
+
+const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
+
+/*  **********************************************************
+ *****      AUTH SECTION            ***********************
+ **********************************************************
+ */
 
 const verifyToken = (req, res, next) => {
   if (req.headers.authorization) {
@@ -31,14 +49,6 @@ const verifyToken = (req, res, next) => {
     res.status(401).json({ message: 'No token present' });
   }
 };
-
-const User = require('./models/user');
-const Class = require('./models/class');
-const Course = require('./models/course');
-const Subject = require('./models/subject');
-const Theme = require('./models/theme');
-const Lesson = require('./models/lesson');
-const Hw = require('./models/homework');
 
 app.use(express.json());
 app.use(cors());
@@ -67,6 +77,12 @@ app.post('/auth', async (req, res) => {
   }
 });
 
+/*  **********************************************************
+    *****       REG SECTION            ***********************
+    **********************************************************
+ 
+*/
+
 app.post('/reg', async (req, res) => {
   let user = new User(req.body);
   user = await user.save();
@@ -85,6 +101,13 @@ app.post('/reg-course', async (req, res) => {
   res.json(course);
 });
 
+app.post('/reg-subject', async (req, res) => {
+  let subject = new Subject(req.body);
+  subject = await subject.save();
+  res.json(subject);
+  console.log(subject);
+});
+
 app.post('/reg-theme', async (req, res) => {
   let theme = new Theme(req.body);
   theme = await theme.save();
@@ -97,12 +120,11 @@ app.post('/reg-lesson', async (req, res) => {
   res.json(lesson);
 });
 
-app.post('/reg-subject', async (req, res) => {
-  let subject = new Subject(req.body);
-  subject = await subject.save();
-  res.json(subject);
-  console.log(subject);
-});
+/*     **********************************************************
+       *****       GET SECTION            ***********************
+       **********************************************************
+ 
+*/
 
 app.get('/users', async (req, res) => {
   const { status } = req.query;
@@ -176,19 +198,25 @@ app.get('/user/:id', async (req, res) => {
 });
 
 app.get('/subject/:id', async (req, res) => {
-  const subject = await Subject.findById(req.params.id);
+  const subject = await Subject.findById(req.params.id).sort({ subject: 1 });
   res.json({ subject });
 });
 
 app.get('/theme/:id', async (req, res) => {
-  const theme = await Theme.findById(req.params.id);
+  const theme = await Theme.findById(req.params.id).sort({ theme: 1 });
   res.json({ theme });
 });
 
 app.get('/lesson/:id', async (req, res) => {
-  const lesson = await Lesson.findById(req.params.id);
+  const lesson = await Lesson.findById(req.params.id).sort({ lesson: 1 });
   res.json({ lesson });
 });
+
+/*    **********************************************************
+      *****       PUT SECTION            ***********************
+      **********************************************************
+ 
+*/
 
 app.put('/users/:id', async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body);
@@ -285,6 +313,12 @@ app.put('/themes/delete/:id', async (req, res) => {
   res.json({ theme });
 });
 
+/*      **********************************************************
+        *****       API SECTION            ***********************
+        **********************************************************
+ 
+*/
+
 app.all('/api*', verifyToken);
 app.all('/prevatearea*', verifyToken);
 
@@ -320,6 +354,8 @@ app.get('/api/photos/:id', async (req, res) => {
   ]);
   res.json(photo);
 });
+
+//APP PORT
 
 app.listen(8888, () => {
   console.log('Server has been started!');
