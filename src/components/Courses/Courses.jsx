@@ -48,14 +48,14 @@ export class Courses extends Component {
   };
   render() {
     const { display } = this.state;
-
-    const courses = this.props.courses.course.map(course => {
+    const { courses } = this.props;
+    const course = courses.course.map(course => {
       return <Course key={course._id} {...course} />;
     });
     return (
       <div className="classes-wrap">
         <h3 onClick={this.handleDisplay}>Курсы</h3>
-        {display && <>{courses}</>}
+        {display && <>{course}</>}
       </div>
     );
   }

@@ -40,9 +40,12 @@ export class Theme extends Component {
 
     let theme;
     if (themes) {
+      themes.sort((a, b) => {
+        a.theme.theme > b.theme.theme;
+      });
       theme = themes.map((i, index) => {
         return (
-          <li key={index}>
+          <li key={index} className="theme-list-item">
             {i.theme.theme}
             <Lesson lessonIds={i.theme.lessons} />
           </li>
@@ -55,7 +58,7 @@ export class Theme extends Component {
         <p className="inlist" onClick={this.fetchTheme}>
           темы
         </p>
-        {displayTheme && <ul>{theme}</ul>}
+        {displayTheme && <ul className="theme-list">{theme}</ul>}
       </>
     );
   }

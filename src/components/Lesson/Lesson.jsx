@@ -39,8 +39,16 @@ export class Lesson extends Component {
 
     let lesson;
     if (lessons) {
+      lessons.sort((a, b) => {
+        a.lesson.lesson > b.lesson.lesson;
+      });
+
       lesson = lessons.map((i, index) => {
-        return <li key={index}>{i.lesson.lesson}</li>;
+        return (
+          <li key={index} className="lesson-list-item">
+            {i.lesson.lesson}
+          </li>
+        );
       });
     }
 
@@ -49,7 +57,7 @@ export class Lesson extends Component {
         <p className="inlist" onClick={this.fetchLesson}>
           уроки
         </p>
-        {displayLesson && <ul>{lesson}</ul>}
+        {displayLesson && <ul className="lesson-list">{lesson}</ul>}
       </>
     );
   }
