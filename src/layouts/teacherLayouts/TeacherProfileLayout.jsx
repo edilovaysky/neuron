@@ -1,4 +1,4 @@
-import './UserProfileLayout.scss';
+import './TeacherProfileLayout.scss';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
@@ -8,7 +8,7 @@ import { UserInstruction } from '../texts/UserInstruction';
 
 import { loadUsers } from 'actions/fetchUsers';
 
-class UserProfileLayouts extends Component {
+class TeacherProfileLayouts extends Component {
   state = {
     instructions: '',
     userProfile: '',
@@ -53,11 +53,11 @@ class UserProfileLayouts extends Component {
     const user = this.props.user.user;
     let name;
     if (user) {
-      name = user.firstName;
+      name = user.firstName + user.patronymic;
     }
     return (
       <>
-        <p className="user-profile-name"> Привет, {name}!</p>
+        <p className="user-profile-name"> Здравствуйте, {name}!</p>
         <ul className="layout-menu">
           <li
             id="instructions"
@@ -100,7 +100,7 @@ function mapDispatchToProps(dispatch, props) {
   };
 }
 
-export const UserProfileLayout = connect(
+export const TeacherProfileLayout = connect(
   mapStateToProps,
   mapDispatchToProps
-)(UserProfileLayouts);
+)(TeacherProfileLayouts);

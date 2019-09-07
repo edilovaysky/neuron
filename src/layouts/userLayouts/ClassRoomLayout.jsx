@@ -91,7 +91,7 @@ class ClassRoomLayouts extends Component {
       reg,
     } = this.state;
     const users = this.props.users;
-    console.log(users);
+
     return (
       <>
         <p>Страница управления пользователями</p>

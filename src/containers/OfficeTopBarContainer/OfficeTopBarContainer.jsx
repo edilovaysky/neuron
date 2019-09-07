@@ -8,10 +8,9 @@ import { unAuth } from 'actions/auth';
 class ProfileSettings extends Component {
   componentWillMount() {
     this.setState({
-      name: `${this.props.user.user.firstName}  ${
-        this.props.user.user.lastName
-      }`,
+      name: `${this.props.user.user.firstName}  ${this.props.user.user.lastName}`,
       status: this.props.user.user.status,
+      gen: this.props.user.user.gen,
     });
   }
   componentDidMount() {}
@@ -27,18 +26,29 @@ class ProfileSettings extends Component {
     }, 0);
   };
   render() {
-    const { name, status } = this.state;
-    const mapping = {
-      admin: 'aдмин',
-      teacher: 'учитель',
-      user: 'ученик',
-      esquire: 'super',
-    };
+    const { name, status, gen } = this.state;
+    let mapping;
+    if (gen == 'm' || '') {
+      mapping = {
+        admin: 'aдмин',
+        teacher: 'учитель',
+        user: 'ученик',
+        esquire: 'ADMIN',
+      };
+    } else {
+      mapping = {
+        admin: 'aдмин',
+        teacher: 'учительница',
+        user: 'ученица',
+        esquire: 'ADMIN',
+      };
+    }
+
     return (
       <div className="top-nav-bar">
         <h5>личный кабинет</h5>
         <div className="top-nav-bar-status">
-          {status && <p>*{mapping[status]}</p>}
+          {status && <p>*{mapping[status]} </p>}
         </div>
         {name && <h3> {name}</h3>}
         <div className="top-nav-bar-btn-section">
