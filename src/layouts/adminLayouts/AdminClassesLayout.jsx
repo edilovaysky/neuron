@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import { ClassReg } from 'components/Registration/ClassReg';
 import { AddUsersToClass } from 'components/Registration/AddUsersToClass';
+import { AddCourseToClass } from 'components/Registration/AddCourseToClass';
 import { Classes } from 'components/Classes';
 import { AdminInstruction } from '../texts/AdminInstruction';
 
@@ -18,6 +19,7 @@ class AdminClassesLayouts extends Component {
     fetchStatus: '',
     reg: '',
     addusertoclass: '',
+    addcoursetoclass: '',
   };
 
   handleMenu = event => {
@@ -29,6 +31,7 @@ class AdminClassesLayouts extends Component {
         fetchStatus: '',
         reg: '',
         addusertoclass: '',
+        addcoursetoclass: '',
       });
     }
     if (value == 'allclasses') {
@@ -38,6 +41,7 @@ class AdminClassesLayouts extends Component {
         fetchStatus: 'user',
         reg: '',
         addusertoclass: '',
+        addcoursetoclass: '',
       });
     }
     if (value == 'reg') {
@@ -47,6 +51,7 @@ class AdminClassesLayouts extends Component {
         fetchStatus: 'teacher',
         reg: 'active',
         addusertoclass: '',
+        addcoursetoclass: '',
       });
     }
     if (value == 'addusertoclass') {
@@ -56,6 +61,17 @@ class AdminClassesLayouts extends Component {
         fetchStatus: 'user',
         reg: '',
         addusertoclass: 'active',
+        addcoursetoclass: '',
+      });
+    }
+    if (value == 'addcoursetoclass') {
+      this.setState({
+        instructions: '',
+        allClasses: '',
+        fetchStatus: '',
+        reg: '',
+        addusertoclass: '',
+        addcoursetoclass: 'active',
       });
     }
 
@@ -84,6 +100,7 @@ class AdminClassesLayouts extends Component {
       allClasses,
       reg,
       addusertoclass,
+      addcoursetoclass,
     } = this.state;
     const users = this.props.users;
 
@@ -116,6 +133,13 @@ class AdminClassesLayouts extends Component {
           >
             добавление учеников в классы
           </li>
+          <li
+            id="addcoursetoclass"
+            className={`${addcoursetoclass}`}
+            onClick={this.handleMenu}
+          >
+            добавление курсов в класс
+          </li>
         </ul>
         <div className="layout-wraper">
           {instructions == 'active' && <AdminInstruction />}
@@ -124,6 +148,7 @@ class AdminClassesLayouts extends Component {
           {addusertoclass == 'active' && (
             <AddUsersToClass users={users} status={fetchStatus} />
           )}
+          {addcoursetoclass == 'active' && <AddCourseToClass />}
         </div>
       </>
     );

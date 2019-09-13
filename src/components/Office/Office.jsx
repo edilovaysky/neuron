@@ -1,7 +1,6 @@
 import './Office.scss';
 
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 
 import { OfficeTopBar } from 'components/OfficeTopBar';
 import { OfficeSideBarContainer } from 'containers/OfficeSideBarContainer';

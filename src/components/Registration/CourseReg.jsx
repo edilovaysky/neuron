@@ -44,6 +44,32 @@ class CourseRegistration extends Component {
         });
     }
   };
+  handleRegOut = () => {
+    const id = this.state.course_id;
+    if (!id == '') {
+      fetch(`http://localhost:8888/courses/delete/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id,
+        }),
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Wrong credentials');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data) {
+            console.log('course was deleted');
+            alert('Курс удален.');
+          }
+        });
+    }
+  };
   handleAdd = () => {
     const { course_id, subject } = this.state;
     let id = course_id;
@@ -170,7 +196,9 @@ class CourseRegistration extends Component {
       <>
         <div className="reg-wrap">
           <div className="reg">
-            <h3 onClick={this.handleDisplayReg}>Регистрация курсов</h3>
+            <h3 onClick={this.handleDisplayReg}>
+              Регистрация и удаление курсов
+            </h3>
             {displayReg && (
               <>
                 <i>Все поля обязательны к заполнению.</i>
@@ -185,7 +213,17 @@ class CourseRegistration extends Component {
                   <option value={4}>4-й класс</option>
                 </select>
                 <br />
-                <button onClick={this.handleRegIn}>отправить</button>
+                <button onClick={this.handleRegIn}>добавить курс</button>
+                <br />
+                <span className="click-span" onClick={this.fetchCourse}>
+                  выберите курс для редактирования
+                </span>
+                <select name="course_id" onChange={this.handleTextChange}>
+                  <option defaultValue>выберите курс для удаления</option>
+                  {courseToEdit}
+                </select>
+                <br />
+                <button onClick={this.handleRegOut}>удалить курс</button>
               </>
             )}
           </div>
@@ -230,6 +268,7 @@ function mapStateToProps(state, props) {
     user: state.userAuth.entries,
     users: state.fetchUsers.entries.users,
     classes: state.fetchClasses.entries,
+    courses: state.fetchCourses.entries.course,
   };
 }
 

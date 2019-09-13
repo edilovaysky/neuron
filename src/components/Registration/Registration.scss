@@ -1,3 +1,7 @@
+$width: 4em;
+$padding: 0.3em;
+$height: $width / 2 + $padding;
+
 .reg-h1 {
   text-align: center;
   font-size: 1.7em;
@@ -127,5 +131,55 @@
 .button-block button {
   display: inline-block;
   max-width: 20em;
-  min-height: 2em;
+  min-height: 3em;
+}
+.check-wrap {
+  display: flex;
+  flex-direction: row;
+}
+.check-wrap p {
+  display: block;
+  max-width: max-content;
+  margin: 0 0 0 0.5em;
+}
+.check-wrap p:hover {
+  font-weight: 500;
+  cursor: default;
+}
+.switch-wrap {
+  cursor: pointer;
+  background: #2584f1;
+  padding: $padding;
+  width: $width;
+  height: $height;
+  border-radius: $height / 2;
+  margin-bottom: 0.3em;
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+.switch {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 0fr 1fr 1fr;
+  transition: 0.2s;
+  //ICYMI, pseudo elements are treated as grid items
+  &::after {
+    content: '';
+    border-radius: 50%;
+    background: #ccc;
+    grid-column: 2;
+    transition: background 0.2s;
+  }
+}
+input:checked {
+  + .switch {
+    grid-template-columns: 1fr 1fr 0fr;
+    &::after {
+      background-color: #24f358;
+    }
+  }
 }

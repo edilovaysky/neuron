@@ -1,3 +1,7 @@
+$width: 4em;
+$padding: 0.3em;
+$height: $width / 2 + $padding;
+
 .editing-h1 {
   text-align: center;
   font-size: 1.7em;
@@ -62,4 +66,41 @@
   border-radius: 0.3rem;
   padding: 0 2.4rem;
   margin: 0.2rem 0 0 0.15rem;
+}
+.switch-wrap-edit {
+  cursor: pointer;
+  background: #2584f1;
+  padding: $padding;
+  width: $width;
+  height: $height;
+  border-radius: $height / 2;
+  margin-bottom: 0.3em;
+  input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+}
+.switch-edit {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 0fr;
+  transition: 0.2s;
+  //ICYMI, pseudo elements are treated as grid items
+  &::after {
+    content: '';
+    border-radius: 50%;
+    background: #24f358;
+    grid-column: 2;
+    transition: background 0.2s;
+  }
+}
+input:checked {
+  + .switch-edit {
+    grid-template-columns: 0fr 1fr 1fr;
+    &::after {
+      background-color: #ccc;
+    }
+  }
 }

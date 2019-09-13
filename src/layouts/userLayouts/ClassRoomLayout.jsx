@@ -2,9 +2,8 @@ import './UserProfileLayout.scss';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Registration } from 'components/Registration';
-import { Users } from 'components/Users';
-import { AdminInstruction } from '../texts/AdminInstruction';
+import { UserClass } from 'components/UserClass';
+import { UserInstruction } from '../texts/UserInstruction';
 
 import { loadUsers } from 'actions/fetchUsers';
 
@@ -12,89 +11,72 @@ class ClassRoomLayouts extends Component {
   state = {
     status: this.props.user.user.status,
     instructions: '',
-    allusers: '',
-    allteachers: '',
-    reg: '',
-    fetchStatus: '',
-    alladmins: '',
+    myclass: '',
+    studyClass: {},
+    displayClass: false,
   };
   handleMenu = event => {
+    const id = this.props.user.user.class;
     const value = event.target.id;
     if (value == 'instructions') {
       this.setState({
         instructions: 'active',
-        allusers: '',
-        allteachers: '',
-        reg: '',
+        myclass: '',
         fetchStatus: '',
-        alladmins: '',
       });
     }
-    if (value == 'allusers') {
+    if (value == 'myclass') {
       this.setState({
         instructions: '',
-        allusers: 'active',
-        allteachers: '',
-        reg: '',
-        fetchStatus: 'user',
-        alladmins: '',
-      });
-    }
-    if (value == 'allteachers') {
-      this.setState({
-        instructions: '',
-        allusers: '',
-        allteachers: 'active',
-        reg: '',
+        myclass: 'active',
         fetchStatus: 'teacher',
-        alladmins: '',
       });
+      fetch(`http://localhost:8888/class/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Wrong credentials');
+          }
+          return response.json(response);
+        })
+        .then(data => {
+          this.setState({ studyClass: data.studyClass });
+          if (JSON.stringify(data) == '{}') {
+            alert('Вы не являетесь учеником какого-либо класса');
+            this.setState({ displayClass: false });
+          } else {
+            this.setState({ displayClass: true });
+            this.handleFetchStatus();
+          }
+        });
     }
-    if (value == 'reg') {
-      this.setState({
-        instructions: '',
-        allusers: '',
-        allteachers: '',
-        reg: 'active',
-        fetchStatus: '',
-        alladmins: '',
-      });
-    }
-    if (value == 'alladmins') {
-      this.setState({
-        instructions: '',
-        allusers: '',
-        allteachers: '',
-        reg: '',
-        fetchStatus: 'admin',
-        alladmins: 'active',
-      });
-    }
-    setTimeout(() => {
-      this.handleFetchStatus();
-    }, 0);
-
     event.preventDefault();
   };
+
   handleFetchStatus = () => {
     const { fetchStatus } = this.state;
     const { handleFetchUsers } = this.props;
     handleFetchUsers(fetchStatus);
   };
-  render() {
-    const {
-      status,
-      instructions,
-      allusers,
-      allteachers,
-      alladmins,
-      reg,
-    } = this.state;
-    const users = this.props.users;
 
+  render() {
+    const { instructions, myclass, studyClass, displayClass } = this.state;
+    const teachers = this.props.users.map((i, index) => {
+      if (studyClass.teacher == i._id) {
+        return i;
+      }
+    });
+    let teacher;
+    if (teachers[0]) {
+      teacher = teachers[0];
+    } else {
+      teacher = null;
+    }
     return (
       <>
-        <p>Страница управления пользователями</p>
         <ul className="layout-menu">
           <li
             id="instructions"
@@ -103,35 +85,15 @@ class ClassRoomLayouts extends Component {
           >
             инструкции
           </li>
-          <li id="allusers" className={`${allusers}`} onClick={this.handleMenu}>
-            все ученики
-          </li>
-          <li
-            id="allteachers"
-            className={`${allteachers}`}
-            onClick={this.handleMenu}
-          >
-            все учителя
-          </li>
-          {status == 'esquire' && (
-            <li
-              id="alladmins"
-              className={`${alladmins}`}
-              onClick={this.handleMenu}
-            >
-              все администраторы
-            </li>
-          )}
-          <li id="reg" className={`${reg}`} onClick={this.handleMenu}>
-            регистрация
+          <li id="myclass" className={`${myclass}`} onClick={this.handleMenu}>
+            класс
           </li>
         </ul>
         <div className="layout-wraper">
-          {reg == 'active' && <Registration adminStatus={status} />}
-          {instructions == 'active' && <AdminInstruction />}
-          {allusers == 'active' && <Users users={users} />}
-          {allteachers == 'active' && <Users users={users} />}
-          {alladmins == 'active' && <Users users={users} />}
+          {instructions == 'active' && <UserInstruction />}
+          {myclass == 'active' && displayClass && (
+            <UserClass teacher={teacher} />
+          )}
         </div>
       </>
     );

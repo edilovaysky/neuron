@@ -19,6 +19,7 @@ export class Editing extends Component {
       tel: userToEdit.tel,
       email: userToEdit.email,
       gen: userToEdit.gen,
+      active: true,
     };
   }
 
@@ -36,7 +37,9 @@ export class Editing extends Component {
       tel,
       email,
       gen,
+      active,
     } = this.state;
+
     firstName = firstName.replace(/\s/g, '');
     lastName = lastName.replace(/\s/g, '');
     patronymic = patronymic.replace(/\s/g, '');
@@ -56,6 +59,7 @@ export class Editing extends Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        active,
         status,
         firstName,
         lastName,
@@ -83,6 +87,9 @@ export class Editing extends Component {
       [name]: value,
     });
   };
+  handleCheckActive = () => {
+    this.setState({ active: !this.state.active });
+  };
   render() {
     const {
       firstName,
@@ -107,6 +114,13 @@ export class Editing extends Component {
               ))}
             {userToEdit.status == 'user' && <h3>редактирование данных</h3>}
             <i>заполните подлежащие редактированию поля</i>
+            <div className="check-wrap">
+              <label className="switch-wrap-edit">
+                <input type="checkbox" onChange={this.handleCheckActive} />
+                <div className="switch-edit"></div>
+              </label>
+              <p>активен</p>
+            </div>
             <span>Имя:</span>
             <input
               required

@@ -17,6 +17,7 @@ class AdminUsersLayouts extends Component {
     reg: '',
     fetchStatus: '',
     alladmins: '',
+    active: false,
   };
   handleMenu = event => {
     const value = event.target.id;
@@ -28,6 +29,7 @@ class AdminUsersLayouts extends Component {
         reg: '',
         fetchStatus: '',
         alladmins: '',
+        active: false,
       });
     }
     if (value == 'allusers') {
@@ -38,6 +40,7 @@ class AdminUsersLayouts extends Component {
         reg: '',
         fetchStatus: 'user',
         alladmins: '',
+        active: true,
       });
     }
     if (value == 'allteachers') {
@@ -48,6 +51,7 @@ class AdminUsersLayouts extends Component {
         reg: '',
         fetchStatus: 'teacher',
         alladmins: '',
+        active: true,
       });
     }
     if (value == 'reg') {
@@ -58,6 +62,7 @@ class AdminUsersLayouts extends Component {
         reg: 'active',
         fetchStatus: '',
         alladmins: '',
+        active: false,
       });
     }
     if (value == 'alladmins') {
@@ -68,8 +73,10 @@ class AdminUsersLayouts extends Component {
         reg: '',
         fetchStatus: 'admin',
         alladmins: 'active',
+        active: true,
       });
     }
+
     setTimeout(() => {
       this.handleFetchStatus();
     }, 0);
@@ -83,6 +90,7 @@ class AdminUsersLayouts extends Component {
   };
   render() {
     const {
+      active,
       status,
       instructions,
       allusers,
@@ -92,6 +100,7 @@ class AdminUsersLayouts extends Component {
       fetchStatus,
     } = this.state;
     const users = this.props.users;
+
     const page = 'otherPages';
     return (
       <>
@@ -131,13 +140,28 @@ class AdminUsersLayouts extends Component {
           {reg == 'active' && <Registration adminStatus={status} />}
           {instructions == 'active' && <AdminInstruction />}
           {allusers == 'active' && (
-            <Users users={users} status={fetchStatus} page={page} />
+            <Users
+              users={users}
+              status={fetchStatus}
+              page={page}
+              active={active}
+            />
           )}
           {allteachers == 'active' && (
-            <Users users={users} status={fetchStatus} page={page} />
+            <Users
+              users={users}
+              status={fetchStatus}
+              page={page}
+              active={active}
+            />
           )}
           {alladmins == 'active' && (
-            <Users users={users} status={fetchStatus} page={page} />
+            <Users
+              users={users}
+              status={fetchStatus}
+              page={page}
+              active={active}
+            />
           )}
         </div>
       </>

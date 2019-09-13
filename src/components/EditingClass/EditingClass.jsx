@@ -29,7 +29,7 @@ export class EditingClasses extends Component {
     const { classToEdit } = this.props;
     const id = classToEdit._id;
     let { number, name, teacher, user } = this.state;
-    fetch(`http://localhost:8888/class/${id}`, {
+    fetch(`http://localhost:8888/classes/delete/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
