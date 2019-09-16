@@ -39,17 +39,22 @@ export class Theme extends Component {
     const { displayTheme, themes } = this.state;
 
     let theme;
-    if (themes) {
+    if (themes.length) {
       themes.sort((a, b) => {
-        a.theme.theme > b.theme.theme;
+        if (a.theme || b.theme) {
+          a.theme.theme > b.theme.theme;
+        }
       });
-      theme = themes.map((i, index) => {
-        return (
-          <li key={index} className="theme-list-item">
-            {i.theme.theme}
-            <Lesson lessonIds={i.theme.lessons} />
-          </li>
-        );
+
+      theme = themes.map(i => {
+        if (i.theme) {
+          return (
+            <li key={i._id} className="theme-list-item">
+              {i.theme.theme}
+              <Lesson lessonIds={i.theme.lessons} />
+            </li>
+          );
+        }
       });
     }
 

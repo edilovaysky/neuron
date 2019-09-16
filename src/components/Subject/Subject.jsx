@@ -44,12 +44,14 @@ export class Subject extends Component {
         a.subject.subject > b.subject.subject;
       });
       subject = subjects.map((i, index) => {
-        return (
-          <li key={index} className="subject-list-item">
-            {i.subject.subject}
-            <Theme themeIds={i.subject.themes} />
-          </li>
-        );
+        if (i.subject) {
+          return (
+            <li key={index} className="subject-list-item">
+              {i.subject.subject}
+              <Theme themeIds={i.subject.themes} />
+            </li>
+          );
+        }
       });
     }
 

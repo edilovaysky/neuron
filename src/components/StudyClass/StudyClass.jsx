@@ -15,7 +15,7 @@ export class StudyClass extends Component {
   componentDidMount() {
     this.setState(() => {
       this.state.pupil_id = this.props.pupil.map(user => {
-        return user.user;
+        return user;
       });
     });
     this.setState({ teacher_id: this.props.teacher });
@@ -67,8 +67,9 @@ export class StudyClass extends Component {
     const { number, name } = this.props;
 
     const { display, edit, fetchTeacher, fetchUser } = this.state;
-
+    console.log(fetchUser);
     const users = fetchUser.map((user, index) => {
+      console.log(user);
       return (
         <li key={index}>
           <p>
@@ -94,7 +95,7 @@ export class StudyClass extends Component {
               <ol>{users}</ol>
 
               <button onClick={this.handleEdit}>редактировать</button>
-              <button>документы класса</button>
+
               {edit && (
                 <EditingClass
                   classToEdit={this.props}

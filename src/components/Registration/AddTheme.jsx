@@ -10,6 +10,7 @@ export class AddTheme extends Component {
     theme: '',
     themesToEdit: [],
     themeToEdit: '',
+    themeToDel: '',
     lessons: [],
     lesson: '',
   };
@@ -36,6 +37,36 @@ export class AddTheme extends Component {
       .then(data => {
         console.log('theme was added');
         alert('Тема добавлена');
+      });
+  };
+
+  handleDelTheme = () => {
+    let { themeToDel } = this.state;
+    const id = themeToDel;
+    console.log(id);
+    let marker = false;
+    if (id) {
+      marker = true;
+    }
+
+    fetch(`http://localhost:8888/themes/delete/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        marker,
+      }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Wrong credentials');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('theme was deleted');
+        alert('Тема удалена');
       });
   };
 
@@ -204,8 +235,20 @@ export class AddTheme extends Component {
               placeholder="название темы"
             />
             <br />
-
             <button onClick={this.handleAddTheme}>добавить тему</button>
+          </div>
+        </div>
+        <div className="reg-wrap">
+          <div className="reg">
+            <h3>Удаление тем</h3>
+            <span onClick={this.handleThemeB} className="click-span">
+              список зарегестрированных тем:
+            </span>
+            <select name="themeToDel" onChange={this.handleTextChange}>
+              <option defaultValue>выберите удаляемую тему</option>
+              {themeToEdit}
+            </select>
+            <button onClick={this.handleDelTheme}>удалить тему</button>
           </div>
         </div>
         <div className="reg-wrap">
@@ -222,7 +265,7 @@ export class AddTheme extends Component {
               список зарегестрированных уроков:
             </span>
             <select name="lesson" onChange={this.handleTextChange}>
-              <option defaultValue>выберите тему</option>
+              <option defaultValue>выберите урок</option>
               {lessonToAdd}
             </select>
             <div className="button-block">

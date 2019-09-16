@@ -17,6 +17,7 @@ export class Registration extends Component {
     tel: '',
     email: '',
     gen: '',
+    active: false,
   };
   handleRegIn = () => {
     let {
@@ -31,7 +32,9 @@ export class Registration extends Component {
       tel,
       email,
       gen,
+      active,
     } = this.state;
+
     firstName = firstName.replace(/\s/g, '');
     lastName = lastName.replace(/\s/g, '');
     password = password.replace(/\s/g, '');
@@ -40,6 +43,8 @@ export class Registration extends Component {
     dateOfBirth = dateOfBirth.replace(/\s/g, '');
     tel = tel.replace(/\s/g, '');
     email = email.replace(/\s/g, '');
+
+    console.log(status);
     if (
       !status == '' &&
       !firstName == '' &&
@@ -52,6 +57,7 @@ export class Registration extends Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          active,
           status,
           firstName,
           lastName,
@@ -81,11 +87,12 @@ export class Registration extends Component {
     this.setState({
       [name]: value,
     });
-    console.log({ [name]: value });
+  };
+  handleCheckActive = () => {
+    this.setState({ active: !this.state.active });
   };
   render() {
     const {
-      status,
       firstName,
       lastName,
       password,
@@ -95,18 +102,26 @@ export class Registration extends Component {
       parentName,
       tel,
       email,
-      gen,
     } = this.state;
     const { adminStatus } = this.props;
+
     return (
       <>
         <div className="reg-wrap">
           <div className="reg">
             <h3>Регистрация пользователей</h3>
-            <i>Все поля обязательны к заполнению.</i>
+            <i>* поля обязательны к заполнению.</i>
+            <div className="check-wrap">
+              <label className="switch-wrap">
+                <input type="checkbox" onChange={this.handleCheckActive} />
+                <div className="switch"></div>
+              </label>
+              <p>* активен</p>
+            </div>
+
             <select name="status" onChange={this.handleTextChange}>
               <option defaultValue>
-                выберите статус регистрации пользователя
+                * выберите статус регистрации пользователя
               </option>
               <option value="user">Ученик</option>
               <option value="teacher">Учитель</option>
@@ -115,7 +130,7 @@ export class Registration extends Component {
               )}
             </select>
             <br />
-            <span>Имя:</span>
+            <span>* Имя:</span>
             <input
               required
               onChange={this.handleTextChange}
@@ -135,7 +150,7 @@ export class Registration extends Component {
               placeholder="Отчество"
             />
             <br />
-            <span>Фамилия:</span>
+            <span>* Фамилия:</span>
             <input
               required
               onChange={this.handleTextChange}
@@ -201,7 +216,7 @@ export class Registration extends Component {
               placeholder="email"
             />
             <br />
-            <span>пароль для входа в личный кабинет:</span>
+            <span>* пароль для входа в личный кабинет:</span>
             <input
               required
               onChange={this.handleTextChange}

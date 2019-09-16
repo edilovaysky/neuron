@@ -17,8 +17,15 @@ export class User extends Component {
     this.setState({ edit: !this.state.edit });
   };
   render() {
-    const { lastName, firstName, patronymic, page } = this.props;
+    const { lastName, firstName, patronymic, active, findMarker } = this.props;
     const { display, edit } = this.state;
+    let isActive;
+    if (active) {
+      isActive = '* активен';
+    } else {
+      isActive = '* не активен';
+    }
+
     return (
       <>
         {this.props.page == 'otherPages' && (
@@ -27,6 +34,7 @@ export class User extends Component {
               <p onClick={this.handleDisplay}>
                 {lastName} {firstName} {patronymic}
               </p>
+              {findMarker && <>{isActive}</>}
             </div>
             {display && (
               <div className="card-body">
@@ -37,8 +45,10 @@ export class User extends Component {
                 )}
                 <p>телефон: {this.props.tel}</p>
                 <p>e-mail: {this.props.email}</p>
-                <button onClick={this.handleEdit}>редактировать</button>
-                <button>документы пользователя</button>
+                <button className="user-edit-btn" onClick={this.handleEdit}>
+                  редактировать
+                </button>
+                <button className="user-edit-btn">документы</button>
                 {edit && <Editing userToEdit={this.props} />}
               </div>
             )}

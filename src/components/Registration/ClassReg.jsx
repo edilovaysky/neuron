@@ -18,7 +18,7 @@ class ClassRegistration extends Component {
     let { number, name, teacher } = this.state;
     console.log(teacher);
     name = name.replace(/\s/g, '');
-    if (!name == '' && !number == '' && !teacher == '') {
+    if (!name == '' && !number == '') {
       fetch('http://localhost:8888/reg-class', {
         method: 'POST',
         headers: {

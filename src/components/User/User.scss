@@ -17,8 +17,8 @@
   font-weight: 600;
 }
 
-.card-body button {
-  width: 40%;
+.user-edit-btn {
+  min-width: 40%;
   color: #31b2e8;
   display: inline-block;
   text-align: center;
@@ -32,6 +32,6 @@
   margin-left: 1rem;
   cursor: pointer;
 }
-.card-body button:hover {
+.user-edit-btn:hover {
   background-color: #fafafa;
 }

@@ -3,8 +3,6 @@ import './Registration.scss';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import PropTypes from 'prop-types';
-
 import { loadUsers } from 'actions/fetchUsers';
 import { FindUser } from 'components/FindUser';
 
@@ -19,7 +17,7 @@ class AddUserToClass extends Component {
     display: false,
   };
 
-  handleEdit = () => {
+  handleAddUser = () => {
     let { id, pupil } = this.state;
 
     this.props.classes.studyClasses[0].pupil.map(item => {
@@ -54,6 +52,7 @@ class AddUserToClass extends Component {
         }
       });
   };
+
   handleDisplay = () => {
     this.setState({ display: !this.state.display });
   };
@@ -92,7 +91,7 @@ class AddUserToClass extends Component {
             </select>
             <br />
             <span className="reg-class-user" onClick={this.handleDisplay}>
-              Добавьте ученика:
+              Выберите ученика:
             </span>
             {display && (
               <FindUser
@@ -103,7 +102,7 @@ class AddUserToClass extends Component {
               />
             )}
 
-            <button onClick={this.handleEdit}>добавить ученика</button>
+            <button onClick={this.handleAddUser}>добавить ученика</button>
           </div>
         </div>
       </>
@@ -111,14 +110,6 @@ class AddUserToClass extends Component {
   }
 }
 
-AddUserToClass.propTypes = {
-  firstName: PropTypes.string,
-  lastName: PropTypes.string,
-  studyGroup: PropTypes.string,
-  teacherName: PropTypes.string,
-  teacherLastName: PropTypes.string,
-  teacherPassword: PropTypes.string,
-};
 function mapStateToProps(state, props) {
   return {
     user: state.userAuth.entries,

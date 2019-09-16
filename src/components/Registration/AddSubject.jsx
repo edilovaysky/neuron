@@ -10,12 +10,13 @@ export class AddSubject extends Component {
     subjectsToEdit: [],
     subject: '',
     subjectToEdit: '',
+    subjectToDel: '',
     themes: [],
     theme: '',
     course: '',
   };
 
-  handleAdd = () => {
+  handleAddSub = () => {
     let { subject } = this.state;
     subject.toLowerCase();
     if (subject !== '') {
@@ -40,6 +41,37 @@ export class AddSubject extends Component {
           alert('Предмет добавлен');
         });
     }
+  };
+
+  handleDelSub = () => {
+    let { subjectToDel } = this.state;
+    const id = subjectToDel;
+    let delMarker = false;
+    if (id) {
+      delMarker = true;
+    }
+    console.log('id  ' + id);
+    console.log('marker  ' + delMarker);
+    fetch(`http://localhost:8888/subjects/delete/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        delMarker,
+      }),
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Wrong credentials');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log(data);
+        console.log('Subject was deleted');
+        alert('Предмет удален');
+      });
   };
 
   handleTextChange = ({ target: { name, value } }) => {
@@ -201,7 +233,21 @@ export class AddSubject extends Component {
             />
             <br />
 
-            <button onClick={this.handleAdd}>добавить предмет</button>
+            <button onClick={this.handleAddSub}>добавить предмет</button>
+          </div>
+        </div>
+        <div className="reg-wrap">
+          <div className="reg">
+            <h3>Удаление предметов</h3>
+            <span onClick={this.handleSubjectB} className="click-span">
+              список зарегестрированных предметов:
+            </span>
+            <select name="subjectToDel" onChange={this.handleTextChange}>
+              <option defaultValue>выберите удаляемый предмет</option>
+              {subToEdit}
+            </select>
+
+            <button onClick={this.handleDelSub}>удалить предмет</button>
           </div>
         </div>
         <div className="reg-wrap">

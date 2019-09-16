@@ -60,16 +60,27 @@ export class FindUser extends Component {
 
     const { lastName, foundUsers, display } = this.state;
     const foundArr = foundUsers.map(found => {
-      return <User key={found._id} {...found} page={page} />;
+      const findMarker = true;
+      return (
+        <User key={found._id} {...found} page={page} findMarker={findMarker} />
+      );
     });
+    let marker;
     const selectUser = foundUsers.map(user => {
+      if (user.active) {
+        marker = '   *активен';
+      } else {
+        marker = '   * не активен';
+      }
       return (
         <option key={user._id} value={user._id}>
           {user.lastName} {user.firstName} {user.patronymic}
+          {marker}
+          {}
         </option>
       );
     });
-    //console.log(foundArr);
+
     return (
       <div className="users-wrap">
         <input

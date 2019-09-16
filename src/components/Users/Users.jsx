@@ -9,23 +9,44 @@ export class Users extends Component {
     this.state = {
       lastName: '',
       display: false,
+      displayInactive: false,
     };
   }
 
   handleDisplay = () => {
     this.setState({ display: !this.state.display });
   };
+  handleDisplayInactive = () => {
+    this.setState({ displayInactive: !this.state.displayInactive });
+  };
   render() {
-    const { page, status } = this.props;
-    const { display } = this.state;
+    const { page, status, active } = this.props;
+    const mapping = {
+      user: 'ученики: ',
+      teacher: 'учителя: ',
+      admin: 'администраторы: ',
+    };
+
+    const { display, displayInactive } = this.state;
     const users = this.props.users.map(user => {
-      return <User key={user._id} {...user} page={page} />;
+      if (user.active == active) {
+        return <User key={user._id} {...user} page={page} />;
+      }
+    });
+    const inactive = this.props.users.map(user => {
+      if (!user.active == active) {
+        return <User key={user._id} {...user} page={page} />;
+      }
     });
     return (
       <div className="users-wrap">
         <FindUser users={users} page={page} status={status} />
-        <h3 onClick={this.handleDisplay}>Пользователи</h3>
+        <h3 onClick={this.handleDisplay}>{mapping[status]}</h3>
         {display && <>{users} </>}
+        <h3 onClick={this.handleDisplayInactive}>
+          не активные {mapping[status]}
+        </h3>
+        {displayInactive && <>{inactive} </>}
       </div>
     );
   }
