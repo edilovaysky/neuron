@@ -19,7 +19,7 @@ export class Editing extends Component {
       tel: userToEdit.tel,
       email: userToEdit.email,
       gen: userToEdit.gen,
-      active: true,
+      active: userToEdit.active,
     };
   }
 
@@ -82,6 +82,32 @@ export class Editing extends Component {
     //.then(data => {});
   };
 
+  isUserActive = () => {
+    const { active } = this.props.userToEdit;
+
+    if (active) {
+      return (
+        <div className="check-wrap">
+          <label className="switch-wrap-edit">
+            <input type="checkbox" onChange={this.handleCheckActive} />
+            <div className="switch-edit"></div>
+          </label>
+          <p>* активен</p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="check-wrap">
+          <label className="switch-wrap">
+            <input type="checkbox" onChange={this.handleCheckActive} />
+            <div className="switch"></div>
+          </label>
+          <p>* активен</p>
+        </div>
+      );
+    }
+  };
+
   handleTextChange = ({ target: { name, value } }) => {
     this.setState({
       [name]: value,
@@ -103,6 +129,8 @@ export class Editing extends Component {
       gen,
     } = this.state;
     const { userToEdit } = this.props;
+    console.log(this.state.active);
+    const isActive = this.isUserActive();
 
     return (
       <>
@@ -114,13 +142,7 @@ export class Editing extends Component {
               ))}
             {userToEdit.status == 'user' && <h3>редактирование данных</h3>}
             <i>заполните подлежащие редактированию поля</i>
-            <div className="check-wrap">
-              <label className="switch-wrap-edit">
-                <input type="checkbox" onChange={this.handleCheckActive} />
-                <div className="switch-edit"></div>
-              </label>
-              <p>активен</p>
-            </div>
+            {isActive}
             <span>Имя:</span>
             <input
               required

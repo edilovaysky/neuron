@@ -3,14 +3,17 @@ import React, { Component } from 'react';
 
 export class UserClass extends Component {
   render() {
-    const teacher = this.props;
-    console.log(teacher);
+    const { teacher, studyClass } = this.props;
+
     return (
       <>
+        <span className="user-class-span">Мой класс:</span>
+        <p className="user-class-p">
+          {studyClass.number}-й {studyClass.name}{' '}
+        </p>
         <span className="user-class-span">Мой учитель:</span>
         <p className="user-class-p">
-          {teacher.teacher.firstName} {teacher.teacher.patronymic}{' '}
-          {teacher.teacher.lastName}
+          {teacher.firstName} {teacher.patronymic} {teacher.lastName}
         </p>
       </>
     );
