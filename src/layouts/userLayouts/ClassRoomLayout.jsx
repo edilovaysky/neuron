@@ -14,6 +14,7 @@ class ClassRoomLayouts extends Component {
     myclass: '',
     studyClass: {},
     displayClass: false,
+    fetchStatus: '',
   };
   handleMenu = event => {
     const id = this.props.user.user.class;
@@ -43,13 +44,13 @@ class ClassRoomLayouts extends Component {
           return response.json(response);
         })
         .then(data => {
+          this.handleFetchStatus();
           this.setState({ studyClass: data.studyClass });
           if (JSON.stringify(data) == '{}') {
             alert('Вы не являетесь учеником какого-либо класса');
             this.setState({ displayClass: false });
           } else {
             this.setState({ displayClass: true });
-            this.handleFetchStatus();
           }
         });
     }
@@ -69,11 +70,10 @@ class ClassRoomLayouts extends Component {
         return i;
       }
     });
+
     let teacher;
     if (teachers[0]) {
       teacher = teachers[0];
-    } else {
-      teacher = null;
     }
     return (
       <>
@@ -92,7 +92,7 @@ class ClassRoomLayouts extends Component {
         <div className="layout-wraper">
           {instructions == 'active' && <UserInstruction />}
           {myclass == 'active' && displayClass && (
-            <UserClass teacher={teacher} />
+            <UserClass teacher={teacher} studyClass={studyClass} />
           )}
         </div>
       </>
