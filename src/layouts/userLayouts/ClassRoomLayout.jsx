@@ -65,6 +65,7 @@ class ClassRoomLayouts extends Component {
 
   render() {
     const { instructions, myclass, studyClass, displayClass } = this.state;
+
     const teachers = this.props.users.map((i, index) => {
       if (studyClass.teacher == i._id) {
         return i;

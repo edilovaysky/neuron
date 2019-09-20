@@ -6,10 +6,26 @@
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
+const AWS = require('aws-sdk');
+//AWS.config.loadFromPath('./config.json');
+const S3 = require('aws-sdk/clients/s3');
+
+AWS.config.update({
+  accessKeyId: 'sHGdyEex47fVtP85ghTn1K',
+  secretAccessKey: '4A6gk1f3oo7K55nWuqzBKynaTuCpJkxopbm4c3eUXzE1',
+  region: 'ru-msk',
+  endpoint: 'http://hb.bizmrg.com',
+});
+
+const neuronStore = new AWS.S3();
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+var multer = require('multer');
+var uploadFromUser = multer().single('file');
+const formData = require('express-form-data');
 
 mongoose.set('useFindAndModify', false);
 
@@ -19,6 +35,21 @@ mongoose.connect(
 );
 
 const app = express();
+app.use(express.json());
+app.use(cors());
+
+/* const options = {
+  autoClean: true,
+};
+
+// parse data with connect-multiparty.
+app.use(formData.parse(options));
+// delete from the request all empty files (size == 0)
+app.use(formData.format());
+// change the file objects to fs.ReadStream
+app.use(formData.stream());
+// union the body and the files
+app.use(formData.union()); */
 
 const User = require('./models/user');
 const Class = require('./models/class');
@@ -49,9 +80,6 @@ const verifyToken = (req, res, next) => {
     res.status(401).json({ message: 'No token present' });
   }
 };
-
-app.use(express.json());
-app.use(cors());
 
 app.post('/auth', async (req, res) => {
   const { firstName, lastName, password } = req.body;
@@ -468,6 +496,70 @@ app.get('/lesson/:id', async (req, res) => {
   const lesson = await Lesson.findById(req.params.id).sort({ lesson: 1 });
   res.json({ lesson });
 });
+
+/**********************************************************
+ *****       AWS SECTION            ***********************
+ **********************************************************
+ */
+
+app.put('/upload/udoc', async (req, res) => {
+  uploadFromUser(req, res, function(err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err);
+    } else {
+      console.log('unknown err  ' + err);
+    }
+    console.log('FILE', req.file.buffer);
+    // Все прекрасно загрузилось.
+    console.log('BODY', req.body.body);
+  });
+
+  res.status(200).send({});
+
+  //let user = new User(req.body);
+  //user = await user.save();
+  //res.json(user);
+});
+
+//TO GET OBJ FROM STORE
+
+/* neuronStore.getObject({ Bucket: 'neuron-bucket', Key: 'keyName' }, function(err, data) {
+  if (err) console.log(err, err.stack);
+  // an error occurred
+  else console.log(data); // successful response
+});
+ */
+//TO PUT OBJ INTO STORE
+
+/* neuronStore.putObject(
+  {
+    Body: '',
+    Bucket: 'examplebucket',
+    Key: 'HappyFace.jpg',
+  },
+  function(err, data) {
+    if (err) console.log(err, err.stack);
+    // an error occurred
+    else console.log(data); // successful response
+  }
+); */
+// to delete neuronStore.deleteObject
+
+/*function deleteFile() {
+    var bucketInstance = new AWS.S3();
+    var params = {
+        Bucket: 'BUCKET_NAME',
+        Key: 'FILENAME'
+    };
+    bucketInstance.deleteObject(params, function (err, data) {
+        if (data) {
+            console.log("File deleted successfully");
+        }
+        else {
+            console.log("Check if you have sufficient permissions : "+err);
+        }
+    });
+} */
 
 //APP PORT
 

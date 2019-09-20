@@ -83,28 +83,30 @@ export class Editing extends Component {
   };
 
   isUserActive = () => {
-    const { active } = this.props.userToEdit;
+    if (this.props.userToEdit) {
+      const { active } = this.props.userToEdit;
 
-    if (active) {
-      return (
-        <div className="check-wrap">
-          <label className="switch-wrap-edit">
-            <input type="checkbox" onChange={this.handleCheckActive} />
-            <div className="switch-edit"></div>
-          </label>
-          <p>* активен</p>
-        </div>
-      );
-    } else {
-      return (
-        <div className="check-wrap">
-          <label className="switch-wrap">
-            <input type="checkbox" onChange={this.handleCheckActive} />
-            <div className="switch"></div>
-          </label>
-          <p>* активен</p>
-        </div>
-      );
+      if (active) {
+        return (
+          <div className="check-wrap">
+            <label className="switch-wrap-edit">
+              <input type="checkbox" onChange={this.handleCheckActive} />
+              <div className="switch-edit"></div>
+            </label>
+            <p>* активен</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className="check-wrap">
+            <label className="switch-wrap">
+              <input type="checkbox" onChange={this.handleCheckActive} />
+              <div className="switch"></div>
+            </label>
+            <p>* активен</p>
+          </div>
+        );
+      }
     }
   };
 
@@ -118,6 +120,7 @@ export class Editing extends Component {
   };
   render() {
     const {
+      status,
       firstName,
       lastName,
       patronymic,
@@ -126,23 +129,22 @@ export class Editing extends Component {
       parentName,
       tel,
       email,
-      gen,
     } = this.state;
-    const { userToEdit } = this.props;
-    console.log(this.state.active);
-    const isActive = this.isUserActive();
+    const { userStatus } = this.props;
 
+    const isActive = this.isUserActive();
     return (
       <>
         <div className="editing-wrap">
           <div className="editing">
-            {userToEdit.status == 'admin' ||
-              (userToEdit.status == 'esquire' && (
+            {userStatus == 'admin' ||
+              (userStatus == 'esquire' && (
                 <h3>редактирование пользователей</h3>
               ))}
-            {userToEdit.status == 'user' && <h3>редактирование данных</h3>}
+            {userStatus == 'user' && <h3>редактирование данных</h3>}
             <i>заполните подлежащие редактированию поля</i>
-            {isActive}
+            {(userStatus == 'admin' && <>{isActive}</>) ||
+              (userStatus == 'esquire' && <>{isActive}</>)}
             <span>Имя:</span>
             <input
               required
@@ -150,7 +152,7 @@ export class Editing extends Component {
               name="firstName"
               type="text"
               value={firstName}
-              placeholder={userToEdit.firstName}
+              placeholder={firstName}
             />
             <br />
             <span>Отчество:</span>
@@ -160,7 +162,7 @@ export class Editing extends Component {
               name="patronymic"
               type="text"
               value={patronymic}
-              placeholder={userToEdit.patronymic}
+              placeholder={patronymic}
             />
             <br />
             <span>Фамилия:</span>
@@ -170,7 +172,7 @@ export class Editing extends Component {
               name="lastName"
               type="text"
               value={lastName}
-              placeholder={userToEdit.lastName}
+              placeholder={lastName}
             />
             <br />
             <span>укажите пол</span>
@@ -186,7 +188,7 @@ export class Editing extends Component {
               name="dateOfBirth"
               type="text"
               value={dateOfBirth || ''}
-              placeholder={userToEdit.dateOfBirth}
+              placeholder={dateOfBirth}
             />
             <br />
             <span>место проживания:</span>
@@ -196,20 +198,18 @@ export class Editing extends Component {
               name="city"
               type="text"
               value={city || ''}
-              placeholder={userToEdit.city}
+              placeholder={city}
             />
             <br />
-            {userToEdit.status == 'user' && (
-              <span>ФИО родителя или родителей:</span>
-            )}
-            {userToEdit.status == 'user' && (
+            {status == 'user' && <span>ФИО родителя или родителей:</span>}
+            {status == 'user' && (
               <input
                 required
                 onChange={this.handleTextChange}
                 name="parentName"
                 type="text"
                 value={parentName || ''}
-                placeholder={userToEdit.parentName}
+                placeholder={parentName}
               />
             )}
             <br />
@@ -220,7 +220,7 @@ export class Editing extends Component {
               name="tel"
               type="tel"
               value={tel || ''}
-              placeholder={userToEdit.tel}
+              placeholder={tel}
             />
             <br />
             <span>email:</span>
@@ -230,7 +230,7 @@ export class Editing extends Component {
               name="email"
               type="email"
               value={email || ''}
-              placeholder={userToEdit.email}
+              placeholder={email}
             />
             <br />
             <p className="editing-btn" onClick={this.handleEdit}>
