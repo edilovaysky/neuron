@@ -57,6 +57,7 @@ const Course = require('./models/course');
 const Subject = require('./models/subject');
 const Theme = require('./models/theme');
 const Lesson = require('./models/lesson');
+const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
 
 const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
@@ -502,47 +503,94 @@ app.get('/lesson/:id', async (req, res) => {
  **********************************************************
  */
 
+//TO PUT OBJ INTO CLOUD
+
 app.put('/upload/udoc', async (req, res) => {
-  uploadFromUser(req, res, function(err) {
-    if (err instanceof multer.MulterError) {
-      console.log(err);
-    } else {
-      console.log('unknown err  ' + err);
-    }
-    console.log('FILE', req.file.buffer);
-    // Все прекрасно загрузилось.
-    console.log('BODY', req.body.body);
+  let userId, userDocId, docName, file;
+  let message = '';
+  let getFormData = new Promise((resolve, reject) => {
+    // geting formData
+    uploadFromUser(req, res, err => {
+      if (err instanceof multer.MulterError) {
+        reject(console.log(err));
+      }
+      userId = req.body.body[0];
+      docName = req.body.body[1];
+      file = req.file.buffer;
+      resolve(() => {
+        console.log('promise done');
+      });
+    });
   });
 
-  res.status(200).send({});
-
-  //let user = new User(req.body);
-  //user = await user.save();
-  //res.json(user);
+  getFormData
+    .then(async result => {
+      console.log('1:  ', result);
+      let userDoc = await UserDoc.findOne({
+        user: userId,
+        docName: docName,
+      }).lean();
+      if (userDoc) {
+        console.log(userDoc);
+        message = 'Документ с этим именем уже существует';
+        console.log(message);
+        return message;
+      } else {
+        const docData = {
+          user: userId,
+          docName: docName,
+        };
+        // save docData into mongodb
+        let userDoc = new UserDoc(docData);
+        userDoc = await userDoc.save();
+        console.log(userDoc);
+        userDocId = userDoc._id;
+      }
+    })
+    .then(result => {
+      console.log('2:  ', result);
+      // put file into cloud
+      if (userId && userDocId && docName) {
+        message = 'файл успешно добавлен';
+        neuronStore.putObject(
+          {
+            Body: file,
+            Bucket: 'neuron-bucket',
+            Key: `udoc/${userId}/${userDocId}/${docName}`,
+          },
+          (err, data) => {
+            if (err) console.log('an error occurred  ', err, err.stack);
+            else console.log('successful response ', data);
+          }
+        );
+        console.log(message);
+        return message;
+      } else {
+        return (message = result);
+      }
+    });
+  console.log(message);
+  res.status(200).send(message);
 });
 
-//TO GET OBJ FROM STORE
+//TO GET OBJ FROM CLOUD
 
-/* neuronStore.getObject({ Bucket: 'neuron-bucket', Key: 'keyName' }, function(err, data) {
-  if (err) console.log(err, err.stack);
-  // an error occurred
-  else console.log(data); // successful response
+app.get('/upload/udoc/:id', async (req, res) => {
+  neuronStore.getObject(
+    {
+      Bucket: 'neuron-bucket',
+      Key: `udoc/${req.params.id}/${req.body.body[1]}`,
+    },
+    (err, data) => {
+      if (err) console.log(err, err.stack);
+      // an error occurred
+      else console.log(data); // successful response
+    }
+  );
+
+  res.json({ lesson });
 });
- */
-//TO PUT OBJ INTO STORE
 
-/* neuronStore.putObject(
-  {
-    Body: '',
-    Bucket: 'examplebucket',
-    Key: 'HappyFace.jpg',
-  },
-  function(err, data) {
-    if (err) console.log(err, err.stack);
-    // an error occurred
-    else console.log(data); // successful response
-  }
-); */
 // to delete neuronStore.deleteObject
 
 /*function deleteFile() {
