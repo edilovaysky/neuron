@@ -52,8 +52,10 @@ class UserProfileLayouts extends Component {
     const { instructions, userProfile, change } = this.state;
     const user = this.props.user.user;
     let name;
+    let status;
     if (user) {
       name = user.firstName;
+      status = user.status;
     }
     return (
       <>
@@ -79,7 +81,9 @@ class UserProfileLayouts extends Component {
         </ul>
         <div className="layout-wraper">
           {instructions == 'active' && <UserInstruction />}
-          {userProfile == 'active' && <Editing userToEdit={user} />}
+          {userProfile == 'active' && (
+            <Editing userToEdit={user} userStatus={status} />
+          )}
           {change == 'active' && <Change userToEdit={user} />}
         </div>
       </>

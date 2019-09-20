@@ -55,14 +55,21 @@ export class FindUser extends Component {
     }
   };
   render() {
-    const { page, pupil } = this.props;
+    const { page, pupil, userStatus } = this.props;
     const chosen = pupil;
 
     const { lastName, foundUsers, display } = this.state;
     const foundArr = foundUsers.map(found => {
       const findMarker = true;
       return (
-        <User key={found._id} {...found} page={page} findMarker={findMarker} />
+        <User
+          key={found._id}
+          {...found}
+          page={page}
+          findMarker={findMarker}
+          userStatus={userStatus}
+          userId={found._id}
+        />
       );
     });
     let marker;

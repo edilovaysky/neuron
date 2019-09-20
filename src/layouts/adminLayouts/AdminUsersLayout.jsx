@@ -11,6 +11,7 @@ import { loadUsers } from 'actions/fetchUsers';
 class AdminUsersLayouts extends Component {
   state = {
     status: this.props.user.user.status,
+    id: this.props.user.user._id,
     instructions: '',
     allusers: '',
     allteachers: '',
@@ -90,6 +91,7 @@ class AdminUsersLayouts extends Component {
   };
   render() {
     const {
+      id,
       active,
       status,
       instructions,
@@ -145,6 +147,8 @@ class AdminUsersLayouts extends Component {
               status={fetchStatus}
               page={page}
               active={active}
+              userStatus={status}
+              userId={id}
             />
           )}
           {allteachers == 'active' && (
@@ -153,6 +157,8 @@ class AdminUsersLayouts extends Component {
               status={fetchStatus}
               page={page}
               active={active}
+              userStatus={status}
+              userId={id}
             />
           )}
           {alladmins == 'active' && (
@@ -161,6 +167,8 @@ class AdminUsersLayouts extends Component {
               status={fetchStatus}
               page={page}
               active={active}
+              userStatus={status}
+              userId={id}
             />
           )}
         </div>
