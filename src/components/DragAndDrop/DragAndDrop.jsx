@@ -15,15 +15,23 @@ export const DragAndDrop = props => {
     let formData = new FormData();
     formData.append('file', file, file.name);
     formData.append('body', userId);
+    formData.append('body', file.name);
     //formData.append('body', x);
 
     console.log(file);
     axios
       .put('http://localhost:8888/upload/udoc', formData)
-      .then(function(response) {
+      .then(response => {
+        if (response.status == 200 && !response.message) {
+          alert('файл добавлен');
+        }
         console.log(response);
+        if (response.message) {
+          alert(response.message);
+        }
+        console.log('successful file upload');
       })
-      .catch(function(error) {
+      .catch(error => {
         console.log(error);
       });
   }, []);

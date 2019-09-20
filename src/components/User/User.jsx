@@ -4,6 +4,7 @@ import React, { Component } from 'react';
 import { Editing } from 'components/Editing';
 import { FileLoader } from 'components/FileLoader';
 import { DragAndDrop } from 'components/DragAndDrop';
+import { GetDoc } from 'components/GetDoc';
 
 export class User extends Component {
   state = {
@@ -61,36 +62,26 @@ export class User extends Component {
                 )}
                 <p>телефон: {this.props.tel}</p>
                 <p>e-mail: {this.props.email}</p>
-
                 <button className="user-edit-btn" onClick={this.handleEdit}>
                   редактировать
                 </button>
-                {userStatus == 'user' && (
-                  <button
-                    className="user-edit-btn"
-                    onClick={this.handleDisplayFile}
-                  >
-                    документы
-                  </button>
-                )}
-                {userStatus == 'admin' && (
-                  <button
-                    className="user-edit-btn"
-                    onClick={this.handleDisplayFile}
-                  >
-                    документы
-                  </button>
-                )}
-                {userStatus == 'esquire' && (
-                  <button
-                    className="user-edit-btn"
-                    onClick={this.handleDisplayFile}
-                  >
-                    документы
-                  </button>
-                )}
+                <button
+                  className="user-edit-btn"
+                  onClick={this.handleDisplayFile}
+                >
+                  документы
+                </button>
                 {displayLoader && (
-                  <DragAndDrop docType={docType} userId={userId} />
+                  <>
+                    <div className="card-body-span">
+                      <span>загрука документов пользователя</span>
+                    </div>
+                    <DragAndDrop docType={docType} userId={userId} />
+                    <div className="card-body-span">
+                      <span>просмотр документов пользователя</span>
+                    </div>
+                    <GetDoc />
+                  </>
                 )}
                 {edit && (
                   <Editing userToEdit={this.props} userStatus={userStatus} />
