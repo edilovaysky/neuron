@@ -1,0 +1,1 @@
+export { GetDocs } from './GetDocs';

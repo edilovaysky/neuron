@@ -3,16 +3,18 @@ import './Registration.scss';
 import React, { Component } from 'react';
 
 import PropTypes from 'prop-types';
+import axios from 'axios';
+import { DragAndDrop } from '../DragAndDrop/DragAndDrop';
 
 export class AddLesson extends Component {
   state = {
     lesson: '',
     lessonToDel: '',
     toTheme: '',
-    path: '',
     lessons: [],
     displayAddLes: false,
     displayDelLes: false,
+    formData: {},
   };
 
   handleDisplayAddLes = () => {
@@ -24,34 +26,37 @@ export class AddLesson extends Component {
   };
 
   handleAddLesson = () => {
-    let { lesson, toTheme, path } = this.state;
+    let { lesson, toTheme } = this.state;
 
-    path.toLowerCase();
     lesson.toLowerCase();
     toTheme.toLowerCase();
 
-    fetch(`http://localhost:8888/reg-lesson`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        lesson,
-        toTheme,
-        path,
-      }),
-    })
+    const { formData } = this.state;
+    formData.append('body', lesson);
+    formData.append('body', toTheme);
+
+    axios
+      .put('http://localhost:8888/reg-lesson', formData)
       .then(response => {
-        if (!response.ok) {
-          throw new Error('Wrong credentials');
+        if (
+          response.status == 200 &&
+          response.data == 'Файл успешно добавлен'
+        ) {
+          alert(response.data);
+          console.log('successful file upload');
         }
-        return response.json();
+        if (response.data == 'Файл с этим именем уже существует') {
+          alert(response.data);
+          console.log('failed file upload');
+        }
       })
-      .then(data => {
-        console.log(data);
-        console.log('Lesson was added');
-        alert('Урок добавлен');
+      .catch(error => {
+        console.log(error);
       });
+    setTimeout(() => {
+      alert('Урок создан, а файл будет загружен в хранилище в фоновом режиме');
+      this.setState({ displayAddLes: !this.state.displayAddLes });
+    }, 3000);
   };
 
   handleDelLesson = () => {
@@ -102,15 +107,20 @@ export class AddLesson extends Component {
       });
   };
 
+  handleDragAndDrop = formData => {
+    this.setState({ formData: formData });
+  };
+
   render() {
     const {
       lessons,
       lesson,
-      path,
       toTheme,
       displayAddLes,
       displayDelLes,
     } = this.state;
+    const docType = 'lesson';
+
     let lessonList;
     if (lessons.lesson) {
       lessonList = lessons.lesson.map((i, index) => {
@@ -166,14 +176,10 @@ export class AddLesson extends Component {
                   placeholder="тема урока"
                 />
                 <br />
-                <span>напишите путь к уроку</span>
-                <input
-                  required
-                  onChange={this.handleTextChange}
-                  name="path"
-                  type="text"
-                  value={path || ''}
-                  placeholder="путь к расположению урока"
+                <span>видео файл</span>
+                <DragAndDrop
+                  docType={docType}
+                  onSuccess={this.handleDragAndDrop}
                 />
                 <br />
                 <button onClick={this.handleAddLesson}>добавить урок</button>

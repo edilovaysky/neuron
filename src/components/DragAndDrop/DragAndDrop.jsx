@@ -9,31 +9,44 @@ export const DragAndDrop = props => {
 
   const onDrop = useCallback(acceptedFiles => {
     let file = acceptedFiles[0];
+
     setChosenFile(file.name);
     const userId = props.userId;
-    //const x = 'xxx';
-    let formData = new FormData();
-    formData.append('file', file, file.name);
-    formData.append('body', userId);
-    formData.append('body', file.name);
-    //formData.append('body', x);
+    const docType = props.docType;
 
-    console.log(file);
-    axios
-      .put('http://localhost:8888/upload/udoc', formData)
-      .then(response => {
-        if (response.status == 200 && !response.message) {
-          alert('файл добавлен');
-        }
-        console.log(response);
-        if (response.message) {
-          alert(response.message);
-        }
-        console.log('successful file upload');
-      })
-      .catch(error => {
-        console.log(error);
-      });
+    if (docType == 'udoc') {
+      let formData = new FormData();
+      formData.append('file', file, file.name);
+      formData.append('body', userId);
+      formData.append('body', file.name);
+
+      axios
+        .put('http://localhost:8888/upload/udoc', formData)
+        .then(response => {
+          if (
+            response.status == 200 &&
+            response.data == 'файл успешно добавлен'
+          ) {
+            alert(response.data);
+            console.log('successful file upload');
+          }
+          if (response.data == 'Документ с этим именем уже существует') {
+            alert(response.data);
+            console.log('failed file upload');
+          }
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
+
+    if (docType == 'lesson') {
+      let { onSuccess } = props;
+      let formData = new FormData();
+      formData.append('file', file, file.name);
+      formData.append('body', file.name);
+      onSuccess(formData);
+    }
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
