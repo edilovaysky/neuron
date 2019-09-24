@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { Editing } from 'components/Editing';
 import { FileLoader } from 'components/FileLoader';
 import { DragAndDrop } from 'components/DragAndDrop';
-import { GetDoc } from 'components/GetDoc';
+import { GetDocs } from 'components/GetDocs';
 
 export class User extends Component {
   state = {
@@ -34,7 +34,7 @@ export class User extends Component {
       userStatus,
       userId,
     } = this.props;
-    console.log(userStatus);
+
     const { display, edit, displayLoader } = this.state;
     let isActive;
     if (active) {
@@ -80,7 +80,7 @@ export class User extends Component {
                     <div className="card-body-span">
                       <span>просмотр документов пользователя</span>
                     </div>
-                    <GetDoc />
+                    <GetDocs userId={userId} userStatus={userStatus} />
                   </>
                 )}
                 {edit && (

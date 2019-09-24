@@ -449,15 +449,75 @@ app.put('/themes/delete/:id', async (req, res) => {
 });
 
 /*  **********************************************************
-    *****       LESSON SECTION         ***********************
+    *****       LESSON SECTION AWS       *********************
     **********************************************************
  
 */
 
-app.post('/reg-lesson', async (req, res) => {
-  let lesson = new Lesson(req.body);
+app.put('/reg-lesson', async (req, res) => {
+  let lesson, toTheme, lessonId, fileName, file;
+  let failedMessage = 'Файл с этим именем уже существует';
+  let successMessage = 'файл успешно добавлен';
+  let getFormData = new Promise((resolve, reject) => {
+    // geting formData
+    uploadFromUser(req, res, err => {
+      if (err instanceof multer.MulterError) {
+        reject(console.log(err));
+      }
+      fileName = req.body.body[0];
+      lesson = req.body.body[1];
+      toTheme = req.body.body[2];
+      file = req.file.buffer;
+      resolve(() => {
+        console.log('promise done');
+      });
+    });
+  });
+
+  getFormData
+    .then(async result => {
+      let isLesson = await Lesson.findOne({
+        lesson: lesson,
+      }).lean();
+      if (isLesson) {
+        res.status(200).send(`${failedMessage}`);
+        return;
+      } else {
+        const docData = {
+          lesson: lesson,
+          toTheme: toTheme,
+          fileName: fileName,
+        };
+        // save docData into mongodb
+        let newLesson = new Lesson(docData);
+        newLesson = await newLesson.save();
+        console.log(newLesson);
+        lessonId = newLesson._id;
+      }
+    })
+    .then(result => {
+      message = result;
+      // put file into cloud
+      console.log(lessonId, fileName, file);
+      if (lessonId && fileName && file) {
+        console.log(lessonId, fileName, file);
+        neuronStore.putObject(
+          {
+            Body: file,
+            Bucket: 'neuron-bucket',
+            Key: `lessons/${lessonId}/${fileName}`,
+          },
+          (err, data) => {
+            if (err) console.log('an error occurred  ', err, err.stack);
+            else console.log('successful response ', data);
+            res.status(200).send(`${successMessage}`);
+          }
+        );
+      }
+    });
+  /*  let lesson = new Lesson(req.body);
   lesson = await lesson.save();
-  res.json(lesson);
+  res.json(lesson); */
 });
 
 app.put('/lesson/delete/:id', async (req, res) => {
@@ -503,11 +563,12 @@ app.get('/lesson/:id', async (req, res) => {
  **********************************************************
  */
 
-//TO PUT OBJ INTO CLOUD
+//TO PUT OBJ INTO CLOUD AND MONGO
 
 app.put('/upload/udoc', async (req, res) => {
   let userId, userDocId, docName, file;
-  let message = '';
+  let failedMessage = 'Документ с этим именем уже существует';
+  let successMessage = 'файл успешно добавлен';
   let getFormData = new Promise((resolve, reject) => {
     // geting formData
     uploadFromUser(req, res, err => {
@@ -525,16 +586,13 @@ app.put('/upload/udoc', async (req, res) => {
 
   getFormData
     .then(async result => {
-      console.log('1:  ', result);
       let userDoc = await UserDoc.findOne({
         user: userId,
         docName: docName,
       }).lean();
       if (userDoc) {
-        console.log(userDoc);
-        message = 'Документ с этим именем уже существует';
-        console.log(message);
-        return message;
+        res.status(200).send(`${failedMessage}`);
+        return;
       } else {
         const docData = {
           user: userId,
@@ -543,15 +601,14 @@ app.put('/upload/udoc', async (req, res) => {
         // save docData into mongodb
         let userDoc = new UserDoc(docData);
         userDoc = await userDoc.save();
-        console.log(userDoc);
+        //console.log(userDoc);
         userDocId = userDoc._id;
       }
     })
     .then(result => {
-      console.log('2:  ', result);
+      message = result;
       // put file into cloud
       if (userId && userDocId && docName) {
-        message = 'файл успешно добавлен';
         neuronStore.putObject(
           {
             Body: file,
@@ -561,53 +618,67 @@ app.put('/upload/udoc', async (req, res) => {
           (err, data) => {
             if (err) console.log('an error occurred  ', err, err.stack);
             else console.log('successful response ', data);
+            res.status(200).send(`${successMessage}`);
           }
         );
-        console.log(message);
-        return message;
-      } else {
-        return (message = result);
       }
     });
-  console.log(message);
-  res.status(200).send(message);
 });
 
-//TO GET OBJ FROM CLOUD
+//TO GET USER-DOC-LIST
 
-app.get('/upload/udoc/:id', async (req, res) => {
-  neuronStore.getObject(
-    {
-      Bucket: 'neuron-bucket',
-      Key: `udoc/${req.params.id}/${req.body.body[1]}`,
-    },
-    (err, data) => {
-      if (err) console.log(err, err.stack);
-      // an error occurred
-      else console.log(data); // successful response
-    }
-  );
-
-  res.json({ lesson });
+app.get('/udoc-list/:id', async (req, res) => {
+  userId = req.params.id;
+  if (userId) {
+    let userDoc = await UserDoc.find({
+      user: userId,
+    }).lean();
+    res.json({ userDoc });
+  }
 });
 
-// to delete neuronStore.deleteObject
+//TO GET OBJ FROM CLOUD AND MONGO
 
-/*function deleteFile() {
-    var bucketInstance = new AWS.S3();
-    var params = {
-        Bucket: 'BUCKET_NAME',
-        Key: 'FILENAME'
-    };
-    bucketInstance.deleteObject(params, function (err, data) {
-        if (data) {
-            console.log("File deleted successfully");
-        }
-        else {
-            console.log("Check if you have sufficient permissions : "+err);
-        }
-    });
-} */
+app.get('/udoc/:id', async (req, res) => {
+  let id = req.params.id;
+  let userDoc = await UserDoc.findById(req.params.id);
+  if (id) {
+    neuronStore.getObject(
+      {
+        Bucket: 'neuron-bucket',
+        Key: `udoc/${userDoc.user}/${userDoc._id}/${userDoc.docName}`,
+      },
+      (err, data) => {
+        if (err) console.log(err, err.stack);
+        // an error occurred
+        //console.log(data); // successful response
+        else res.json({ data });
+      }
+    );
+  }
+});
+
+// TO DELETE OBJ FROM CLOUD AND MONGO
+
+app.get('/udoc/del/:id', async (req, res) => {
+  const id = req.params.id;
+  if (id) {
+    let userDoc = await UserDoc.findById(id);
+    neuronStore.deleteObject(
+      {
+        Bucket: 'neuron-bucket',
+        Key: `udoc/${userDoc.user}/${userDoc._id}/${userDoc.docName}`,
+      },
+      (err, data) => {
+        if (err) console.log(err, err.stack);
+        // an error occurred
+        else console.log(data); // successful response
+        res.json('successful doc delete');
+      }
+    );
+    await UserDoc.findByIdAndDelete(id);
+  }
+});
 
 //APP PORT
 
