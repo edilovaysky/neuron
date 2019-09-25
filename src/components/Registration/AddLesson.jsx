@@ -5,20 +5,52 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { DragAndDrop } from '../DragAndDrop/DragAndDrop';
+import { GetLesson } from '../GetLesson/GetLesson';
 
 export class AddLesson extends Component {
   state = {
     lesson: '',
     lessonToDel: '',
+    lessonToShow: '',
     toTheme: '',
     lessons: [],
     displayAddLes: false,
     displayDelLes: false,
+    displayLesson: false,
+    displayGetLesson: false,
     formData: {},
+    url: '',
   };
 
   handleDisplayAddLes = () => {
     this.setState({ displayAddLes: !this.state.displayAddLes });
+  };
+
+  handleDisplayGetLesson = () => {
+    this.setState({ displayGetLesson: !this.state.displayGetLesson });
+    const id = this.state.lessonToShow;
+    fetch(`http://localhost:8888/lesson/${id}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log(response);
+        if (!response.ok) {
+          throw new Error('Wrong credentials');
+        }
+        return response.json(response);
+      })
+      .then(data => {
+        console.log(data);
+        const bufferArr = data.data.Body.data;
+        // Obtain a blob: URL for the video data.
+        const arrayBufferView = new Uint8Array(bufferArr);
+        const blob = new Blob([arrayBufferView], { type: 'video/mp4' });
+        const urlCreator = window.URL || window.webkitURL;
+        const videoUrl = urlCreator.createObjectURL(blob);
+        this.setState({ url: videoUrl });
+      });
   };
 
   handleDisplayDelLes = () => {
@@ -56,7 +88,7 @@ export class AddLesson extends Component {
     setTimeout(() => {
       alert('Урок создан, а файл будет загружен в хранилище в фоновом режиме');
       this.setState({ displayAddLes: !this.state.displayAddLes });
-    }, 3000);
+    }, 1000);
   };
 
   handleDelLesson = () => {
@@ -111,6 +143,11 @@ export class AddLesson extends Component {
     this.setState({ formData: formData });
   };
 
+  handleDisplayLesson = () => {
+    this.setState({ displayLesson: !this.state.displayLesson });
+    this.fetchLesson();
+  };
+
   render() {
     const {
       lessons,
@@ -118,14 +155,17 @@ export class AddLesson extends Component {
       toTheme,
       displayAddLes,
       displayDelLes,
+      displayLesson,
+      displayGetLesson,
+      url,
     } = this.state;
     const docType = 'lesson';
 
     let lessonList;
     if (lessons.lesson) {
-      lessonList = lessons.lesson.map((i, index) => {
+      lessonList = lessons.lesson.map(i => {
         return (
-          <li key={index} value={i._id}>
+          <li key={i._id} value={i._id} onClick={this.handleDisplayLesson}>
             {i.lesson} {i.toTheme}
           </li>
         );
@@ -133,9 +173,20 @@ export class AddLesson extends Component {
     }
     let lessonListToDel;
     if (lessons.lesson) {
-      lessonListToDel = lessons.lesson.map((i, index) => {
+      lessonListToDel = lessons.lesson.map(i => {
         return (
-          <option key={index} value={i._id}>
+          <option key={i._id} value={i._id}>
+            {' '}
+            {i.lesson} {i.toTheme}
+          </option>
+        );
+      });
+    }
+    let lessonListToShow;
+    if (lessons.lesson) {
+      lessonListToShow = lessons.lesson.map(i => {
+        return (
+          <option key={i._id} value={i._id}>
             {' '}
             {i.lesson} {i.toTheme}
           </option>
@@ -147,6 +198,21 @@ export class AddLesson extends Component {
       <>
         <div className="reg-wrap">
           <div className="reg">
+            <h3 className="click-span" onClick={this.handleDisplayLesson}>
+              Просмотр уроков
+            </h3>
+            {displayLesson && (
+              <>
+                <select name="lessonToShow" onChange={this.handleTextChange}>
+                  <option defaultValue>выберите урок для просмотра</option>
+                  {lessonListToShow}
+                </select>
+                <button onClick={this.handleDisplayGetLesson}>
+                  показать урок
+                </button>
+                {displayGetLesson && <GetLesson url={url} />}
+              </>
+            )}
             <h3 className="click-span" onClick={this.handleDisplayAddLes}>
               Добавление уроков
             </h3>
@@ -156,6 +222,7 @@ export class AddLesson extends Component {
                   список зарегистрированных уроков
                 </span>
                 <ol>{lessonList}</ol>
+
                 <span>напишите название урока</span>
                 <input
                   required

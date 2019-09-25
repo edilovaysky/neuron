@@ -515,12 +515,10 @@ app.put('/reg-lesson', async (req, res) => {
         );
       }
     });
-  /*  let lesson = new Lesson(req.body);
-  lesson = await lesson.save();
-  res.json(lesson); */
 });
 
 app.put('/lesson/delete/:id', async (req, res) => {
+  const lessonId = req.params.id;
   const themes = await Theme.find();
   let themeId;
   themes.map(item => {
@@ -536,16 +534,27 @@ app.put('/lesson/delete/:id', async (req, res) => {
     });
     console.log(theme);
   }
-  const lesson = await Lesson.findByIdAndDelete(
-    req.params.id,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      }
-      console.log(result);
+  let lessonToDel = await Lesson.findById(lessonId);
+  let fileName = lessonToDel.fileName;
+  neuronStore.deleteObject(
+    {
+      Bucket: 'neuron-bucket',
+      Key: `lessons/${lessonId}/${fileName}`,
+    },
+    (err, data) => {
+      if (err) console.log(err, err.stack);
+      // an error occurred
+      else console.log(data); // successful response
+      res.json('successful doc delete');
     }
   );
-  res.json({ lesson });
+  const lesson = await Lesson.findByIdAndDelete(lessonId, (err, result) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(result);
+  });
+  //res.json({ lesson });
 });
 
 app.get('/lesson', async (req, res) => {
@@ -554,8 +563,25 @@ app.get('/lesson', async (req, res) => {
 });
 
 app.get('/lesson/:id', async (req, res) => {
-  const lesson = await Lesson.findById(req.params.id).sort({ lesson: 1 });
-  res.json({ lesson });
+  const lessonId = req.params.id;
+  console.log(lessonId);
+  const lesson = await Lesson.findById(lessonId);
+  const fileName = lesson.fileName;
+  if (lessonId && fileName) {
+    neuronStore.getObject(
+      {
+        Bucket: 'neuron-bucket',
+        Key: `lessons/${lessonId}/${fileName}`,
+      },
+      (err, data) => {
+        if (err) console.log(err, err.stack);
+        // an error occurred
+        //console.log(data); // successful response
+        else res.json({ data });
+      }
+    );
+  }
+  //res.json({ lesson });
 });
 
 /**********************************************************
