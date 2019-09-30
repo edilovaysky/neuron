@@ -455,66 +455,50 @@ app.put('/themes/delete/:id', async (req, res) => {
 */
 
 app.put('/reg-lesson', async (req, res) => {
-  let lesson, toTheme, lessonId, fileName, file;
-  let failedMessage = 'Файл с этим именем уже существует';
-  let successMessage = 'файл успешно добавлен';
-  let getFormData = new Promise((resolve, reject) => {
-    // geting formData
-    uploadFromUser(req, res, err => {
-      if (err instanceof multer.MulterError) {
-        reject(console.log(err));
-      }
-      fileName = req.body.body[0];
-      lesson = req.body.body[1];
-      toTheme = req.body.body[2];
-      file = req.file.buffer;
-      resolve(() => {
-        console.log('promise done');
-      });
-    });
-  });
+  const lesson = req.body.lesson;
+  const toTheme = req.body.toTheme;
+  console.log(lesson, toTheme);
 
-  getFormData
-    .then(async result => {
-      let isLesson = await Lesson.findOne({
-        lesson: lesson,
-      }).lean();
-      if (isLesson) {
-        res.status(200).send(`${failedMessage}`);
-        return;
-      } else {
-        const docData = {
-          lesson: lesson,
-          toTheme: toTheme,
-          fileName: fileName,
-        };
-        // save docData into mongodb
-        let newLesson = new Lesson(docData);
-        newLesson = await newLesson.save();
-        console.log(newLesson);
-        lessonId = newLesson._id;
+  let newLesson = new Lesson(req.body);
+  newLesson = await newLesson.save();
+  res.json(newLesson);
+});
+
+app.put('/video-to-lesson', async (req, res) => {
+  // geting formData
+
+  uploadFromUser(req, res, err => {
+    if (err instanceof multer.MulterError) {
+      reject(console.log(err));
+    }
+
+    const fileName = req.body.body[0];
+    const lessonId = req.body.body[1];
+    const file = req.file.buffer;
+    const data = { fileName: fileName };
+    console.log(lessonId, fileName);
+
+    const lesson = async data => {
+      await Lesson.findByIdAndUpdate(lessonId, data);
+    };
+
+    if (data) {
+      lesson(data);
+    }
+
+    neuronStore.putObject(
+      {
+        Body: file,
+        Bucket: 'neuron-bucket',
+        Key: `lessons/${lessonId}/${fileName}`,
+      },
+      (err, data) => {
+        if (err) console.log('an error occurred  ', err, err.stack);
+        else console.log('successful response ', data);
       }
-    })
-    .then(result => {
-      message = result;
-      // put file into cloud
-      console.log(lessonId, fileName, file);
-      if (lessonId && fileName && file) {
-        console.log(lessonId, fileName, file);
-        neuronStore.putObject(
-          {
-            Body: file,
-            Bucket: 'neuron-bucket',
-            Key: `lessons/${lessonId}/${fileName}`,
-          },
-          (err, data) => {
-            if (err) console.log('an error occurred  ', err, err.stack);
-            else console.log('successful response ', data);
-            res.status(200).send(`${successMessage}`);
-          }
-        );
-      }
-    });
+    );
+    res.json('file is upload to storage');
+  });
 });
 
 app.put('/lesson/delete/:id', async (req, res) => {
@@ -536,23 +520,25 @@ app.put('/lesson/delete/:id', async (req, res) => {
   }
   let lessonToDel = await Lesson.findById(lessonId);
   let fileName = lessonToDel.fileName;
-  neuronStore.deleteObject(
-    {
-      Bucket: 'neuron-bucket',
-      Key: `lessons/${lessonId}/${fileName}`,
-    },
-    (err, data) => {
-      if (err) console.log(err, err.stack);
-      // an error occurred
-      else console.log(data); // successful response
-      res.json('successful doc delete');
-    }
-  );
+  if (fileName) {
+    neuronStore.deleteObject(
+      {
+        Bucket: 'neuron-bucket',
+        Key: `lessons/${lessonId}/${fileName}`,
+      },
+      (err, data) => {
+        if (err) console.log(err, err.stack);
+        // an error occurred
+        else console.log('deleted obj     ' + data); // successful response
+        res.json('successful doc delete');
+      }
+    );
+  }
+
   const lesson = await Lesson.findByIdAndDelete(lessonId, (err, result) => {
     if (err) {
       console.log(err);
     }
-    console.log(result);
   });
   //res.json({ lesson });
 });
