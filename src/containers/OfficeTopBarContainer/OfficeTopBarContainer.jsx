@@ -32,15 +32,17 @@ class ProfileSettings extends Component {
       mapping = {
         admin: 'aдмин',
         teacher: 'учитель',
-        user: 'ученик',
+        user: 'родитель',
         esquire: 'ADMIN',
+        child: 'ученик',
       };
     } else {
       mapping = {
         admin: 'aдмин',
         teacher: 'учительница',
-        user: 'ученица',
+        user: 'родитель',
         esquire: 'ADMIN',
+        child: 'ученица',
       };
     }
 
@@ -52,7 +54,6 @@ class ProfileSettings extends Component {
         </div>
         {name && <h3> {name}</h3>}
         <div className="top-nav-bar-btn-section">
-          {/*  <button className="top-btn">РЕДАКТИРОВАТЬ</button> */}
           <button className="top-btn" onClick={this.handleSignOut}>
             ВЫХОД
           </button>

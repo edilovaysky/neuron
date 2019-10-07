@@ -48,6 +48,7 @@ export class UserSideBar extends Component {
   };
   render() {
     const { classRoom, courses, tutor, userProfile } = this.state;
+    const { status } = this.props;
     return (
       <>
         <div className="side-nav-bar">
@@ -60,28 +61,28 @@ export class UserSideBar extends Component {
               className={`side-btn-${userProfile}`}
               onClick={this.handleEnter}
             >
-              мой профиль
+              {status == 'user' ? <>профиль</> : <>мой профиль</>}
             </li>
             <li
               id="classRoom"
               className={`side-btn-${classRoom}`}
               onClick={this.handleEnter}
             >
-              мой класс
+              {status == 'user' ? <>класс</> : <>мой класс</>}
             </li>
             <li
               id="courses"
               className={`side-btn-${courses}`}
               onClick={this.handleEnter}
             >
-              мои курсы
+              {status == 'user' ? <>курсы</> : <>мои курсы</>}
             </li>
             <li
               id="tutor"
               className={`side-btn-${tutor}`}
               onClick={this.handleEnter}
             >
-              мой тьютор
+              {status == 'user' ? <>тьютор</> : <>мой тьютор</>}
             </li>
           </ul>
         </div>

@@ -22,7 +22,7 @@
 }
 
 .auth input {
-  min-width: 20rem;
+  min-width: 30rem;
   height: 3rem;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
@@ -30,7 +30,7 @@
 }
 
 .auth button {
-  width: 20rem;
+  width: 30rem;
   display: inline-block;
   font: inherit;
   background: none;
@@ -44,4 +44,8 @@
   border-radius: 0.3rem;
   padding: 0 2.4rem;
   margin: 0.2rem 0 0 0.15rem;
+}
+
+.auth-reg-wrap {
+  margin: 3em 0;
 }
