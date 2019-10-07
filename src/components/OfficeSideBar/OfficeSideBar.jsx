@@ -23,16 +23,16 @@ export class OfficeSideBar extends Component {
   defineSideBar = () => {
     const { status } = this.state.status;
     if (status == 'user') {
-      return <UserSideBar onEnter={this.handleEnter} />;
+      return <UserSideBar onEnter={this.handleEnter} status={status} />;
     }
     if (status == 'teacher') {
-      return <TeacherSideBar onEnter={this.handleEnter} />;
+      return <TeacherSideBar onEnter={this.handleEnter} status={status} />;
     }
     if (status == 'admin') {
-      return <AdminSideBar onEnter={this.handleEnter} />;
+      return <AdminSideBar onEnter={this.handleEnter} status={status} />;
     }
     if (status == 'esquire') {
-      return <SuperSideBar onEnter={this.handleEnter} />;
+      return <SuperSideBar onEnter={this.handleEnter} status={status} />;
     } else {
       return null;
     }

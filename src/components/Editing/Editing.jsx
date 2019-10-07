@@ -24,7 +24,7 @@ export class Editing extends Component {
   }
 
   handleEdit = () => {
-    const { userToEdit } = this.props;
+    const { userToEdit, reAuth } = this.props;
     const id = userToEdit._id;
     let {
       status,
@@ -79,6 +79,7 @@ export class Editing extends Component {
       alert('Учетная запись успешно отредактирована.');
       return response.json();
     });
+    reAuth();
     //.then(data => {});
   };
 

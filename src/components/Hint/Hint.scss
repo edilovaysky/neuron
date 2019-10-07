@@ -1,0 +1,19 @@
+.hint-wrap {
+  width: 20%;
+  height: 5em;
+  position: absolute;
+  top: 5%;
+  left: 60%;
+  background-color: #96ee91;
+  border: 0.4em solid #25a51e;
+  border-radius: 0.7em;
+  -webkit-box-shadow: 18px 7px 14px 0px rgba(0, 0, 0, 0.36);
+  -moz-box-shadow: 18px 7px 14px 0px rgba(0, 0, 0, 0.36);
+  box-shadow: 18px 7px 14px 0px rgba(0, 0, 0, 0.36);
+}
+.hint-wrap p {
+  padding: 0.2em 0;
+  color: #176813;
+  font-weight: 500;
+  text-shadow: 3px 2px 0px rgba(15, 240, 71, 0.952);
+}

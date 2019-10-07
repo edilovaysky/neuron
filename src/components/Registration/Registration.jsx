@@ -20,6 +20,9 @@ export class Registration extends Component {
     active: false,
   };
   handleRegIn = () => {
+    const { isSelfReg, child, userToEdit, reAuth } = this.props;
+    let parent;
+    let regPath = '';
     let {
       status,
       firstName,
@@ -34,6 +37,15 @@ export class Registration extends Component {
       gen,
       active,
     } = this.state;
+    if (child) {
+      status = 'child';
+      parent = userToEdit._id;
+      regPath = 'http://localhost:8888/reg-child';
+      active = true;
+    }
+    if (!child) {
+      regPath = 'http://localhost:8888/reg';
+    }
 
     firstName = firstName.replace(/\s/g, '');
     lastName = lastName.replace(/\s/g, '');
@@ -44,14 +56,13 @@ export class Registration extends Component {
     tel = tel.replace(/\s/g, '');
     email = email.replace(/\s/g, '');
 
-    console.log(status);
     if (
       !status == '' &&
       !firstName == '' &&
       !lastName == '' &&
       !password == ''
     ) {
-      fetch('http://localhost:8888/reg', {
+      fetch(regPath, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -65,10 +76,11 @@ export class Registration extends Component {
           patronymic,
           city,
           dateOfBirth,
-          parentName,
           tel,
           email,
           gen,
+          isSelfReg,
+          parent,
         }),
       })
         .then(response => {
@@ -79,8 +91,11 @@ export class Registration extends Component {
           alert('Регистрация прошла успешно.');
           return response.json();
         })
-        .then(data => {});
+        .then(data => {
+          //this.handleSendMail()
+        });
     }
+    reAuth();
   };
 
   handleTextChange = ({ target: { name, value } }) => {
@@ -103,7 +118,8 @@ export class Registration extends Component {
       tel,
       email,
     } = this.state;
-    const { adminStatus } = this.props;
+    const { adminStatus, isSelfReg, child } = this.props;
+    //console.log(isSelfReg, child);
 
     return (
       <>
@@ -111,24 +127,29 @@ export class Registration extends Component {
           <div className="reg">
             <h3>Регистрация пользователей</h3>
             <i>* поля обязательны к заполнению.</i>
-            <div className="check-wrap">
-              <label className="switch-wrap">
-                <input type="checkbox" onChange={this.handleCheckActive} />
-                <div className="switch"></div>
-              </label>
-              <p>* активен</p>
-            </div>
+            {!isSelfReg ||
+              (child && (
+                <div className="check-wrap">
+                  <label className="switch-wrap">
+                    <input type="checkbox" onChange={this.handleCheckActive} />
+                    <div className="switch"></div>
+                  </label>
+                  <p>* активен</p>
+                </div>
+              ))}
 
-            <select name="status" onChange={this.handleTextChange}>
-              <option defaultValue>
-                * выберите статус регистрации пользователя
-              </option>
-              <option value="user">Ученик</option>
-              <option value="teacher">Учитель</option>
-              {adminStatus == 'esquire' && (
-                <option value="admin">Администратор</option>
-              )}
-            </select>
+            {!child && (
+              <select name="status" onChange={this.handleTextChange}>
+                <option defaultValue>
+                  * выберите статус регистрации пользователя
+                </option>
+                <option value="user">Ученик</option>
+                {!isSelfReg && <option value="teacher">Учитель</option>}
+                {adminStatus == 'esquire' && (
+                  <option value="admin">Администратор</option>
+                )}
+              </select>
+            )}
             <br />
             <span>* Имя:</span>
             <input
@@ -186,7 +207,7 @@ export class Registration extends Component {
               placeholder="место проживания"
             />
             <br />
-            <span>ФИО родителя или родителей:</span>
+            {/* <span>ФИО родителя или родителей:</span>
             <input
               required
               onChange={this.handleTextChange}
@@ -195,27 +216,35 @@ export class Registration extends Component {
               value={parentName}
               placeholder="ФИО родителя"
             />
-            <br />
-            <span>телефон:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="tel"
-              type="tel"
-              value={tel}
-              placeholder="телефон"
-            />
-            <br />
-            <span>email родителей:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="email"
-              type="email"
-              value={email}
-              placeholder="email"
-            />
-            <br />
+            <br /> */}
+            {!child && (
+              <>
+                <span>телефон:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="tel"
+                  type="tel"
+                  value={tel}
+                  placeholder="телефон"
+                />
+                <br />
+              </>
+            )}
+            {!child && (
+              <>
+                <span>email:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="email"
+                  type="email"
+                  value={email}
+                  placeholder="email"
+                />
+                <br />
+              </>
+            )}
             <span>* пароль для входа в личный кабинет:</span>
             <input
               required

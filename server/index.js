@@ -38,19 +38,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-/* const options = {
-  autoClean: true,
-};
-
-// parse data with connect-multiparty.
-app.use(formData.parse(options));
-// delete from the request all empty files (size == 0)
-app.use(formData.format());
-// change the file objects to fs.ReadStream
-app.use(formData.stream());
-// union the body and the files
-app.use(formData.union()); */
-
 const User = require('./models/user');
 const Class = require('./models/class');
 const Course = require('./models/course');
@@ -60,12 +47,19 @@ const Lesson = require('./models/lesson');
 const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
 
-const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
+/******************************************************
+ *****       send mail          ***********************
+ ******************************************************
+ */
+
+const nodemailer = require('nodemailer');
+const smtpTransport = require('nodemailer-smtp-transport');
 
 /**********************************************************
  *****      AUTH SECTION            ***********************
  **********************************************************
  */
+const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
 
 const verifyToken = (req, res, next) => {
   if (req.headers.authorization) {
@@ -113,9 +107,59 @@ app.post('/auth', async (req, res) => {
 */
 
 app.post('/reg', async (req, res) => {
+  const data = {
+    active: req.body.active,
+    status: req.body.status,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    password: req.body.password,
+    patrunymic: req.body.patronymic,
+    city: req.body.city,
+    dataOfBirth: req.body.dateOfBirth,
+    parent: req.body.parent,
+    tel: req.body.tel,
+    email: req.body.email,
+    gen: req.body.gen,
+  };
+
+  let user = new User(data);
+  user = await user.save();
+
+  const isSelfReg = req.body.isSelfReg;
+  const linkToActiveUser = `https://neuron-school/active/${user._id}`;
+  const to = data.email;
+  const subject = 'регистрация на портале Neuron-school.ru';
+  const text = `Здравствуйте, Вы зарегестрировались на портале Neuron-school. Ваш логин для входа ${data.email}, Ваш пароль для входа ${data.password}. 
+  Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке ${linkToActiveUser} . С уважением команда портала.`;
+  if (isSelfReg) {
+    //send mail to user
+    console.log(to, subject, text);
+    //sendMail(to, subject, text);
+  }
+  res.json(user);
+});
+
+app.post('/reg-child', async (req, res) => {
+  const parentId = req.body.parent;
   let user = new User(req.body);
   user = await user.save();
+  const id = user._id;
+  let parent = await User.findByIdAndUpdate(parentId, {
+    $addToSet: { child: user._id },
+  });
+  console.log(parent);
   res.json(user);
+});
+
+app.get('/child/:id', async (req, res) => {
+  const user = await User.findById(req.params.id);
+  res.json({ user });
+});
+
+app.get('/userpass/:id', async (req, res) => {
+  const user = await User.findById(req.params.id);
+  const password = user.password;
+  res.json({ password });
 });
 
 app.get('/users', async (req, res) => {
@@ -455,66 +499,50 @@ app.put('/themes/delete/:id', async (req, res) => {
 */
 
 app.put('/reg-lesson', async (req, res) => {
-  let lesson, toTheme, lessonId, fileName, file;
-  let failedMessage = 'Файл с этим именем уже существует';
-  let successMessage = 'файл успешно добавлен';
-  let getFormData = new Promise((resolve, reject) => {
-    // geting formData
-    uploadFromUser(req, res, err => {
-      if (err instanceof multer.MulterError) {
-        reject(console.log(err));
-      }
-      fileName = req.body.body[0];
-      lesson = req.body.body[1];
-      toTheme = req.body.body[2];
-      file = req.file.buffer;
-      resolve(() => {
-        console.log('promise done');
-      });
-    });
-  });
+  const lesson = req.body.lesson;
+  const toTheme = req.body.toTheme;
+  console.log(lesson, toTheme);
 
-  getFormData
-    .then(async result => {
-      let isLesson = await Lesson.findOne({
-        lesson: lesson,
-      }).lean();
-      if (isLesson) {
-        res.status(200).send(`${failedMessage}`);
-        return;
-      } else {
-        const docData = {
-          lesson: lesson,
-          toTheme: toTheme,
-          fileName: fileName,
-        };
-        // save docData into mongodb
-        let newLesson = new Lesson(docData);
-        newLesson = await newLesson.save();
-        console.log(newLesson);
-        lessonId = newLesson._id;
+  let newLesson = new Lesson(req.body);
+  newLesson = await newLesson.save();
+  res.json(newLesson);
+});
+
+app.put('/video-to-lesson', async (req, res) => {
+  // geting formData
+
+  uploadFromUser(req, res, err => {
+    if (err instanceof multer.MulterError) {
+      reject(console.log(err));
+    }
+
+    const fileName = req.body.body[0];
+    const lessonId = req.body.body[1];
+    const file = req.file.buffer;
+    const data = { fileName: fileName };
+    console.log(lessonId, fileName);
+
+    const lesson = async data => {
+      await Lesson.findByIdAndUpdate(lessonId, data);
+    };
+
+    if (data) {
+      lesson(data);
+    }
+
+    neuronStore.putObject(
+      {
+        Body: file,
+        Bucket: 'neuron-bucket',
+        Key: `lessons/${lessonId}/${fileName}`,
+      },
+      (err, data) => {
+        if (err) console.log('an error occurred  ', err, err.stack);
+        else console.log('successful response ', data);
       }
-    })
-    .then(result => {
-      message = result;
-      // put file into cloud
-      console.log(lessonId, fileName, file);
-      if (lessonId && fileName && file) {
-        console.log(lessonId, fileName, file);
-        neuronStore.putObject(
-          {
-            Body: file,
-            Bucket: 'neuron-bucket',
-            Key: `lessons/${lessonId}/${fileName}`,
-          },
-          (err, data) => {
-            if (err) console.log('an error occurred  ', err, err.stack);
-            else console.log('successful response ', data);
-            res.status(200).send(`${successMessage}`);
-          }
-        );
-      }
-    });
+    );
+    res.json('file is upload to storage');
+  });
 });
 
 app.put('/lesson/delete/:id', async (req, res) => {
@@ -536,23 +564,25 @@ app.put('/lesson/delete/:id', async (req, res) => {
   }
   let lessonToDel = await Lesson.findById(lessonId);
   let fileName = lessonToDel.fileName;
-  neuronStore.deleteObject(
-    {
-      Bucket: 'neuron-bucket',
-      Key: `lessons/${lessonId}/${fileName}`,
-    },
-    (err, data) => {
-      if (err) console.log(err, err.stack);
-      // an error occurred
-      else console.log(data); // successful response
-      res.json('successful doc delete');
-    }
-  );
+  if (fileName) {
+    neuronStore.deleteObject(
+      {
+        Bucket: 'neuron-bucket',
+        Key: `lessons/${lessonId}/${fileName}`,
+      },
+      (err, data) => {
+        if (err) console.log(err, err.stack);
+        // an error occurred
+        else console.log('deleted obj     ' + data); // successful response
+        res.json('successful doc delete');
+      }
+    );
+  }
+
   const lesson = await Lesson.findByIdAndDelete(lessonId, (err, result) => {
     if (err) {
       console.log(err);
     }
-    console.log(result);
   });
   //res.json({ lesson });
 });
@@ -703,6 +733,57 @@ app.get('/udoc/del/:id', async (req, res) => {
       }
     );
     await UserDoc.findByIdAndDelete(id);
+  }
+});
+
+//TEST
+app.post('/test-mail', async (req, res) => {
+  const options = {
+    // host: 'smtp.mail.ru',
+    //domain: 'smtp.mail.ru',
+    // port: 465,
+    service: 'Gmail',
+    secure: true,
+    auth: {
+      user: 'edilovaysky@gmail.com',
+      pass: 'gthcbr777',
+    },
+    /*  tls: {
+      // do not fail on invalid certs
+      rejectUnauthorized: false,
+    }, */
+  };
+  let transport = nodemailer.createTransport(smtpTransport(options));
+
+  const linkToActiveUser = `https://neuron-school/active`;
+  const to = 'test@dotschool.bizml.ru';
+  const subject = 'регистрация на портале Neuron-school.ru';
+  const text = `Здравствуйте, Вы зарегестрировались на портале Neuron-school. Ваш логин для входа, Ваш пароль для входа . 
+    Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке ${linkToActiveUser} . С уважением команда портала.`;
+
+  const mail = {
+    from: 'edilovaysky@gmail.com',
+    to: to,
+    subject: subject,
+    text: text,
+  };
+  const sendMail = () => {
+    transport.sendMail(mail, (err, res) => {
+      if (err) {
+        console.log("mail wasn't send", err);
+        res.json(400, { err });
+      } else {
+        console.log('mail was send');
+        res.json(200, { response: 'Mail sent.' });
+      }
+      transport.close();
+    });
+  };
+  console.log(req.body);
+  try {
+    sendMail();
+  } catch (error) {
+    res.json(400, { error });
   }
 });
 

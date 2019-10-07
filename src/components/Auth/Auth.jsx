@@ -4,10 +4,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
-
+import { Registration } from 'components/Registration';
+import { TestMail } from 'components/Registration/TestMail';
 import { load } from 'actions/auth';
 
 class AuthUnmounted extends Component {
+  state = {
+    displayReg: false,
+  };
+
   handleSignIn = () => {
     const { authUser, onSuccess } = this.props;
     authUser(this.state.firstName, this.state.lastName, this.state.password);
@@ -21,8 +26,15 @@ class AuthUnmounted extends Component {
       [name]: value,
     });
   };
+
+  handleReg = () => {
+    this.setState({ displayReg: !this.state.displayReg });
+  };
+
   render() {
     const { firstName, lastName, password } = this.props;
+    const { displayReg } = this.state;
+    const isSelfReg = true;
     return (
       <>
         <div className="auth-wrap">
@@ -56,7 +68,19 @@ class AuthUnmounted extends Component {
             />
             <br />
             <button onClick={this.handleSignIn}>Войти</button>
+
+            <div className="auth-menu-wrap">
+              <ul className="auth-menu">
+                <li>
+                  <p onClick={this.handleReg}>регистрация</p>
+                </li>
+              </ul>
+            </div>
           </div>
+        </div>
+        <div className="auth-reg-wrap">
+          {displayReg && <Registration isSelfReg={isSelfReg} />}
+          <TestMail />
         </div>
       </>
     );

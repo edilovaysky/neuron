@@ -33,3 +33,12 @@
   cursor: default;
   font-weight: inherit;
 }
+
+.user-enter-to-child {
+  margin: 0.5em 0;
+}
+
+.user-enter-to-child:hover {
+  cursor: pointer;
+  font-weight: 600;
+}

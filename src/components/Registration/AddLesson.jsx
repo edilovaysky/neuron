@@ -18,8 +18,10 @@ export class AddLesson extends Component {
     displayDelLes: false,
     displayLesson: false,
     displayGetLesson: false,
+    displayAddVideo: false,
     formData: {},
     url: '',
+    videoToLesson: '',
   };
 
   handleDisplayAddLes = () => {
@@ -53,6 +55,10 @@ export class AddLesson extends Component {
       });
   };
 
+  handleDisplayVideo = () => {
+    this.setState({ displayAddVideo: !this.state.displayAddVideo });
+  };
+
   handleDisplayDelLes = () => {
     this.setState({ displayDelLes: !this.state.displayDelLes });
   };
@@ -62,13 +68,33 @@ export class AddLesson extends Component {
 
     lesson.toLowerCase();
     toTheme.toLowerCase();
-
-    const { formData } = this.state;
-    formData.append('body', lesson);
-    formData.append('body', toTheme);
+    const data = {
+      lesson: lesson,
+      toTheme: toTheme,
+    };
 
     axios
-      .put('http://localhost:8888/reg-lesson', formData)
+      .put('http://localhost:8888/reg-lesson', data)
+      .then(response => {
+        if (response.status == 200) {
+          alert('Урок успешно добавлен.');
+          console.log('successful add lesson');
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
+
+  handleAddVideo = () => {
+    const { videoToLesson } = this.state;
+    const lessonId = videoToLesson;
+
+    const { formData } = this.state;
+    formData.append('body', lessonId);
+
+    axios
+      .put('http://localhost:8888/video-to-lesson', formData)
       .then(response => {
         if (
           response.status == 200 &&
@@ -148,6 +174,10 @@ export class AddLesson extends Component {
     this.fetchLesson();
   };
 
+  handleGetVideoToLesson = () => {
+    this.fetchLesson();
+  };
+
   render() {
     const {
       lessons,
@@ -157,6 +187,7 @@ export class AddLesson extends Component {
       displayDelLes,
       displayLesson,
       displayGetLesson,
+      displayAddVideo,
       url,
     } = this.state;
     const docType = 'lesson';
@@ -188,6 +219,16 @@ export class AddLesson extends Component {
         return (
           <option key={i._id} value={i._id}>
             {' '}
+            {i.lesson} {i.toTheme}
+          </option>
+        );
+      });
+    }
+    let lessonToAddVideo;
+    if (lessons.lesson) {
+      lessonToAddVideo = lessons.lesson.map(i => {
+        return (
+          <option key={i._id} value={i._id}>
             {i.lesson} {i.toTheme}
           </option>
         );
@@ -243,13 +284,31 @@ export class AddLesson extends Component {
                   placeholder="тема урока"
                 />
                 <br />
+                <button onClick={this.handleAddLesson}>добавить урок</button>
+              </>
+            )}
+            <h3 className="click-span" onClick={this.handleDisplayVideo}>
+              Добавление видео к уроку
+            </h3>
+            {displayAddVideo && (
+              <>
+                <span
+                  className="click-span"
+                  onClick={this.handleGetVideoToLesson}
+                >
+                  выберите урок к которому хотите добавить видео
+                </span>
+                <select name="videoToLesson" onChange={this.handleTextChange}>
+                  <option defaultValue>урок к которому добавляете видео</option>
+                  {lessonToAddVideo}
+                </select>
                 <span>видео файл</span>
                 <DragAndDrop
                   docType={docType}
                   onSuccess={this.handleDragAndDrop}
                 />
+                <button onClick={this.handleAddVideo}>добавить видео</button>
                 <br />
-                <button onClick={this.handleAddLesson}>добавить урок</button>
               </>
             )}
             <h3 className="click-span" onClick={this.handleDisplayDelLes}>
