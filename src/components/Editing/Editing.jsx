@@ -8,6 +8,7 @@ export class Editing extends Component {
   constructor(props) {
     super(props);
     const { userToEdit } = this.props;
+
     this.state = {
       status: userToEdit.status,
       firstName: userToEdit.firstName,
@@ -20,7 +21,15 @@ export class Editing extends Component {
       email: userToEdit.email,
       gen: userToEdit.gen,
       active: userToEdit.active,
+      child: false,
+      displayEdit: false,
     };
+  }
+  componentWillMount() {
+    const { userToEdit } = this.props;
+    if (userToEdit.status == 'child') {
+      this.setState({ child: true });
+    }
   }
 
   handleEdit = () => {
@@ -119,6 +128,10 @@ export class Editing extends Component {
   handleCheckActive = () => {
     this.setState({ active: !this.state.active });
   };
+
+  handelDisplayEdit = () => {
+    this.setState({ displayEdit: !this.state.displayEdit });
+  };
   render() {
     const {
       status,
@@ -130,6 +143,8 @@ export class Editing extends Component {
       parentName,
       tel,
       email,
+      child,
+      displayEdit,
     } = this.state;
     const { userStatus } = this.props;
 
@@ -138,117 +153,125 @@ export class Editing extends Component {
       <>
         <div className="editing-wrap">
           <div className="editing">
-            {userStatus == 'admin' ||
-              (userStatus == 'esquire' && (
-                <h3>редактирование пользователей</h3>
-              ))}
-            {userStatus == 'user' && <h3>редактирование данных</h3>}
-            <i>заполните подлежащие редактированию поля</i>
-            {(userStatus == 'admin' && <>{isActive}</>) ||
-              (userStatus == 'esquire' && <>{isActive}</>)}
-            <span>Имя:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="firstName"
-              type="text"
-              value={firstName}
-              placeholder={firstName}
-            />
-            <br />
-            <span>Отчество:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="patronymic"
-              type="text"
-              value={patronymic}
-              placeholder={patronymic}
-            />
-            <br />
-            <span>Фамилия:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="lastName"
-              type="text"
-              value={lastName}
-              placeholder={lastName}
-            />
-            <br />
-            <span>укажите пол</span>
-            <select name="gen" onChange={this.handleTextChange}>
-              <option defaultValue>пол</option>
-              <option value="m">муж</option>
-              <option value="f">жен</option>
-            </select>
-            <span>Дата рождения:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="dateOfBirth"
-              type="text"
-              value={dateOfBirth || ''}
-              placeholder={dateOfBirth}
-            />
-            <br />
-            <span>место проживания:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="city"
-              type="text"
-              value={city || ''}
-              placeholder={city}
-            />
-            <br />
-            {status == 'user' && <span>ФИО родителя или родителей:</span>}
-            {status == 'user' && (
-              <input
-                required
-                onChange={this.handleTextChange}
-                name="parentName"
-                type="text"
-                value={parentName || ''}
-                placeholder={parentName}
-              />
+            {userStatus == 'admin' && (
+              <h3 onClick={this.handelDisplayEdit}>
+                редактирование пользователей
+              </h3>
             )}
-            <br />
-            <span>телефон родителя:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="tel"
-              type="tel"
-              value={tel || ''}
-              placeholder={tel}
-            />
-            <br />
-            <span>email:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="email"
-              type="email"
-              value={email || ''}
-              placeholder={email}
-            />
-            <br />
-            <p className="editing-btn" onClick={this.handleEdit}>
-              отправить
-            </p>
+            {userStatus == 'esquire' && (
+              <h3 onClick={this.handelDisplayEdit}>
+                редактирование пользователей
+              </h3>
+            )}
+            {userStatus == 'user' && (
+              <h3 onClick={this.handelDisplayEdit}>редактирование данных</h3>
+            )}
+            {child && (
+              <h3 onClick={this.handelDisplayEdit}>
+                редактирование данных ученика
+              </h3>
+            )}
+            {displayEdit && (
+              <>
+                <i>заполните подлежащие редактированию поля</i>
+                {(userStatus == 'admin' && <>{isActive}</>) ||
+                  (userStatus == 'esquire' && <>{isActive}</>)}
+                <span>Имя:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="firstName"
+                  type="text"
+                  value={firstName}
+                  placeholder={firstName}
+                />
+                <br />
+                <span>Отчество:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="patronymic"
+                  type="text"
+                  value={patronymic}
+                  placeholder={patronymic}
+                />
+                <br />
+                <span>Фамилия:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="lastName"
+                  type="text"
+                  value={lastName}
+                  placeholder={lastName}
+                />
+                <br />
+                <span>укажите пол</span>
+                <select name="gen" onChange={this.handleTextChange}>
+                  <option defaultValue>пол</option>
+                  <option value="m">муж</option>
+                  <option value="f">жен</option>
+                </select>
+                <span>Дата рождения:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="dateOfBirth"
+                  type="text"
+                  value={dateOfBirth || ''}
+                  placeholder={dateOfBirth}
+                />
+                <br />
+                <span>место проживания:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="city"
+                  type="text"
+                  value={city || ''}
+                  placeholder={city}
+                />
+                <br />
+                {status == 'user' && <span>ФИО родителя или родителей:</span>}
+                {status == 'user' && (
+                  <input
+                    required
+                    onChange={this.handleTextChange}
+                    name="parentName"
+                    type="text"
+                    value={parentName || ''}
+                    placeholder={parentName}
+                  />
+                )}
+                <br />
+                <span>телефон родителя:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="tel"
+                  type="tel"
+                  value={tel || ''}
+                  placeholder={tel}
+                />
+                <br />
+                <span>email:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="email"
+                  type="email"
+                  value={email || ''}
+                  placeholder={email}
+                />
+                <br />
+                <p className="editing-btn" onClick={this.handleEdit}>
+                  отправить
+                </p>{' '}
+              </>
+            )}
           </div>
         </div>
       </>
     );
   }
 }
-
-Editing.propTypes = {
-  firstName: PropTypes.string,
-  lastName: PropTypes.string,
-  studyGroup: PropTypes.string,
-  teacherName: PropTypes.string,
-  teacherLastName: PropTypes.string,
-  teacherPassword: PropTypes.string,
-};

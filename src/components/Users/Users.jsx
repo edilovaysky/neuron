@@ -22,7 +22,7 @@ export class Users extends Component {
   render() {
     const { page, status, active, userStatus, userId } = this.props;
     const mapping = {
-      user: 'ученики: ',
+      user: 'родители: ',
       teacher: 'учителя: ',
       admin: 'администраторы: ',
     };

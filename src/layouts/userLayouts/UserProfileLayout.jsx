@@ -10,6 +10,7 @@ import { UserInstruction } from 'layouts/texts/UserInstruction';
 import { Hint } from 'components/Hint';
 
 import { loadUsers } from 'actions/fetchUsers';
+import { ChildOffice } from '../childLayouts/ChildOffice';
 
 class UserProfileLayouts extends Component {
   state = {
@@ -21,6 +22,7 @@ class UserProfileLayouts extends Component {
     password: '',
     displayHint: false,
     displayChildOffice: false,
+    officeOfChild: {},
   };
 
   componentWillMount() {
@@ -125,9 +127,22 @@ class UserProfileLayouts extends Component {
   handleHideHint = () => {
     this.setState({ displayHint: false });
   };
-  handleEnter = () => {
-    this.setState({ displayChildOffice: !this.displayChildOffice });
-    console.log('child office');
+  handleEnter = ({ target }) => {
+    this.setState({ displayChildOffice: !this.state.displayChildOffice });
+    let chosenChild = target.outerText;
+    chosenChild = chosenChild.replace(/\s/g, '');
+
+    let child;
+    let id;
+    if (this.state.foundChild.length) {
+      this.state.foundChild.map(i => {
+        child = `${i.user.firstName}${i.user.lastName}`;
+        id = i.user._id;
+        if (chosenChild == child) {
+          this.setState({ officeOfChild: i });
+        }
+      });
+    }
   };
 
   render() {
@@ -139,8 +154,10 @@ class UserProfileLayouts extends Component {
       foundChild,
       displayHint,
       displayChildOffice,
+      officeOfChild,
     } = this.state;
     let childName;
+
     if (foundChild.length) {
       childName = foundChild.map(i => {
         return (
@@ -177,6 +194,7 @@ class UserProfileLayouts extends Component {
             {displayHint && <Hint />}
           </>
         )}
+        {displayChildOffice && <ChildOffice officeOfChild={officeOfChild} />}
         {status == 'child' && (
           <p className="user-profile-name"> Привет, {name}!</p>
         )}
@@ -217,11 +235,13 @@ class UserProfileLayouts extends Component {
           )}
           {change == 'active' && <Change userToEdit={user} />}
           {childProfile == 'active' && (
-            <Registration
-              userToEdit={user}
-              child={child}
-              reAuth={this.handleReAuth}
-            />
+            <>
+              <Registration
+                userToEdit={user}
+                child={child}
+                reAuth={this.handleReAuth}
+              />
+            </>
           )}
         </div>
       </>
