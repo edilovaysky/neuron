@@ -116,7 +116,7 @@ class AdminUsersLayouts extends Component {
             инструкции
           </li>
           <li id="allusers" className={`${allusers}`} onClick={this.handleMenu}>
-            все ученики
+            все пользователи
           </li>
           <li
             id="allteachers"

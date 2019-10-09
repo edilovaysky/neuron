@@ -5,6 +5,7 @@ import { Editing } from 'components/Editing';
 import { FileLoader } from 'components/FileLoader';
 import { DragAndDrop } from 'components/DragAndDrop';
 import { GetDocs } from 'components/GetDocs';
+import { FetchChild } from 'components/FetchChild';
 
 export class User extends Component {
   state = {
@@ -33,9 +34,13 @@ export class User extends Component {
       findMarker,
       userStatus,
       userId,
+      page,
+      child,
     } = this.props;
+    const userToEdit = this.props;
 
     const { display, edit, displayLoader } = this.state;
+
     let isActive;
     if (active) {
       isActive = '* активен';
@@ -45,7 +50,7 @@ export class User extends Component {
     const docType = 'udoc';
     return (
       <>
-        {this.props.page == 'otherPages' && (
+        {page && (
           <div className="card-wraper">
             <div className="card-header">
               <p onClick={this.handleDisplay}>
@@ -55,6 +60,12 @@ export class User extends Component {
             </div>
             {display && (
               <div className="card-body">
+                {child.length > 0 && userToEdit.status == 'user' && (
+                  <div> дети: {<FetchChild child={child} />}</div>
+                )}
+                {child.length == 0 && userToEdit.status == 'user' && (
+                  <div> нет зарегистрированных детей </div>
+                )}
                 <p>дата рождения: {this.props.dateOfBirth}</p>
                 <p>место проживания: {this.props.city}</p>
                 {this.props.status == 'user' && (
@@ -84,7 +95,7 @@ export class User extends Component {
                   </>
                 )}
                 {edit && (
-                  <Editing userToEdit={this.props} userStatus={userStatus} />
+                  <Editing userToEdit={userToEdit} userStatus={userStatus} />
                 )}
               </div>
             )}

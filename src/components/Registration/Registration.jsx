@@ -18,6 +18,7 @@ export class Registration extends Component {
     email: '',
     gen: '',
     active: false,
+    displayReg: false,
   };
   handleRegIn = () => {
     const { isSelfReg, child, userToEdit, reAuth } = this.props;
@@ -106,6 +107,10 @@ export class Registration extends Component {
   handleCheckActive = () => {
     this.setState({ active: !this.state.active });
   };
+  handleDisplayReg = () => {
+    this.setState({ displayReg: !this.state.displayReg });
+  };
+
   render() {
     const {
       firstName,
@@ -117,6 +122,7 @@ export class Registration extends Component {
       parentName,
       tel,
       email,
+      displayReg,
     } = this.state;
     const { adminStatus, isSelfReg, child } = this.props;
     //console.log(isSelfReg, child);
@@ -125,89 +131,99 @@ export class Registration extends Component {
       <>
         <div className="reg-wrap">
           <div className="reg">
-            <h3>Регистрация пользователей</h3>
-            <i>* поля обязательны к заполнению.</i>
-            {!isSelfReg ||
-              (child && (
-                <div className="check-wrap">
-                  <label className="switch-wrap">
-                    <input type="checkbox" onChange={this.handleCheckActive} />
-                    <div className="switch"></div>
-                  </label>
-                  <p>* активен</p>
-                </div>
-              ))}
-
             {!child && (
-              <select name="status" onChange={this.handleTextChange}>
-                <option defaultValue>
-                  * выберите статус регистрации пользователя
-                </option>
-                <option value="user">Ученик</option>
-                {!isSelfReg && <option value="teacher">Учитель</option>}
-                {adminStatus == 'esquire' && (
-                  <option value="admin">Администратор</option>
-                )}
-              </select>
+              <h3 onClick={this.handleDisplayReg}>Регистрация пользователей</h3>
             )}
-            <br />
-            <span>* Имя:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="firstName"
-              type="text"
-              value={firstName}
-              placeholder="Имя"
-            />
-            <br />
-            <span>Отчество:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="patronymic"
-              type="text"
-              value={patronymic}
-              placeholder="Отчество"
-            />
-            <br />
-            <span>* Фамилия:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="lastName"
-              type="text"
-              value={lastName}
-              placeholder="Фамилия"
-            />
-            <br />
-            <span>укажите пол</span>
-            <select name="gen" onChange={this.handleTextChange}>
-              <option defaultValue>пол</option>
-              <option value="m">муж</option>
-              <option value="f">жен</option>
-            </select>
-            <span>дата рождения:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="dateOfBirth"
-              type="text"
-              value={dateOfBirth}
-              placeholder="дата рождения в формате дд.мм.гггг"
-            />
-            <br />
-            <span>место проживания:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="city"
-              type="text"
-              value={city}
-              placeholder="место проживания"
-            />
-            <br />
-            {/* <span>ФИО родителя или родителей:</span>
+            {child && (
+              <h3 onClick={this.handleDisplayReg}>Регистрация ребенка</h3>
+            )}
+            {displayReg && (
+              <>
+                <i>* поля обязательны к заполнению.</i>
+                {!isSelfReg ||
+                  (child && (
+                    <div className="check-wrap">
+                      <label className="switch-wrap">
+                        <input
+                          type="checkbox"
+                          onChange={this.handleCheckActive}
+                        />
+                        <div className="switch"></div>
+                      </label>
+                      <p>* активен</p>
+                    </div>
+                  ))}
+
+                {!child && (
+                  <select name="status" onChange={this.handleTextChange}>
+                    <option defaultValue>
+                      * выберите статус регистрации пользователя
+                    </option>
+                    <option value="user">Ученик</option>
+                    {!isSelfReg && <option value="teacher">Учитель</option>}
+                    {adminStatus == 'esquire' && (
+                      <option value="admin">Администратор</option>
+                    )}
+                  </select>
+                )}
+                <br />
+                <span>* Имя:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="firstName"
+                  type="text"
+                  value={firstName}
+                  placeholder="Имя"
+                />
+                <br />
+                <span>Отчество:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="patronymic"
+                  type="text"
+                  value={patronymic}
+                  placeholder="Отчество"
+                />
+                <br />
+                <span>* Фамилия:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="lastName"
+                  type="text"
+                  value={lastName}
+                  placeholder="Фамилия"
+                />
+                <br />
+                <span>укажите пол</span>
+                <select name="gen" onChange={this.handleTextChange}>
+                  <option defaultValue>пол</option>
+                  <option value="m">муж</option>
+                  <option value="f">жен</option>
+                </select>
+                <span>дата рождения:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="dateOfBirth"
+                  type="text"
+                  value={dateOfBirth}
+                  placeholder="дата рождения в формате дд.мм.гггг"
+                />
+                <br />
+                <span>часовой пояс:</span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="city"
+                  type="text"
+                  value={city}
+                  placeholder="часовой пояс"
+                />
+                <br />
+                {/* <span>ФИО родителя или родителей:</span>
             <input
               required
               onChange={this.handleTextChange}
@@ -217,45 +233,47 @@ export class Registration extends Component {
               placeholder="ФИО родителя"
             />
             <br /> */}
-            {!child && (
-              <>
-                <span>телефон:</span>
+                {!child && (
+                  <>
+                    <span>телефон:</span>
+                    <input
+                      required
+                      onChange={this.handleTextChange}
+                      name="tel"
+                      type="tel"
+                      value={tel}
+                      placeholder="телефон"
+                    />
+                    <br />
+                  </>
+                )}
+                {!child && (
+                  <>
+                    <span>email:</span>
+                    <input
+                      required
+                      onChange={this.handleTextChange}
+                      name="email"
+                      type="email"
+                      value={email}
+                      placeholder="email"
+                    />
+                    <br />
+                  </>
+                )}
+                <span>* пароль для входа в личный кабинет:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
-                  name="tel"
-                  type="tel"
-                  value={tel}
-                  placeholder="телефон"
+                  name="password"
+                  type="password"
+                  value={password}
+                  placeholder="пароль"
                 />
                 <br />
+                <button onClick={this.handleRegIn}>отправить</button>
               </>
             )}
-            {!child && (
-              <>
-                <span>email:</span>
-                <input
-                  required
-                  onChange={this.handleTextChange}
-                  name="email"
-                  type="email"
-                  value={email}
-                  placeholder="email"
-                />
-                <br />
-              </>
-            )}
-            <span>* пароль для входа в личный кабинет:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="password"
-              type="password"
-              value={password}
-              placeholder="пароль"
-            />
-            <br />
-            <button onClick={this.handleRegIn}>отправить</button>
           </div>
         </div>
       </>
