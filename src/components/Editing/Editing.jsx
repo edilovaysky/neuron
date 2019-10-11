@@ -1,6 +1,7 @@
 import './Editing.scss';
 
 import React, { Component } from 'react';
+import { DragAndDrop } from 'components/DragAndDrop';
 
 import PropTypes from 'prop-types';
 
@@ -11,20 +12,44 @@ export class Editing extends Component {
 
     this.state = {
       status: userToEdit.status,
-      firstName: userToEdit.firstName,
-      lastName: userToEdit.lastName,
-      patronymic: userToEdit.patronymic,
-      city: userToEdit.city,
-      dateOfBirth: userToEdit.dateOfBirth,
-      parentName: userToEdit.parentName,
-      tel: userToEdit.tel,
-      email: userToEdit.email,
-      gen: userToEdit.gen,
-      active: userToEdit.active,
+      firstName: '',
+      lastName: '',
+      patronymic: '',
+      utc: '',
+      dateOfBirth: '',
+      parentName: '',
+      tel: '',
+      email: '',
+      gen: '',
+      active: '',
+      comment: '',
       child: false,
       displayEdit: false,
+      prevData: {
+        firstName: userToEdit.firstName,
+        lastName: userToEdit.lastName,
+        patronymic: userToEdit.patronymic,
+        utc: userToEdit.utc,
+        dateOfBirth: userToEdit.dateOfBirth,
+        parentName: userToEdit.parentName,
+        tel: userToEdit.tel,
+        email: userToEdit.email,
+        gen: userToEdit.gen,
+        active: userToEdit.active,
+        comment: userToEdit.comment,
+      },
     };
+    /*   String.prototype.firstToCapital = () => {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    }; */
   }
+
+  firstToCapital = str => {
+    if (str) {
+      str = str[0].toUpperCase() + str.substring(1);
+      return str;
+    }
+  };
   componentWillMount() {
     const { userToEdit } = this.props;
     if (userToEdit.status == 'child') {
@@ -35,34 +60,83 @@ export class Editing extends Component {
   handleEdit = () => {
     const { userToEdit, reAuth } = this.props;
     const id = userToEdit._id;
+    const active = userToEdit.active;
+
     let {
+      comment,
       status,
       firstName,
       lastName,
       patronymic,
-      city,
+      utc,
       dateOfBirth,
-      parentName,
       tel,
       email,
       gen,
-      active,
+      prevData,
     } = this.state;
-
-    firstName = firstName.replace(/\s/g, '');
-    lastName = lastName.replace(/\s/g, '');
-    patronymic = patronymic.replace(/\s/g, '');
-    if (city) {
-      city = city.replace(/\s/g, '');
+    let url;
+    let responseMessage;
+    console.log(firstName, 'prevData:  ', prevData.firstName);
+    if (firstName == '' && lastName == '' && dateOfBirth == '') {
+      console.log('to user editing worked');
+      url = `http://localhost:8888/users/${id}`;
+      responseMessage = 'Учетная запись успешно отредактирована.';
     }
+    if (!firstName == '' || !lastName == '' || !dateOfBirth == '') {
+      console.log('to admin approve worked');
+      url = `http://localhost:8888/approve-edit-user/${id}`;
+      responseMessage =
+        'Изменение ожидает проверки аминистратора. Это может занять 24 часов.';
+    }
+    if (comment == '') {
+      comment = prevData.comment;
+    }
+    if (firstName == '') {
+      firstName = prevData.firstName;
+    }
+    if (lastName == '') {
+      lastName = prevData.lastName;
+    }
+    if (patronymic == '') {
+      patronymic = prevData.patronymic;
+    }
+    if (utc == '') {
+      utc = prevData.utc;
+    }
+    if (dateOfBirth == '') {
+      dateOfBirth = prevData.dateOfBirth;
+    }
+    if (tel == '') {
+      tel = prevData.tel;
+    }
+    if ((email = '')) {
+      email = prevData.email;
+    }
+    if (gen == '') {
+      gen = prevData.gen;
+    }
+
+    firstName = firstName.replace(/\s/g, '').toLowerCase();
+    firstName = this.firstToCapital(firstName);
+    lastName = lastName.replace(/\s/g, '').toLowerCase();
+    lastName = this.firstToCapital(lastName);
+    patronymic = patronymic.replace(/\s/g, '').toLowerCase();
+    patronymic = this.firstToCapital(patronymic);
+
     if (tel) {
-      tel = tel.replace(/\s/g, '');
+      tel = tel
+        .replace(/\s/g, '')
+        .replace(/\(/, '')
+        .replace(/\)/, '');
+      console.log(tel);
     }
     if (email) {
       email = email.replace(/\s/g, '');
     }
 
-    fetch(`http://localhost:8888/users/${id}`, {
+    console.log(firstName, patronymic, lastName, url);
+    fetch(url, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -73,9 +147,8 @@ export class Editing extends Component {
         firstName,
         lastName,
         patronymic,
-        city,
+        utc,
         dateOfBirth,
-        parentName,
         tel,
         email,
         gen,
@@ -84,11 +157,11 @@ export class Editing extends Component {
       if (!response.ok) {
         throw new Error('Wrong credentials');
       }
-      console.log('succesful editing');
-      alert('Учетная запись успешно отредактирована.');
+      console.log(responseMessage);
+      alert(responseMessage);
       return response.json();
     });
-    reAuth();
+    // reAuth();
     //.then(data => {});
   };
 
@@ -138,15 +211,18 @@ export class Editing extends Component {
       firstName,
       lastName,
       patronymic,
-      city,
+      comment,
       dateOfBirth,
       parentName,
       tel,
       email,
       child,
       displayEdit,
+      prevData,
     } = this.state;
     const { userStatus } = this.props;
+    const docType = 'udoc';
+    const userId = this.props.userToEdit._id;
 
     const isActive = this.isUserActive();
     return (
@@ -176,34 +252,34 @@ export class Editing extends Component {
                 <i>заполните подлежащие редактированию поля</i>
                 {(userStatus == 'admin' && <>{isActive}</>) ||
                   (userStatus == 'esquire' && <>{isActive}</>)}
-                <span>Имя:</span>
+                <span>*Имя:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
                   name="firstName"
                   type="text"
                   value={firstName}
-                  placeholder={firstName}
+                  placeholder={prevData.firstName}
                 />
                 <br />
-                <span>Отчество:</span>
+                <span>*Отчество:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
                   name="patronymic"
                   type="text"
                   value={patronymic}
-                  placeholder={patronymic}
+                  placeholder={prevData.patronymic}
                 />
                 <br />
-                <span>Фамилия:</span>
+                <span>*Фамилия:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
                   name="lastName"
                   type="text"
                   value={lastName}
-                  placeholder={lastName}
+                  placeholder={prevData.lastName}
                 />
                 <br />
                 <span>укажите пол</span>
@@ -212,27 +288,47 @@ export class Editing extends Component {
                   <option value="m">муж</option>
                   <option value="f">жен</option>
                 </select>
-                <span>Дата рождения:</span>
+                <span>*Дата рождения:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
                   name="dateOfBirth"
                   type="text"
                   value={dateOfBirth || ''}
-                  placeholder={dateOfBirth}
+                  placeholder={prevData.dateOfBirth}
                 />
                 <br />
-                <span>место проживания:</span>
-                <input
-                  required
-                  onChange={this.handleTextChange}
-                  name="city"
-                  type="text"
-                  value={city || ''}
-                  placeholder={city}
-                />
+                <span>выбирете часовой пояс:</span>
+                <select name="utc" onChange={this.handleTextChange}>
+                  <option defaultValue>часовой пояс по Гринвичу</option>
+                  <option value="-12">UTC(GTM) -12 </option>
+                  <option value="-11">UTC(GTM) -11 </option>
+                  <option value="-10">UTC(GTM) -10 </option>
+                  <option value="-9">UTC(GTM) -9 (Анкоридж США)</option>
+                  <option value="-8">UTC(GTM) -8 (Лос-Анжелес)</option>
+                  <option value="-7">UTC(GTM) -7 (Денвер США)</option>
+                  <option value="-6">UTC(GTM) -6 (Далас США)</option>
+                  <option value="-5">UTC(GTM) -5 (Торонто)</option>
+                  <option value="-4">UTC(GTM) -4 (Боливия)</option>
+                  <option value="-3">UTC(GTM) -3 (Бразилия)</option>
+                  <option value="-2">UTC(GTM) -2 </option>
+                  <option value="-1">UTC(GTM) -1 (Азорские острова)</option>
+                  <option value="0">UTC(GTM) 0 (Гринвич) </option>
+                  <option value="1">UTC(GTM) +1 (Германия)</option>
+                  <option value="2">UTC(GTM) +2 (Киев) </option>
+                  <option value="3">UTC(GTM) +3 (Москва) </option>
+                  <option value="4">UTC(GTM) +4 (Самара) </option>
+                  <option value="5">UTC(GTM) +5 (Ташкент)</option>
+                  <option value="6">UTC(GTM) +6 (Астана)</option>
+                  <option value="7">UTC(GTM) +7 (Банкок)</option>
+                  <option value="8">UTC(GTM) +8 (Китай)</option>
+                  <option value="9">UTC(GTM) +9 (Япония)</option>
+                  <option value="10">UTC(GTM) +10 (Сидней)</option>
+                  <option value="11">UTC(GTM) +11 (Новая Каледония)</option>
+                  <option value="12">UTC(GTM) +12 (Новая Зеландия)</option>
+                </select>
                 <br />
-                {status == 'user' && <span>ФИО родителя или родителей:</span>}
+                {/*   {status == 'user' && <span>ФИО родителя или родителей:</span>}
                 {status == 'user' && (
                   <input
                     required
@@ -243,7 +339,7 @@ export class Editing extends Component {
                     placeholder={parentName}
                   />
                 )}
-                <br />
+                <br /> */}
                 <span>телефон родителя:</span>
                 <input
                   required
@@ -251,7 +347,7 @@ export class Editing extends Component {
                   name="tel"
                   type="tel"
                   value={tel || ''}
-                  placeholder={tel}
+                  placeholder={prevData.tel}
                 />
                 <br />
                 <span>email:</span>
@@ -261,9 +357,27 @@ export class Editing extends Component {
                   name="email"
                   type="email"
                   value={email || ''}
-                  placeholder={email}
+                  placeholder={prevData.email}
                 />
                 <br />
+                {child && (
+                  <>
+                    <span>прокомментируйте причину редактирования</span>
+                    <textarea
+                      onChange={this.handleTextChange}
+                      name="comment"
+                      rows="10"
+                      cols="45"
+                      maxLength="500"
+                      value={comment || ''}
+                      placeholder="Поля *Имя, *Фамилия, *Отчество и дата рождения редактируются 
+                      только с подтверждения администратора, поэтому опишите пожалуйста причину внесения изменений."
+                    />
+                    <br />
+                    <span>вы можете прикрепит скан документа</span>
+                    <DragAndDrop docType={docType} userId={userId} />
+                  </>
+                )}
                 <p className="editing-btn" onClick={this.handleEdit}>
                   отправить
                 </p>{' '}
