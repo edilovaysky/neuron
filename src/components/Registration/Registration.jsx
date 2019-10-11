@@ -44,8 +44,9 @@ export class Registration extends Component {
       regPath = 'http://localhost:8888/reg-child';
       active = true;
     }
-    if (!child) {
+    if (!child || isSelfReg) {
       regPath = 'http://localhost:8888/reg';
+      status = 'user';
     }
 
     firstName = firstName.replace(/\s/g, '');
@@ -117,7 +118,7 @@ export class Registration extends Component {
       lastName,
       password,
       patronymic,
-      city,
+      utc,
       dateOfBirth,
       parentName,
       tel,
@@ -154,7 +155,7 @@ export class Registration extends Component {
                     </div>
                   ))}
 
-                {!child && (
+                {!child && !isSelfReg && (
                   <select name="status" onChange={this.handleTextChange}>
                     <option defaultValue>
                       * выберите статус регистрации пользователя
@@ -166,6 +167,7 @@ export class Registration extends Component {
                     )}
                   </select>
                 )}
+
                 <br />
                 <span>* Имя:</span>
                 <input
@@ -213,26 +215,49 @@ export class Registration extends Component {
                   placeholder="дата рождения в формате дд.мм.гггг"
                 />
                 <br />
-                <span>часовой пояс:</span>
-                <input
-                  required
-                  onChange={this.handleTextChange}
-                  name="city"
-                  type="text"
-                  value={city}
-                  placeholder="часовой пояс"
-                />
+                <span>выбирете часовой пояс:</span>
+                <select name="utc" onChange={this.handleTextChange}>
+                  <option defaultValue>часовой пояс по Гринвичу</option>
+                  <option value="-12">UTC(GTM) -12 </option>
+                  <option value="-11">UTC(GTM) -11 </option>
+                  <option value="-10">UTC(GTM) -10 </option>
+                  <option value="-9">UTC(GTM) -9 (Анкоридж США)</option>
+                  <option value="-8">UTC(GTM) -8 (Лос-Анжелес)</option>
+                  <option value="-7">UTC(GTM) -7 (Денвер США)</option>
+                  <option value="-6">UTC(GTM) -6 (Далас США)</option>
+                  <option value="-5">UTC(GTM) -5 (Торонто)</option>
+                  <option value="-4">UTC(GTM) -4 (Боливия)</option>
+                  <option value="-3">UTC(GTM) -3 (Бразилия)</option>
+                  <option value="-2">UTC(GTM) -2 </option>
+                  <option value="-1">UTC(GTM) -1 (Азорские острова)</option>
+                  <option value="0">UTC(GTM) 0 (Гринвич) </option>
+                  <option value="1">UTC(GTM) +1 (Германия)</option>
+                  <option value="2">UTC(GTM) +2 (Киев) </option>
+                  <option value="3">UTC(GTM) +3 (Москва) </option>
+                  <option value="4">UTC(GTM) +4 (Самара) </option>
+                  <option value="5">UTC(GTM) +5 (Ташкент)</option>
+                  <option value="6">UTC(GTM) +6 (Астана)</option>
+                  <option value="7">UTC(GTM) +7 (Банкок)</option>
+                  <option value="8">UTC(GTM) +8 (Китай)</option>
+                  <option value="9">UTC(GTM) +9 (Япония)</option>
+                  <option value="10">UTC(GTM) +10 (Сидней)</option>
+                  <option value="11">UTC(GTM) +11 (Новая Каледония)</option>
+                  <option value="12">UTC(GTM) +12 (Новая Зеландия)</option>
+                </select>
                 <br />
-                {/* <span>ФИО родителя или родителей:</span>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="parentName"
-              type="text"
-              value={parentName}
-              placeholder="ФИО родителя"
-            />
-            <br /> */}
+                {!isSelfReg && (
+                  <>
+                    <span>укажите год обучения:</span>
+                    <select name="gen" onChange={this.handleTextChange}>
+                      <option defaultValue>выбирете год обучения</option>
+                      <option value="1"> 1 год обучения (1-й класс)</option>
+                      <option value="2"> 2 год обучения (2-й класс)</option>
+                      <option value="3"> 3 год обучения (3-й класс)</option>
+                      <option value="4"> 4 год обучения (4-й класс)</option>
+                    </select>
+                    <br />
+                  </>
+                )}
                 {!child && (
                   <>
                     <span>телефон:</span>

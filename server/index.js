@@ -20,6 +20,9 @@ AWS.config.update({
 const neuronStore = new AWS.S3();
 
 const express = require('express');
+const socketIO = require('socket.io');
+const http = require('http');
+
 const cors = require('cors');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
@@ -35,6 +38,8 @@ mongoose.connect(
 );
 
 const app = express();
+const server = http.Server(app);
+const io = socketIO(server);
 app.use(express.json());
 app.use(cors());
 
@@ -46,6 +51,7 @@ const Theme = require('./models/theme');
 const Lesson = require('./models/lesson');
 const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
+const AwaitingUser = require('./models/awaitingusers');
 
 /******************************************************
  *****       send mail          ***********************
@@ -198,6 +204,16 @@ app.get('/user/:id', async (req, res) => {
 
 app.put('/users/:id', async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body);
+  res.json({ user });
+});
+
+app.put('/approve-edit-user/:id', async (req, res) => {
+  const userId = req.params.id;
+  let data = req.body;
+  data.userId = userId;
+  console.log(data);
+  let user = new AwaitingUser(data);
+  user = await user.save();
   res.json({ user });
 });
 
@@ -789,6 +805,6 @@ app.post('/test-mail', async (req, res) => {
 
 //APP PORT
 
-app.listen(8888, () => {
+server.listen(8888, () => {
   console.log('Server has been started!');
 });
