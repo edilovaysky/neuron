@@ -25,13 +25,14 @@ class UserProfileLayouts extends Component {
     officeOfChild: {},
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const user = this.props.user.user;
-
-    user.child.map(i => {
-      const id = i;
-      this.handleFetchChild(id);
-    });
+    if (user.child) {
+      user.child.map(i => {
+        const id = i;
+        this.handleFetchChild(id);
+      });
+    }
   }
   handleReAuth = () => {
     const { authUser } = this.props;

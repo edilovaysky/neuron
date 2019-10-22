@@ -6,14 +6,18 @@ import PropTypes from 'prop-types';
 import { unAuth } from 'actions/auth';
 
 class ProfileSettings extends Component {
-  componentWillMount() {
+  state = {
+    name: '',
+    status: '',
+    gen: '',
+  };
+  componentDidMount() {
     this.setState({
       name: `${this.props.user.user.firstName}  ${this.props.user.user.lastName}`,
       status: this.props.user.user.status,
       gen: this.props.user.user.gen,
     });
   }
-  componentDidMount() {}
 
   handleSignOut = event => {
     const { onSignOut } = this.props;

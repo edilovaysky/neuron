@@ -1,22 +1,26 @@
 .auth-menu-wrap {
+  font-family: 'Montserrat', sans-serif;
   display: flex;
   justify-content: space-around;
 }
 .auth-menu {
   display: flex;
-  width: 26em;
-  justify-content: flex-end;
+  width: 100%;
+  justify-content: center;
+  flex-direction: row;
   list-style: none;
   padding: 0;
 }
 .auth-menu li {
   display: inline-block;
-  text-align: center;
   min-height: 100%;
-  margin: auto;
-  color: #31b2e8;
+  margin: 0 2em 0 0;
 }
 .auth-menu li a {
   text-decoration: none;
   color: #31b2e8;
+}
+
+.auth-menu li a p {
+  font-size: 1em;
 }

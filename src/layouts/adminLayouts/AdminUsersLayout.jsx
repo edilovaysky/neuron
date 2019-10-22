@@ -7,7 +7,6 @@ import { Users } from 'components/Users';
 import { AdminInstruction } from '../texts/AdminInstruction';
 
 import { loadUsers } from 'actions/fetchUsers';
-import { Alert } from '../../components/Alert';
 
 class AdminUsersLayouts extends Component {
   state = {
@@ -20,6 +19,8 @@ class AdminUsersLayouts extends Component {
     fetchStatus: '',
     alladmins: '',
     active: false,
+    socketData: {},
+    alert: false,
   };
   handleMenu = event => {
     const value = event.target.id;
@@ -101,14 +102,13 @@ class AdminUsersLayouts extends Component {
       alladmins,
       reg,
       fetchStatus,
+      alert,
     } = this.state;
     const users = this.props.users;
-    const alert = true;
     const page = 'otherPages';
     return (
       <>
         <p>Страница управления пользователями</p>
-        {alert && <Alert />}
         <ul className="layout-menu">
           <li
             id="instructions"

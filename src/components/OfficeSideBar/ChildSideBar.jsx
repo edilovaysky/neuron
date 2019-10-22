@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Logo } from 'components/Logo';
-export class UserSideBar extends Component {
+
+export class ChildSideBar extends Component {
   state = {
     classRoom: '',
     courses: '',
@@ -53,7 +53,9 @@ export class UserSideBar extends Component {
       <>
         <div className="side-nav-bar">
           <ul>
-            <Logo />
+            <li className="logo">
+              <img src="../../../src/assets/logo.png" alt="Neuron-logo" />
+            </li>
             <li
               id="user-profile"
               className={`side-btn-${userProfile}`}

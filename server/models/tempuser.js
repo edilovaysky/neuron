@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const userSchema = new Schema({
+const tempuserSchema = new Schema({
   userId: { type: String },
   status: { type: String },
   adminRights: { type: String },
@@ -21,6 +21,7 @@ const userSchema = new Schema({
   courses: [{ type: Schema.ObjectId, ref: 'Course' }],
   studyYear: { type: String },
   comment: { type: String },
+  initTime: { type: String },
 });
 
-module.exports = mongoose.model('AwaitingUser', userSchema, 'awaitingusers');
+module.exports = mongoose.model('TempUser', tempuserSchema, 'tempusers');

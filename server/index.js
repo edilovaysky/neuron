@@ -10,14 +10,34 @@ const AWS = require('aws-sdk');
 //AWS.config.loadFromPath('./config.json');
 const S3 = require('aws-sdk/clients/s3');
 
-AWS.config.update({
+const s3Cloudtech = {
+  accessKeyId: 'B470X0W436MO5F8C3HM5',
+  secretAccessKey: 'fQ9gEiCWHdxnKntUYyZvMwwMIBU5Pc2BO0oW8R7G',
+  endpoint: ' https://s3.pilw.io:8080/',
+};
+
+const s3Mail = {
   accessKeyId: 'sHGdyEex47fVtP85ghTn1K',
   secretAccessKey: '4A6gk1f3oo7K55nWuqzBKynaTuCpJkxopbm4c3eUXzE1',
   region: 'ru-msk',
   endpoint: 'http://hb.bizmrg.com',
+};
+
+AWS.config.update({
+  accessKeyId: s3Mail.accessKeyId,
+  secretAccessKey: s3Mail.secretAccessKey,
+  region: 'ru-msk',
+  endpoint: s3Mail.endpoint,
 });
 
 const neuronStore = new AWS.S3();
+
+const accessKeyIdAm = 'AKIAI5WNDQBR7DMETTCQ';
+const secretAccessKeyAm = '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';
+
+var AmazonSES = require('amazon-ses');
+var ses = new AmazonSES(accessKeyIdAm, secretAccessKeyAm);
+ses.verifyEmailAddress('dotschool.team@gmail.com');
 
 const express = require('express');
 const socketIO = require('socket.io');
@@ -51,7 +71,8 @@ const Theme = require('./models/theme');
 const Lesson = require('./models/lesson');
 const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
-const AwaitingUser = require('./models/awaitingusers');
+const TempUser = require('./models/tempuser');
+const Payment = require('./models/payment');
 
 /******************************************************
  *****       send mail          ***********************
@@ -83,13 +104,25 @@ const verifyToken = (req, res, next) => {
 };
 
 app.post('/auth', async (req, res) => {
-  const { firstName, lastName, password } = req.body;
+  const { email, firstName, lastName, password } = req.body;
 
-  let user = await User.findOne({
-    firstName: firstName,
-    lastName: lastName,
-    password: password,
-  }).lean();
+  let authData;
+  if (email && password) {
+    authData = {
+      email: email,
+      password: password,
+    };
+  }
+  if (firstName && lastName && password) {
+    authData = {
+      firstName: firstName,
+      lastName: lastName,
+      password: password,
+    };
+  }
+
+  let user = await User.findOne(authData).lean();
+
   if (user) {
     const token = jwt.sign(
       {
@@ -104,6 +137,35 @@ app.post('/auth', async (req, res) => {
   } else {
     res.status(401).json({ message: 'Wrong credentials' });
   }
+});
+
+/*  **********************************************************
+    *****       SOCKET SECTION            ***********************
+    **********************************************************
+ 
+*/
+
+io.on('connection', socket => {
+  //console.log('Connection has been established.');
+  socket.on('join', room => {
+    socket.join(room);
+  });
+  socket.on('userToApprove', async data => {
+    console.log(data);
+    data.initTime = new Date();
+    let user = new TempUser(data);
+    user = await user.save();
+
+    data.socketId = socket.id;
+    socket.join('admin-room');
+    socket.in('admin-room').emit('userToApprove', user);
+    //socket.broadcast.emit('userToApprove', user);
+    socket.emit('userToApprove', user);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Connection has been ended.');
+  });
 });
 
 /*  **********************************************************
@@ -139,7 +201,7 @@ app.post('/reg', async (req, res) => {
   Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке ${linkToActiveUser} . С уважением команда портала.`;
   if (isSelfReg) {
     //send mail to user
-    console.log(to, subject, text);
+    console.log(user);
     //sendMail(to, subject, text);
   }
   res.json(user);
@@ -202,20 +264,46 @@ app.get('/user/:id', async (req, res) => {
   res.json(user);
 });
 
+app.get('/tempusers', async (req, res) => {
+  let tempUsers = await TempUser.find().sort({ initTime: 1 });
+  //console.log({ tempUsers });
+  res.json(tempUsers);
+});
+
 app.put('/users/:id', async (req, res) => {
   const user = await User.findByIdAndUpdate(req.params.id, req.body);
   res.json({ user });
 });
 
-app.put('/approve-edit-user/:id', async (req, res) => {
-  const userId = req.params.id;
+app.put('/tempuser-delete/:id', async (req, res) => {
+  console.log(req.body.user);
+  const tempuser = await TempUser.findByIdAndDelete(req.params.id);
+  res.json({ tempuser });
+});
+
+app.put('/put-approve-user/:id', async (req, res) => {
+  const { user } = req.body;
+  console.log(user);
+  const approvedUser = await User.findByIdAndUpdate(req.params.id, {
+    firstName: user.firstName,
+    lastName: user.lastName,
+    dateOfBirth: user.dateOfBirth,
+  });
+  const tempuser = await TempUser.findByIdAndDelete(user._id);
+  console.log(tempuser, ' was deleted');
+  res.json({ approvedUser });
+});
+
+//app.get('/approve-edit-user', async (req, res) => {
+/* const userId = req.params.id;
   let data = req.body;
   data.userId = userId;
-  console.log(data);
-  let user = new AwaitingUser(data);
+  console.log(data); */
+
+/* let user = new TempUser(data);
   user = await user.save();
-  res.json({ user });
-});
+  res.json({ user }); */
+//});
 
 /*     **********************************************************
        *****       CLASSES SECTION          ***********************
@@ -549,7 +637,7 @@ app.put('/video-to-lesson', async (req, res) => {
     neuronStore.putObject(
       {
         Body: file,
-        Bucket: 'neuron-bucket',
+        Bucket: 'neuron',
         Key: `lessons/${lessonId}/${fileName}`,
       },
       (err, data) => {
@@ -684,7 +772,7 @@ app.put('/upload/udoc', async (req, res) => {
         neuronStore.putObject(
           {
             Body: file,
-            Bucket: 'neuron-bucket',
+            Bucket: 'neuron',
             Key: `udoc/${userId}/${userDocId}/${docName}`,
           },
           (err, data) => {
@@ -754,53 +842,42 @@ app.get('/udoc/del/:id', async (req, res) => {
 
 //TEST
 app.post('/test-mail', async (req, res) => {
-  const options = {
-    // host: 'smtp.mail.ru',
-    //domain: 'smtp.mail.ru',
-    // port: 465,
-    service: 'Gmail',
-    secure: true,
-    auth: {
-      user: 'edilovaysky@gmail.com',
-      pass: 'gthcbr777',
-    },
-    /*  tls: {
-      // do not fail on invalid certs
-      rejectUnauthorized: false,
-    }, */
-  };
-  let transport = nodemailer.createTransport(smtpTransport(options));
+  /* const d = new Date().valueOf();
+  console.log(d);
+  const month = 60000 * 60 * 24 * 30;
+  console.log(month);
+  const course = d + month;
+  console.log(new Date(course).toUTCString()); */
 
+  let sender;
+  ses.listVerifiedEmailAddresses(function(result) {
+    console.log(result);
+  });
   const linkToActiveUser = `https://neuron-school/active`;
-  const to = 'test@dotschool.bizml.ru';
+  const to = ['test@dotschool.bizml.ru'];
   const subject = 'регистрация на портале Neuron-school.ru';
   const text = `Здравствуйте, Вы зарегестрировались на портале Neuron-school. Ваш логин для входа, Ваш пароль для входа . 
-    Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке ${linkToActiveUser} . С уважением команда портала.`;
-
-  const mail = {
-    from: 'edilovaysky@gmail.com',
-    to: to,
-    subject: subject,
-    text: text,
-  };
-  const sendMail = () => {
-    transport.sendMail(mail, (err, res) => {
+    Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке <a href=${linkToActiveUser}>Подтвердить адрес</a> . С уважением команда портала.`;
+  console.log(sender);
+  ses.send(
+    {
+      from: 'Dotschool <dotschool.team@gmail.com>',
+      to: to,
+      replyTo: [sender],
+      subject: subject,
+      body: {
+        text: 'some text',
+        html: text,
+      },
+    },
+    (err, data) => {
       if (err) {
-        console.log("mail wasn't send", err);
-        res.json(400, { err });
-      } else {
-        console.log('mail was send');
-        res.json(200, { response: 'Mail sent.' });
+        console.log('an error occured: ', err);
       }
-      transport.close();
-    });
-  };
-  console.log(req.body);
-  try {
-    sendMail();
-  } catch (error) {
-    res.json(400, { error });
-  }
+      console.log('an answer data: ', data);
+      res.json({ data });
+    }
+  );
 });
 
 //APP PORT

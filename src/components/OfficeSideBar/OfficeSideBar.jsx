@@ -3,6 +3,7 @@ import './OfficeSideBar.scss';
 import React, { Component } from 'react';
 
 import { UserSideBar } from './UserSideBar';
+import { ChildSideBar } from './ChildSideBar';
 import { TeacherSideBar } from './TeacherSideBar';
 import { AdminSideBar } from './AdminSideBar';
 import { SuperSideBar } from './SuperSideBar';
@@ -25,6 +26,9 @@ export class OfficeSideBar extends Component {
     if (status == 'user') {
       return <UserSideBar onEnter={this.handleEnter} status={status} />;
     }
+    if (status == 'child') {
+      return <ChildSideBar onEnter={this.handleEnter} status={status} />;
+    }
     if (status == 'teacher') {
       return <TeacherSideBar onEnter={this.handleEnter} status={status} />;
     }
@@ -39,12 +43,12 @@ export class OfficeSideBar extends Component {
   };
 
   render() {
-    const { layout } = this.state;
+    const { layout, status } = this.state;
     const { onSuccess } = this.props;
     return (
       <>
         {this.defineSideBar()}
-        <OfficeBody layout={layout} onSuccess={onSuccess} />
+        <OfficeBody layout={layout} onSuccess={onSuccess} status={status} />
       </>
     );
   }

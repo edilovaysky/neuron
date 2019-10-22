@@ -19,7 +19,7 @@ export class EditingClasses extends Component {
       user: '',
     };
   }
-  componentWillMount() {
+  componentDidMount() {
     let fetchStatus = 'teacher';
     const { handleFetchUsers } = this.props;
     handleFetchUsers(fetchStatus);

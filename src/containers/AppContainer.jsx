@@ -9,9 +9,14 @@ import { connect } from 'react-redux';
 import { AuthMenu } from 'components/AuthMenu';
 import { Auth } from 'components/Auth';
 import { Office } from 'components/Office';
+import { Registration } from '../components/Registration/Registration';
+import { TestMail } from 'components/Registration/TestMail';
 
 class App extends Component {
-  componentWillMount() {
+  state = {
+    token: '',
+  };
+  componentDidMount() {
     this.setState({
       token: this.props.user.token,
     });
@@ -27,6 +32,7 @@ class App extends Component {
 
   render() {
     const { token } = this.state;
+
     return (
       <>
         <div className="navbar">
@@ -37,6 +43,13 @@ class App extends Component {
           )}
         </div>
         <Switch>
+          {/* <Route path="/" render={() => <TestMail />} /> */}
+          <Route path="/home" render={() => <TestMail />} exact />
+          <Route
+            path="/reg"
+            render={() => <Registration isSelfReg={true} />}
+            exact
+          />
           {token && (
             <Route
               path="/my-office"

@@ -43,6 +43,7 @@ export class Registration extends Component {
       parent = userToEdit._id;
       regPath = 'http://localhost:8888/reg-child';
       active = true;
+      email = userToEdit.email;
     }
     if (!child || isSelfReg) {
       regPath = 'http://localhost:8888/reg';
@@ -62,7 +63,8 @@ export class Registration extends Component {
       !status == '' &&
       !firstName == '' &&
       !lastName == '' &&
-      !password == ''
+      !password == '' &&
+      !email == ''
     ) {
       fetch(regPath, {
         method: 'POST',
@@ -97,7 +99,7 @@ export class Registration extends Component {
           //this.handleSendMail()
         });
     }
-    reAuth();
+    //reAuth();
   };
 
   handleTextChange = ({ target: { name, value } }) => {
@@ -274,7 +276,7 @@ export class Registration extends Component {
                 )}
                 {!child && (
                   <>
-                    <span>email:</span>
+                    <span>* email:</span>
                     <input
                       required
                       onChange={this.handleTextChange}

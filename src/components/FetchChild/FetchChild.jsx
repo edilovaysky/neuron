@@ -5,7 +5,7 @@ export class FetchChild extends Component {
   state = {
     foundChild: [],
   };
-  componentWillMount() {
+  componentDidMount() {
     this.props.child.map(i => {
       const id = i;
       this.handleFetchChild(id);
