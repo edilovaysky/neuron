@@ -1,1 +1,1 @@
-# Development SPA on react App for online-school.
+# Development SPA on react. App for online-school.
