@@ -1,0 +1,1 @@
+export { PassRecover } from './PassRecover';

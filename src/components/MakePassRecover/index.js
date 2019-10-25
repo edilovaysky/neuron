@@ -1,0 +1,1 @@
+export { MakePassRecover } from './MakePassRecover';

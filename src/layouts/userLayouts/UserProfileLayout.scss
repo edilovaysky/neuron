@@ -20,7 +20,9 @@
 .layout-menu li:hover {
   font-weight: 600;
 }
-
+ul {
+  list-style: none;
+}
 .active {
   border-bottom: 0.2em solid rgb(153, 149, 149);
 }

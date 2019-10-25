@@ -4,18 +4,26 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
-import { Registration } from 'components/Registration';
-import { TestMail } from 'components/Registration/TestMail';
+import { PassRecover } from 'components/PassRecover';
 import { load } from 'actions/auth';
 
 class AuthUnmounted extends Component {
   state = {
-    displayReg: false,
+    displayParent: false,
+    displayChild: false,
+    parent: '',
+    child: '',
+    displayPassRecover: false,
   };
 
   handleSignIn = () => {
     const { authUser, onSuccess } = this.props;
-    authUser(this.state.firstName, this.state.lastName, this.state.password);
+    authUser(
+      this.state.email,
+      this.state.firstName,
+      this.state.lastName,
+      this.state.password
+    );
     setTimeout(() => {
       onSuccess();
     }, 500);
@@ -27,60 +35,128 @@ class AuthUnmounted extends Component {
     });
   };
 
-  handleReg = () => {
-    this.setState({ displayReg: !this.state.displayReg });
+  handleChild = () => {
+    this.setState({
+      displayChild: !this.state.displayChild,
+      displayParent: false,
+      child: '-active',
+      parent: '',
+    });
+  };
+
+  handleParent = () => {
+    this.setState({
+      displayParent: !this.state.displayParent,
+      displayChild: false,
+      parent: '-active',
+      child: '',
+    });
+  };
+
+  handleForgetPass = () => {
+    this.setState({
+      displayPassRecover: !this.state.displayPassRecover,
+      displayChild: false,
+      displayParent: false,
+    });
+  };
+
+  handlePassRecRequest = () => {
+    this.setState({
+      displayPassRecover: false,
+    });
   };
 
   render() {
-    const { firstName, lastName, password } = this.props;
-    const { displayReg } = this.state;
+    const { email, firstName, lastName, password } = this.props;
+    const {
+      displayParent,
+      displayChild,
+      parent,
+      child,
+      displayPassRecover,
+    } = this.state;
     const isSelfReg = true;
     return (
       <>
         <div className="auth-wrap">
           <div className="auth">
-            <h3>Авторизация</h3>
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="firstName"
-              type="text"
-              value={firstName}
-              placeholder="Введите ваше имя"
-            />
-            <br />
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="lastName"
-              type="text"
-              value={lastName}
-              placeholder="Введите вашу Фамилию"
-            />
-            <br />
-            <input
-              required
-              onChange={this.handleTextChange}
-              name="password"
-              type="password"
-              value={password}
-              placeholder="Введите свой пароль"
-            />
-            <br />
-            <button onClick={this.handleSignIn}>Войти</button>
-
-            <div className="auth-menu-wrap">
-              <ul className="auth-menu">
-                <li>
-                  <p onClick={this.handleReg}>регистрация</p>
-                </li>
-              </ul>
+            <div className="auth-toggle">
+              <h2
+                className={`auth-toggle-h${parent}`}
+                onClick={this.handleParent}
+              >
+                Родитель
+              </h2>
+              <h2
+                className={`auth-toggle-h${child}`}
+                onClick={this.handleChild}
+              >
+                Ученик
+              </h2>
             </div>
+
+            {displayChild && (
+              <>
+                <span>вход ученика: </span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="firstName"
+                  type="text"
+                  value={firstName}
+                  placeholder="Введите ваше имя"
+                />
+                <br />
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="lastName"
+                  type="text"
+                  value={lastName}
+                  placeholder="Введите вашу Фамилию"
+                />
+                <br />{' '}
+              </>
+            )}
+            {displayParent && (
+              <>
+                <span>вход родителя: </span>
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="email"
+                  type="email"
+                  value={email}
+                  placeholder="Введите свой email"
+                />
+                <br />
+              </>
+            )}
+            {(displayChild || displayParent) && (
+              <>
+                {' '}
+                <input
+                  required
+                  onChange={this.handleTextChange}
+                  name="password"
+                  type="password"
+                  value={password}
+                  placeholder="Введите свой пароль"
+                />
+                <br />
+                <button onClick={this.handleSignIn}>Войти</button>
+              </>
+            )}
+            {displayParent && (
+              <p className="forget-pass" onClick={this.handleForgetPass}>
+                Вы забыли пароль??
+              </p>
+            )}
+            {displayPassRecover && (
+              <PassRecover onRequest={this.handlePassRecRequest} />
+            )}
           </div>
-        </div>
-        <div className="auth-reg-wrap">
-          {displayReg && <Registration isSelfReg={isSelfReg} />}
-          <TestMail />
         </div>
       </>
     );
@@ -99,8 +175,8 @@ function mapStateToProps(state, props) {
 
 function mapDispatchToProps(dispatch, props) {
   return {
-    authUser: (firstName, lastName, password) =>
-      dispatch(load(firstName, lastName, password)),
+    authUser: (email, firstName, lastName, password) =>
+      dispatch(load(email, firstName, lastName, password)),
   };
 }
 

@@ -1,0 +1,26 @@
+.main-menu-wrap {
+  font-family: 'Montserrat', sans-serif;
+  display: flex;
+  justify-content: space-around;
+}
+.main-menu {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: row;
+  list-style: none;
+  padding: 0;
+}
+.main-menu li {
+  display: inline-block;
+  min-height: 100%;
+  margin: 0 2em 0 0;
+}
+.main-menu li a {
+  text-decoration: none;
+  color: #31b2e8;
+}
+
+.main-menu li a p {
+  font-size: 1em;
+}

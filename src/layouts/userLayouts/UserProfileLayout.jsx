@@ -25,13 +25,14 @@ class UserProfileLayouts extends Component {
     officeOfChild: {},
   };
 
-  componentWillMount() {
+  componentDidMount() {
     const user = this.props.user.user;
-
-    user.child.map(i => {
-      const id = i;
-      this.handleFetchChild(id);
-    });
+    if (user.child) {
+      user.child.map(i => {
+        const id = i;
+        this.handleFetchChild(id);
+      });
+    }
   }
   handleReAuth = () => {
     const { authUser } = this.props;
@@ -144,6 +145,9 @@ class UserProfileLayouts extends Component {
       });
     }
   };
+  handlePassChange = () => {
+    this.setState({ change: '' });
+  };
 
   render() {
     const {
@@ -233,7 +237,12 @@ class UserProfileLayouts extends Component {
               reAuth={this.handleReAuth}
             />
           )}
-          {change == 'active' && <Change userToEdit={user} />}
+          {change == 'active' && (
+            <Change
+              userToEdit={user}
+              onSuccessPassChange={this.handlePassChange}
+            />
+          )}
           {childProfile == 'active' && (
             <>
               <Registration

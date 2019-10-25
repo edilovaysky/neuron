@@ -22,6 +22,12 @@
 .top-nav-bar-status p {
   margin: 1em 0.5em 0 0;
   font-size: 1.4em;
+  color: rgb(204, 0, 17);
+}
+
+.top-nav-bar-status-active p {
+  margin: 1em 0.5em 0 0;
+  color: #00ff88;
 }
 
 .top-nav-bar-status p:hover {

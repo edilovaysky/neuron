@@ -1,0 +1,14 @@
+.make-pass-recover-wrap {
+  margin: 2em 0;
+  display: flex;
+  justify-content: center;
+}
+
+.make-pass-recover-message {
+  color: red;
+  font-weight: 700;
+}
+
+.make-pass-recover-message:hover {
+  cursor: default;
+}

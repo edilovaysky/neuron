@@ -3,12 +3,13 @@ import { connect } from 'react-redux';
 import { OfficeSideBar } from 'components/OfficeSideBar';
 
 class SideBarContainer extends Component {
-  componentWillMount() {
-    this.setState({ status: this.props.user.user.status });
-  }
   render() {
-    const { onSuccess } = this.props;
-    const status = this.state.status;
+    const { onSuccess, user } = this.props;
+    let status;
+    if (user.user) {
+      status = user.user.status;
+    }
+
     return (
       <>
         <OfficeSideBar status={status} onSuccess={onSuccess} />

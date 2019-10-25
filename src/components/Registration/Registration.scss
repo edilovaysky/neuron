@@ -8,13 +8,14 @@ $height: $width / 2 + $padding;
 }
 
 .reg-wrap {
+  font-family: 'Montserrat', sans-serif;
   margin: 3em 0 0 0;
   display: flex;
   justify-content: space-around;
 }
 
 .reg {
-  width: 50%;
+  width: 40%;
   display: flex;
   flex-direction: column;
   justify-content: space-around;

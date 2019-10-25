@@ -1,0 +1,59 @@
+.feedback-wraper {
+  display: flex;
+  justify-content: center;
+}
+
+.postcard {
+  width: 60%;
+  margin: 50px auto 0;
+  padding: 20px;
+  background: #fffeee;
+  border: 10px solid transparent;
+  border-image: 10
+    repeating-linear-gradient(
+      135deg,
+      #0b7bd6,
+      #0b7bd6 10px,
+      transparent 10px,
+      transparent 20px,
+      #cfd9fb 20px,
+      #cfd9fb 30px,
+      transparent 30px,
+      transparent 40px
+    );
+  color: #605756;
+}
+.form-row {
+  margin-bottom: 15px;
+}
+.form-row input[type='text'],
+.form-row input[type='email'],
+.form-row textarea {
+  width: 100%;
+  padding: 0 10px;
+  line-height: 35px;
+  border-width: 0;
+  outline: none;
+  background-size: 8px 35px;
+}
+.form-row textarea {
+  background-attachment: local;
+  background-repeat: repeat;
+  resize: none;
+}
+.form-row input[type='submit'] {
+  padding: 10px 20px;
+  margin-top: 10px;
+  background: #7cbbf6;
+  border-width: 0;
+  cursor: pointer;
+  outline: none;
+  font-size: 13px;
+  letter-spacing: 1px;
+  color: #fffdee;
+  text-transform: uppercase;
+  transition: 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+.form-row input[type='submit']:hover {
+  background: #2054c4;
+}

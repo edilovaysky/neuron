@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-
+import { Logo } from 'components/Logo';
 export class UserSideBar extends Component {
   state = {
     classRoom: '',
@@ -53,9 +53,7 @@ export class UserSideBar extends Component {
       <>
         <div className="side-nav-bar">
           <ul>
-            <li className="logo">
-              <img src="../../../src/assets/logo.png" alt="Neuron-logo" />
-            </li>
+            <Logo />
             <li
               id="user-profile"
               className={`side-btn-${userProfile}`}

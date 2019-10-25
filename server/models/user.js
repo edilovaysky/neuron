@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  timeStamp: { type: Date, default: new Date() },
+  initPassRecoverDate: { type: Date },
   status: { type: String },
   adminRights: { type: String },
   active: { type: Boolean },

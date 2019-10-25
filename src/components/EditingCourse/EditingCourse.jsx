@@ -26,7 +26,7 @@ export class EditingCourses extends Component {
       display: !this.state.display,
     });
   };
-  componentWillMount() {
+  componentDidMount() {
     let fetchStatus = 'teacher';
     const { handleFetchUsers } = this.props;
     handleFetchUsers(fetchStatus);

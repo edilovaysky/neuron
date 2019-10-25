@@ -1,6 +1,8 @@
 import './Editing.scss';
 
 import React, { Component } from 'react';
+import io from 'socket.io-client';
+const socket = io.connect('http://localhost:8888');
 import { DragAndDrop } from 'components/DragAndDrop';
 
 import PropTypes from 'prop-types';
@@ -21,7 +23,7 @@ export class Editing extends Component {
       tel: '',
       email: '',
       gen: '',
-      active: '',
+      active: userToEdit.active,
       comment: '',
       child: false,
       displayEdit: false,
@@ -50,7 +52,7 @@ export class Editing extends Component {
       return str;
     }
   };
-  componentWillMount() {
+  componentDidMount() {
     const { userToEdit } = this.props;
     if (userToEdit.status == 'child') {
       this.setState({ child: true });
@@ -60,9 +62,10 @@ export class Editing extends Component {
   handleEdit = () => {
     const { userToEdit, reAuth } = this.props;
     const id = userToEdit._id;
-    const active = userToEdit.active;
+    //const active = userToEdit.active;
 
     let {
+      active,
       comment,
       status,
       firstName,
@@ -76,6 +79,7 @@ export class Editing extends Component {
       prevData,
     } = this.state;
     let url;
+    let needToAppove = false;
     let responseMessage;
     console.log(firstName, 'prevData:  ', prevData.firstName);
     if (firstName == '' && lastName == '' && dateOfBirth == '') {
@@ -85,10 +89,9 @@ export class Editing extends Component {
     }
     if (!firstName == '' || !lastName == '' || !dateOfBirth == '') {
       console.log('to admin approve worked');
-      url = `http://localhost:8888/approve-edit-user/${id}`;
-      responseMessage =
-        'Изменение ожидает проверки аминистратора. Это может занять 24 часов.';
+      needToAppove = true;
     }
+
     if (comment == '') {
       comment = prevData.comment;
     }
@@ -110,7 +113,7 @@ export class Editing extends Component {
     if (tel == '') {
       tel = prevData.tel;
     }
-    if ((email = '')) {
+    if (email == '') {
       email = prevData.email;
     }
     if (gen == '') {
@@ -121,8 +124,10 @@ export class Editing extends Component {
     firstName = this.firstToCapital(firstName);
     lastName = lastName.replace(/\s/g, '').toLowerCase();
     lastName = this.firstToCapital(lastName);
-    patronymic = patronymic.replace(/\s/g, '').toLowerCase();
-    patronymic = this.firstToCapital(patronymic);
+    if (patronymic) {
+      patronymic = patronymic.replace(/\s/g, '').toLowerCase();
+      patronymic = this.firstToCapital(patronymic);
+    }
 
     if (tel) {
       tel = tel
@@ -135,13 +140,40 @@ export class Editing extends Component {
       email = email.replace(/\s/g, '');
     }
 
-    console.log(firstName, patronymic, lastName, url);
-    fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
+    if (url) {
+      fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          active,
+          status,
+          firstName,
+          lastName,
+          patronymic,
+          utc,
+          dateOfBirth,
+          tel,
+          email,
+          gen,
+        }),
+      }).then(response => {
+        if (!response.ok) {
+          throw new Error('Wrong credentials');
+        }
+        console.log(responseMessage);
+        alert(responseMessage);
+        return response.json();
+      });
+      // reAuth();
+      //.then(data => {});
+    }
+
+    if (needToAppove) {
+      const userId = id;
+      const data = {
+        userId,
         active,
         status,
         firstName,
@@ -152,17 +184,17 @@ export class Editing extends Component {
         tel,
         email,
         gen,
-      }),
-    }).then(response => {
-      if (!response.ok) {
-        throw new Error('Wrong credentials');
-      }
-      console.log(responseMessage);
+        comment,
+      };
+
+      socket.emit('userToApprove', data);
+      socket.on('userToApprove', data => {
+        console.log(data);
+      });
+      responseMessage =
+        'Изменение ожидает проверки аминистратора. Это может занять 24 часов.';
       alert(responseMessage);
-      return response.json();
-    });
-    // reAuth();
-    //.then(data => {});
+    }
   };
 
   isUserActive = () => {
@@ -186,7 +218,7 @@ export class Editing extends Component {
               <input type="checkbox" onChange={this.handleCheckActive} />
               <div className="switch"></div>
             </label>
-            <p>* активен</p>
+            <p>* не активен</p>
           </div>
         );
       }
@@ -207,22 +239,25 @@ export class Editing extends Component {
   };
   render() {
     const {
-      status,
+      active,
       firstName,
       lastName,
       patronymic,
       comment,
       dateOfBirth,
-      parentName,
       tel,
       email,
       child,
       displayEdit,
       prevData,
     } = this.state;
-    const { userStatus } = this.props;
+    console.log(active);
+    const { userStatus, userToEdit } = this.props;
     const docType = 'udoc';
-    const userId = this.props.userToEdit._id;
+    let userId;
+    if (userToEdit) {
+      userId = userToEdit._id;
+    }
 
     const isActive = this.isUserActive();
     return (
@@ -262,7 +297,7 @@ export class Editing extends Component {
                   placeholder={prevData.firstName}
                 />
                 <br />
-                <span>*Отчество:</span>
+                <span>Отчество:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
@@ -328,18 +363,6 @@ export class Editing extends Component {
                   <option value="12">UTC(GTM) +12 (Новая Зеландия)</option>
                 </select>
                 <br />
-                {/*   {status == 'user' && <span>ФИО родителя или родителей:</span>}
-                {status == 'user' && (
-                  <input
-                    required
-                    onChange={this.handleTextChange}
-                    name="parentName"
-                    type="text"
-                    value={parentName || ''}
-                    placeholder={parentName}
-                  />
-                )}
-                <br /> */}
                 <span>телефон родителя:</span>
                 <input
                   required

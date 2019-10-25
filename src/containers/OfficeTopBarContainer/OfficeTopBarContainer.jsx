@@ -6,14 +6,19 @@ import PropTypes from 'prop-types';
 import { unAuth } from 'actions/auth';
 
 class ProfileSettings extends Component {
-  componentWillMount() {
+  state = {
+    name: '',
+    status: '',
+    gen: '',
+    active: this.props.user.user.active,
+  };
+  componentDidMount() {
     this.setState({
       name: `${this.props.user.user.firstName}  ${this.props.user.user.lastName}`,
       status: this.props.user.user.status,
       gen: this.props.user.user.gen,
     });
   }
-  componentDidMount() {}
 
   handleSignOut = event => {
     const { onSignOut } = this.props;
@@ -26,7 +31,7 @@ class ProfileSettings extends Component {
     }, 0);
   };
   render() {
-    const { name, status, gen } = this.state;
+    const { name, status, gen, active } = this.state;
     let mapping;
     if (gen == 'm' || '') {
       mapping = {
@@ -45,13 +50,16 @@ class ProfileSettings extends Component {
         child: 'ученица',
       };
     }
-
+    let isActive;
+    if (active) {
+      isActive = 'top-nav-bar-status-active';
+    } else {
+      isActive = 'top-nav-bar-status';
+    }
     return (
       <div className="top-nav-bar">
         <h5>личный кабинет</h5>
-        <div className="top-nav-bar-status">
-          {status && <p>*{mapping[status]} </p>}
-        </div>
+        <div className={isActive}>{status && <p>@{mapping[status]} </p>} </div>
         {name && <h3> {name}</h3>}
         <div className="top-nav-bar-btn-section">
           <button className="top-btn" onClick={this.handleSignOut}>

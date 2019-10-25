@@ -14,15 +14,21 @@ import { AdminCoursesLayout } from 'layouts/adminLayouts/AdminCoursesLayout';
 import { AdminTutorsLayout } from 'layouts/adminLayouts/AdminTutorsLayout';
 import { AdminUsersLayout } from 'layouts/adminLayouts/AdminUsersLayout';
 import { UserProfileLayout } from 'layouts/userLayouts/UserProfileLayout';
+
 import { TeacherProfileLayout } from 'layouts/teacherLayouts/TeacherProfileLayout';
+import { AdminDefaultLayout } from 'layouts/adminLayouts/AdminDefaultLayout';
 
 export class OfficeBody extends Component {
   render() {
-    const { layout } = this.props;
+    const { layout, status } = this.props;
+
     return (
       <>
         <div className="office-body">
           <section className="office-body-layout">
+            {(status.status == 'admin' || status.status == 'esquire') && (
+              <AdminDefaultLayout />
+            )}
             {layout == 'classRoom' && <ClassRoomLayout />}
             {layout == 'courses' && <CoursesLayout />}
             {layout == 'tutor' && <TutorLayout />}
@@ -33,6 +39,7 @@ export class OfficeBody extends Component {
             {layout == 'all-users' && <AdminUsersLayout />}
             {layout == 'all-tutors' && <AdminTutorsLayout />}
             {layout == 'user-profile' && <UserProfileLayout />}
+
             {layout == 'teacher-profile' && <TeacherProfileLayout />}
           </section>
         </div>
