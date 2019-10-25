@@ -1,0 +1,14 @@
+.make-active-wrap {
+  margin: 2em 0;
+  display: flex;
+  justify-content: center;
+}
+
+.make-active-message {
+  color: red;
+  font-weight: 700;
+}
+
+.make-active-message:hover {
+  cursor: default;
+}

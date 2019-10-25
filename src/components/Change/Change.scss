@@ -1,14 +1,14 @@
-.auth-h1 {
+.change-h1 {
   text-align: center;
   font-size: 1.7em;
 }
 
-.auth-wrap {
+.change-wrap {
   display: flex;
   justify-content: space-around;
 }
 
-.auth {
+.change {
   width: 10%;
   display: flex;
   justify-content: space-around;
@@ -16,12 +16,12 @@
   margin-top: 0.5rem;
 }
 
-.auth h3 {
+.change h3 {
   text-align: center;
   font-size: 1.3em;
 }
 
-.auth input {
+.change input {
   min-width: 20rem;
   height: 3rem;
   border: 0.1rem solid #dbdbdb;
@@ -29,7 +29,7 @@
   margin: 0.2rem;
 }
 
-.auth button {
+.change button {
   width: 20rem;
   display: inline-block;
   font: inherit;

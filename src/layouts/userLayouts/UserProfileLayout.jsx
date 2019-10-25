@@ -145,6 +145,9 @@ class UserProfileLayouts extends Component {
       });
     }
   };
+  handlePassChange = () => {
+    this.setState({ change: '' });
+  };
 
   render() {
     const {
@@ -234,7 +237,12 @@ class UserProfileLayouts extends Component {
               reAuth={this.handleReAuth}
             />
           )}
-          {change == 'active' && <Change userToEdit={user} />}
+          {change == 'active' && (
+            <Change
+              userToEdit={user}
+              onSuccessPassChange={this.handlePassChange}
+            />
+          )}
           {childProfile == 'active' && (
             <>
               <Registration

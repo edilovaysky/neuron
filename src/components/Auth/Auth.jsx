@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
-
+import { PassRecover } from 'components/PassRecover';
 import { load } from 'actions/auth';
 
 class AuthUnmounted extends Component {
@@ -13,6 +13,7 @@ class AuthUnmounted extends Component {
     displayChild: false,
     parent: '',
     child: '',
+    displayPassRecover: false,
   };
 
   handleSignIn = () => {
@@ -52,9 +53,29 @@ class AuthUnmounted extends Component {
     });
   };
 
+  handleForgetPass = () => {
+    this.setState({
+      displayPassRecover: !this.state.displayPassRecover,
+      displayChild: false,
+      displayParent: false,
+    });
+  };
+
+  handlePassRecRequest = () => {
+    this.setState({
+      displayPassRecover: false,
+    });
+  };
+
   render() {
     const { email, firstName, lastName, password } = this.props;
-    const { displayParent, displayChild, parent, child } = this.state;
+    const {
+      displayParent,
+      displayChild,
+      parent,
+      child,
+      displayPassRecover,
+    } = this.state;
     const isSelfReg = true;
     return (
       <>
@@ -126,6 +147,14 @@ class AuthUnmounted extends Component {
                 <br />
                 <button onClick={this.handleSignIn}>Войти</button>
               </>
+            )}
+            {displayParent && (
+              <p className="forget-pass" onClick={this.handleForgetPass}>
+                Вы забыли пароль??
+              </p>
+            )}
+            {displayPassRecover && (
+              <PassRecover onRequest={this.handlePassRecRequest} />
             )}
           </div>
         </div>

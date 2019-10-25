@@ -11,17 +11,22 @@ export class Registration extends Component {
     lastName: '',
     password: '',
     patronymic: '',
-    city: '',
+    utc: '',
     dateOfBirth: '',
-    parentName: '',
     tel: '',
     email: '',
     gen: '',
     active: false,
     displayReg: false,
   };
+  firstToCapital = str => {
+    if (str) {
+      str = str[0].toUpperCase() + str.substring(1);
+      return str;
+    }
+  };
   handleRegIn = () => {
-    const { isSelfReg, child, userToEdit, reAuth } = this.props;
+    const { isSelfReg, child, userToEdit, onReg } = this.props;
     let parent;
     let regPath = '';
     let {
@@ -30,9 +35,8 @@ export class Registration extends Component {
       lastName,
       password,
       patronymic,
-      city,
+      utc,
       dateOfBirth,
-      parentName,
       tel,
       email,
       gen,
@@ -50,11 +54,15 @@ export class Registration extends Component {
       status = 'user';
     }
 
-    firstName = firstName.replace(/\s/g, '');
-    lastName = lastName.replace(/\s/g, '');
+    firstName = firstName.replace(/\s/g, '').toLowerCase();
+    firstName = this.firstToCapital(firstName);
+    lastName = lastName.replace(/\s/g, '').toLowerCase();
+    lastName = this.firstToCapital(lastName);
+    if (patronymic) {
+      patronymic = patronymic.replace(/\s/g, '').toLowerCase();
+      patronymic = this.firstToCapital(patronymic);
+    }
     password = password.replace(/\s/g, '');
-    patronymic = patronymic.replace(/\s/g, '');
-    city = city.replace(/\s/g, '');
     dateOfBirth = dateOfBirth.replace(/\s/g, '');
     tel = tel.replace(/\s/g, '');
     email = email.replace(/\s/g, '');
@@ -78,7 +86,7 @@ export class Registration extends Component {
           lastName,
           password,
           patronymic,
-          city,
+          utc,
           dateOfBirth,
           tel,
           email,
@@ -96,10 +104,14 @@ export class Registration extends Component {
           return response.json();
         })
         .then(data => {
-          //this.handleSendMail()
+          if (data.status == 'user') {
+            alert(
+              `На Ваш email: ${data.email}, было отправлено письмо. Для АКТИВАЦИИ АККАУНТА следуйте инструкции в этом письме.`
+            );
+          }
         });
     }
-    //reAuth();
+    onReg();
   };
 
   handleTextChange = ({ target: { name, value } }) => {
@@ -122,7 +134,6 @@ export class Registration extends Component {
       patronymic,
       utc,
       dateOfBirth,
-      parentName,
       tel,
       email,
       displayReg,
@@ -250,7 +261,7 @@ export class Registration extends Component {
                 {!isSelfReg && (
                   <>
                     <span>укажите год обучения:</span>
-                    <select name="gen" onChange={this.handleTextChange}>
+                    <select name="???" onChange={this.handleTextChange}>
                       <option defaultValue>выбирете год обучения</option>
                       <option value="1"> 1 год обучения (1-й класс)</option>
                       <option value="2"> 2 год обучения (2-й класс)</option>

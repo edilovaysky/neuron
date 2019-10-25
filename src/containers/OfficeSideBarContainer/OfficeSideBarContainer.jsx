@@ -6,7 +6,6 @@ class SideBarContainer extends Component {
   render() {
     const { onSuccess, user } = this.props;
     let status;
-    console.log(user);
     if (user.user) {
       status = user.user.status;
     }

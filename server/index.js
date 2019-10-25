@@ -37,7 +37,7 @@ const secretAccessKeyAm = 'syy2UQhWEzJL+HBYFEdeumEsLzJMe8aD5nRzMRQq';
 
 var AmazonSES = require('amazon-ses');
 var ses = new AmazonSES(accessKeyIdAm, secretAccessKeyAm);
-ses.verifyEmailAddress('dotschool.team@gmail.com');
+//ses.verifyEmailAddress('dotschool.team@gmail.com');
 
 const express = require('express');
 const socketIO = require('socket.io');
@@ -54,7 +54,7 @@ mongoose.set('useFindAndModify', false);
 
 mongoose.connect(
   `mongodb://${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
-  { useNewUrlParser: true }
+  { useNewUrlParser: true, useUnifiedTopology: true }
 );
 
 const app = express();
@@ -182,27 +182,46 @@ app.post('/reg', async (req, res) => {
     lastName: req.body.lastName,
     password: req.body.password,
     patrunymic: req.body.patronymic,
-    city: req.body.city,
+    utc: req.body.utc,
     dataOfBirth: req.body.dateOfBirth,
     parent: req.body.parent,
     tel: req.body.tel,
     email: req.body.email,
     gen: req.body.gen,
   };
-
   let user = new User(data);
   user = await user.save();
 
   const isSelfReg = req.body.isSelfReg;
-  const linkToActiveUser = `https://neuron-school/active/${user._id}`;
+  const linkToActiveUser = `http://localhost:8080/active/${user._id}`;
   const to = data.email;
   const subject = 'регистрация на портале Neuron-school.ru';
-  const text = `Здравствуйте, Вы зарегестрировались на портале Neuron-school. Ваш логин для входа ${data.email}, Ваш пароль для входа ${data.password}. 
-  Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке ${linkToActiveUser} . С уважением команда портала.`;
+  const text = `<p>Здравствуйте, </p> <h3>${user.firstName} ${user.lastName}</h3>
+   <p>Вы зарегестрировались на портале Neuron-school. <br><b>Ваш логин для входа: ${user.email}</b>,<br> <b>Ваш пароль для входа: ${user.password}</b>.</p> 
+   <br> <p>Чтобы активировать Ваш аккаунт, Вам необходимо перейти по ссылке кликнув мышкой на: <a href=${linkToActiveUser}>Подтвердить адрес...</a>
+   <b>Внимание! ссылка действительна только 72 часа.</b></p>
+   <br><p> С уважением команда портала.</p>`;
+
   if (isSelfReg) {
-    //send mail to user
-    console.log(user);
-    //sendMail(to, subject, text);
+    ses.send(
+      {
+        from: 'Dotschool <dotschool.team@gmail.com>',
+        to: [to],
+        replyTo: ['Dotschool <dotschool.team@gmail.com>'],
+        subject: subject,
+        body: {
+          text: 'some text',
+          html: text,
+        },
+      },
+      (err, data) => {
+        if (err) {
+          console.log('an error occured: ', err);
+        }
+        console.log('an answer data: ', data);
+        //res.json({ data });
+      }
+    );
   }
   res.json(user);
 });
@@ -258,9 +277,50 @@ app.get('/find-users', async (req, res) => {
 
 app.get('/user/:id', async (req, res) => {
   let user = await User.findById(req.params.id);
-  user = user.toObject();
-  //удаляем пароль
-  delete user.password;
+  if (user !== null) {
+    user.password = null;
+    res.json(user);
+  }
+});
+
+app.get('/user/recover/:email', async (req, res) => {
+  console.log(req.params);
+  let user = await User.findOne({ email: req.params.email });
+  const initRecDate = new Date().valueOf();
+
+  user = await User.findByIdAndUpdate(user._id, {
+    initPassRecoverDate: initRecDate,
+  });
+
+  const linkToPassRecoverUser = `http://localhost:8080/recover/${user._id}`;
+  const to = req.params.email;
+  const subject = 'Восстановление пароля на портале Neuron-school.ru';
+  const text = `<p>Здравствуйте, </p> <h3>${user.firstName} ${user.lastName}</h3>
+   <p>Вы запросили востановление пароля на портале Neuron-school. Если это были не Вы, то проигногируйте это письмо.</p> 
+   <br> <p>Чтобы восстановить пароль, Вам необходимо перейти по ссылке кликнув мышкой на: <a href=${linkToPassRecoverUser}>Восстановить пароль</a>
+   <b>Внимание! ссылка действительна только 12 часов.</b></p>
+   <br><p> С уважением команда портала.</p>`;
+
+  ses.send(
+    {
+      from: 'Dotschool <dotschool.team@gmail.com>',
+      to: [to],
+      replyTo: ['Dotschool <dotschool.team@gmail.com>'],
+      subject: subject,
+      body: {
+        text: 'some text',
+        html: text,
+      },
+    },
+    (err, data) => {
+      if (err) {
+        console.log('an error occured: ', err);
+      }
+      console.log('an answer data: ', data);
+    }
+  );
+  user.password = null;
+
   res.json(user);
 });
 
@@ -271,7 +331,83 @@ app.get('/tempusers', async (req, res) => {
 });
 
 app.put('/users/:id', async (req, res) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body);
+  const { passChange, parent } = req.body;
+  console.log(parent, passChange);
+  let user;
+  let userData = req.body;
+  let updatedUser;
+  if (parent || passChange) {
+    if (userData.passChange) {
+      delete userData.passChange;
+    }
+    if (userData.parent) {
+      delete userData.parent;
+    }
+  }
+
+  user = await User.findByIdAndUpdate(req.params.id, req.body);
+
+  if (user) {
+    updatedUser = await User.findById(user._id);
+  }
+
+  console.log(parent, passChange);
+
+  if (passChange && parent) {
+    const to = user.email;
+    const subject = 'Изменение пароля на портале Neuron-school.ru';
+    const text = `<p>Здравствуйте, </p> <h3>${user.firstName} ${user.lastName}</h3>
+   <p>Вы изменили свой пароль на портале Neuron-school. Если это были не Вы, свяжитель с администрацией сайта, а если это сделати Вы:</p> 
+   <br> <p>Ваш новый пароль: ${updatedUser.password} - никому не сообщайте его.</p>
+   <br><p> С уважением команда портала.</p>`;
+
+    ses.send(
+      {
+        from: 'Dotschool <dotschool.team@gmail.com>',
+        to: [to],
+        replyTo: ['Dotschool <dotschool.team@gmail.com>'],
+        subject: subject,
+        body: {
+          text: 'some text',
+          html: text,
+        },
+      },
+      (err, data) => {
+        if (err) {
+          console.log('an error occured: ', err);
+        }
+        console.log('an answer data: ', data);
+      }
+    );
+  }
+  if (passChange && !parent) {
+    const to = user.email;
+    const subject = 'Изменение пароля на портале Neuron-school.ru';
+    const text = `<p>Здравствуйте, </p> 
+   <p>Вы изменили пароль своего ребенка на портале Neuron-school. Если это были не Вы, свяжитель с администрацией сайта, а если это сделати Вы:</p> 
+   <br> <p>Новый пароль для входа пользователя ${user.fileName} ${user.lastName}: ${updatedUser.password} - никому не сообщайте его, кроме ребенка.</p>
+   <br><p> С уважением команда портала.</p>`;
+
+    ses.send(
+      {
+        from: 'Dotschool <dotschool.team@gmail.com>',
+        to: [to],
+        replyTo: ['Dotschool <dotschool.team@gmail.com>'],
+        subject: subject,
+        body: {
+          text: 'some text',
+          html: text,
+        },
+      },
+      (err, data) => {
+        if (err) {
+          console.log('an error occured: ', err);
+        }
+        console.log('an answer data: ', data);
+      }
+    );
+  }
+
   res.json({ user });
 });
 

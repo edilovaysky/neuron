@@ -9,11 +9,17 @@
 }
 
 .auth {
-  width: 10%;
+  width: 25%;
   display: flex;
   justify-content: space-around;
+  flex-direction: column;
   flex-wrap: wrap;
   margin-top: 0.5rem;
+}
+
+.auth span {
+  width: 100%;
+  text-align: center;
 }
 
 .auth-toggle {
@@ -23,7 +29,7 @@
 }
 
 .auth-toggle-h {
-  margin: 0 1em 0 1em;
+  margin: 0 2.5em 0 2.5em;
   color: rgb(31, 202, 74);
   font-size: 1.5em;
   font-weight: 500;
@@ -35,7 +41,7 @@
 
 .auth-toggle-h-active {
   cursor: pointer;
-  margin: 0 1em 0 1em;
+  margin: 0 2.5em 0 2.5em;
   color: rgb(31, 202, 74);
   font-size: 1.5em;
   font-weight: 700;
@@ -48,7 +54,7 @@
 }
 
 .auth input {
-  min-width: 30rem;
+  width: 100%;
   height: 3rem;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
@@ -56,7 +62,7 @@
 }
 
 .auth button {
-  width: 30rem;
+  width: 100%;
   display: inline-block;
   font: inherit;
   background: none;
@@ -68,10 +74,16 @@
   line-height: 1.8;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
-  padding: 0 2.4rem;
+
   margin: 0.2rem 0 0 0.15rem;
 }
 
 .auth-reg-wrap {
   margin: 3em 0;
+}
+.forget-pass {
+  text-align: center;
+  margin: 2em 0;
+  width: 100%;
+  color: blue;
 }

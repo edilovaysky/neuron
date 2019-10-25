@@ -1,14 +1,14 @@
-import './AuthMenu.scss';
+import './MainMenu.scss';
 
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Logo } from 'components/Logo';
 
-export class AuthMenu extends Component {
+export class MainMenu extends Component {
   render() {
     return (
-      <div className="auth-menu-wrap">
-        <ul className="auth-menu">
+      <div className="main-menu-wrap">
+        <ul className="main-menu">
           <Logo />
           <li>
             <Link to="/home">
@@ -23,6 +23,11 @@ export class AuthMenu extends Component {
           <li>
             <Link to="/reg">
               <p>регистрация</p>
+            </Link>
+          </li>
+          <li>
+            <Link to="/feedback">
+              <p>написать</p>
             </Link>
           </li>
         </ul>

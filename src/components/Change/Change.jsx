@@ -1,10 +1,10 @@
 import './Change.scss';
 
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+//import { connect } from 'react-redux';
 
 import PropTypes from 'prop-types';
-import { equal } from 'assert';
+//import { equal } from 'assert';
 
 //import { load } from 'actions/auth';
 
@@ -18,11 +18,14 @@ export class Change extends Component {
   }
 
   handleChange = () => {
-    const { userToEdit } = this.props;
+    const { userToEdit, parent } = this.props;
     const id = userToEdit._id;
+
     let { password, passwordRepeat } = this.state;
     password = password.replace(/\s/g, '');
     passwordRepeat = passwordRepeat.replace(/\s/g, '');
+
+    const passChange = true;
     if (password !== passwordRepeat) {
       alert('Вы ввели не одинаковые пароли.');
     }
@@ -34,16 +37,24 @@ export class Change extends Component {
         },
         body: JSON.stringify({
           password,
+          parent,
+          passChange,
         }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Wrong credentials');
-        }
-        console.log('succesful changing');
-        alert('Ваш пароль успешно обнавлен.');
-        return response.json();
-      });
-      //.then(data => {});
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Wrong credentials');
+          }
+          console.log('succesful changing');
+          alert('Ваш пароль успешно обнавлен.');
+          return response.json();
+        })
+        .then(data => {
+          const { onSuccessPassChange } = this.props;
+          if (onSuccessPassChange !== 'undefined') {
+            onSuccessPassChange();
+          }
+        });
     }
   };
 
@@ -51,14 +62,14 @@ export class Change extends Component {
     this.setState({
       [name]: value,
     });
-    console.log({ [name]: value });
+    console.log(name, value);
   };
   render() {
     const { passwordRepeat, password } = this.props;
     return (
       <>
-        <div className="auth-wrap">
-          <div className="auth">
+        <div className="change-wrap">
+          <div className="change">
             <h3>изменение пароля </h3>
             <input
               required
