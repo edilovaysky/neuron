@@ -12,8 +12,8 @@ export class GetLesson extends Component {
   handleGetLesson = () => {};
 
   render() {
-    //console.log(this.props);
     const { url } = this.props;
+
     let video;
     if (!url) {
       video = (

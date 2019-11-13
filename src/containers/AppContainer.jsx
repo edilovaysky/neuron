@@ -10,10 +10,12 @@ import { MainMenu } from 'components/MainMenu';
 import { Auth } from 'components/Auth';
 import { Office } from 'components/Office';
 import { Registration } from 'components/Registration';
-import { TestMail } from 'components/Registration/TestMail';
+import { SellPlate } from 'components/SellPlate';
 import { MakeUserActive } from 'components/MakeUserActive';
 import { MakePassRecover } from 'components/MakePassRecover';
 import { UserFeedBack } from 'components/UserFeedBack';
+import { ForTest } from 'components/ForTest';
+import { Xcom } from 'components/Xcom';
 
 class App extends Component {
   state = {
@@ -28,6 +30,9 @@ class App extends Component {
 
   handleSuccess = () => {
     this.setState({ token: this.props.user.token });
+    if (!this.props.user.token) {
+      alert('неправильный пароль или имя пользователя');
+    }
   };
 
   handleSignOut = () => {
@@ -48,7 +53,7 @@ class App extends Component {
           {!token || token == '' || token == null ? (
             <MainMenu />
           ) : (
-            <Redirect from="*" to="/my-office" />
+            <Redirect from="*" to="/office" />
           )}
         </div>
         <Switch>
@@ -64,7 +69,18 @@ class App extends Component {
             )}
             exect
           />
-          <Route path="/home" render={() => <TestMail />} exact />
+          <Route
+            path="/"
+            render={() => (
+              <>
+                {/*   <Xcom /> */}
+                {/* <SellPlate /> */}
+                <ForTest />
+                <h1 className="intro-h1">The main page of the site.</h1>
+              </>
+            )}
+            exact
+          />
           <Route path="/feedback" render={() => <UserFeedBack />} exact />
           {!successReg ? (
             <Route
@@ -79,7 +95,7 @@ class App extends Component {
           )}
           {token && (
             <Route
-              path="/my-office"
+              path="/office"
               render={() => <Office onSignOut={this.handleSignOut} />}
               exact
             />
@@ -92,7 +108,7 @@ class App extends Component {
               exact
             />
           ) : (
-            <Redirect from="/auth" to="/my-office" />
+            <Redirect from="/auth" to="/office" />
           )}
         </Switch>
       </>

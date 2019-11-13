@@ -28,6 +28,7 @@ export class Lesson extends Component {
           return response.json();
         })
         .then(data => {
+          console.log(data);
           this.setState({
             lessons: [...this.state.lessons, data],
           });

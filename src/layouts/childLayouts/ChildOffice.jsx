@@ -7,9 +7,12 @@ import { Editing } from '../../components/Editing/Editing';
 
 export class ChildOffice extends Component {
   render() {
-    const { officeOfChild } = this.props;
+    const { officeOfChild, parent } = this.props;
     const name = `${officeOfChild.user.firstName} ${officeOfChild.user.lastName}`;
     const userToEdit = officeOfChild.user;
+    if (parent) {
+      userToEdit.email = parent.email;
+    }
 
     return (
       <div className="child-office-wraper">

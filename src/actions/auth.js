@@ -49,3 +49,9 @@ export const unAuth = () => (dispatch, getState) => {
   const data = {};
   dispatch(authDataReceived(data));
 };
+
+export const reAuth = data => (dispatch, getState) => {
+  dispatch(authStart());
+  console.log('reauth: ', data);
+  dispatch(authDataReceived(data));
+};

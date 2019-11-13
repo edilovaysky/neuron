@@ -6,11 +6,12 @@ import PropTypes from 'prop-types';
 import { unAuth } from 'actions/auth';
 
 class ProfileSettings extends Component {
+  isUserActive = this.props.user.user.active;
   state = {
     name: '',
     status: '',
     gen: '',
-    active: this.props.user.user.active,
+    active: this.isUserActive,
   };
   componentDidMount() {
     this.setState({
@@ -32,6 +33,7 @@ class ProfileSettings extends Component {
   };
   render() {
     const { name, status, gen, active } = this.state;
+
     let mapping;
     if (gen == 'm' || '') {
       mapping = {

@@ -49,7 +49,7 @@ export class Theme extends Component {
       theme = themes.map(i => {
         if (i.theme) {
           return (
-            <li key={i._id} className="theme-list-item">
+            <li key={i.theme._id} className="theme-list-item">
               {i.theme.theme}
               <Lesson lessonIds={i.theme.lessons} />
             </li>

@@ -29,19 +29,28 @@
   margin: 0.2rem;
 }
 
+.button-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+
 .change button {
-  width: 20rem;
+  width: 9em;
   display: inline-block;
   font: inherit;
   background: none;
   color: inherit;
   padding: 0;
   cursor: pointer;
-  font-size: 1.4rem;
-  font-weight: 600;
+  //font-size: 1.4rem;
+  font-weight: 500;
   line-height: 1.8;
   border: 0.1rem solid #dbdbdb;
   border-radius: 0.3rem;
-  padding: 0 2.4rem;
+  //padding: 0 2.4rem;
   margin: 0.2rem 0 0 0.15rem;
+}
+
+.change button:hover {
+  font-weight: 600;
 }

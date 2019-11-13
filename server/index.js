@@ -13,7 +13,7 @@ const S3 = require('aws-sdk/clients/s3');
 const s3Cloudtech = {
   accessKeyId: 'B470X0W436MO5F8C3HM5',
   secretAccessKey: 'fQ9gEiCWHdxnKntUYyZvMwwMIBU5Pc2BO0oW8R7G',
-  endpoint: ' https://s3.pilw.io:8080/',
+  endpoint: ' https://s3.Cloudtech:8080/',
 };
 
 const s3Mail = {
@@ -21,13 +21,30 @@ const s3Mail = {
   secretAccessKey: '4A6gk1f3oo7K55nWuqzBKynaTuCpJkxopbm4c3eUXzE1',
   region: 'ru-msk',
   endpoint: 'http://hb.bizmrg.com',
+  queueSize: '1',
+  timeout: '0',
+};
+
+const s3Airnode = {
+  accessKeyId: 'ca94494ba5544cdc90660a8ca3b40415',
+  secretAccessKey: 'd6359c336f454b439fff982cc25ba079',
+  region: 'RegionOne',
+  endpoint: 'https://mgmt.airnode.ru:8080',
+};
+
+const s3Amazon = {
+  secretAccessKey: 'syy2UQhWEzJL+HBYFEdeumEsLzJMe8aD5nRzMRQq',
+  region: 'us-east-1',
+  endpoint: 'https://s3.us-east-1.amazonaws.com',
 };
 
 AWS.config.update({
-  accessKeyId: s3Mail.accessKeyId,
-  secretAccessKey: s3Mail.secretAccessKey,
-  region: 'ru-msk',
-  endpoint: s3Mail.endpoint,
+  accessKeyId: s3Airnode.accessKeyId,
+  secretAccessKey: s3Airnode.secretAccessKey,
+  region: s3Airnode.region,
+  endpoint: s3Airnode.endpoint,
+  // queueSize: s3Mail.queueSize,
+  // timeout: s3Mail.timeout,
 });
 
 const neuronStore = new AWS.S3();
@@ -48,7 +65,15 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 var multer = require('multer');
 var uploadFromUser = multer().single('file');
-const formData = require('express-form-data');
+//const formData = require('express-form-data');
+const nodemailer = require('nodemailer');
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: 'neuronmailsender@gmail.com',
+    pass: 'G*T2ntT1pYcn',
+  },
+});
 
 mongoose.set('useFindAndModify', false);
 
@@ -73,14 +98,6 @@ const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
 const TempUser = require('./models/tempuser');
 const Payment = require('./models/payment');
-
-/******************************************************
- *****       send mail          ***********************
- ******************************************************
- */
-
-const nodemailer = require('nodemailer');
-const smtpTransport = require('nodemailer-smtp-transport');
 
 /**********************************************************
  *****      AUTH SECTION            ***********************
@@ -332,7 +349,7 @@ app.get('/tempusers', async (req, res) => {
 
 app.put('/users/:id', async (req, res) => {
   const { passChange, parent } = req.body;
-  console.log(parent, passChange);
+  console.log('comes from front  ', req.body);
   let user;
   let userData = req.body;
   let updatedUser;
@@ -345,7 +362,7 @@ app.put('/users/:id', async (req, res) => {
     }
   }
 
-  user = await User.findByIdAndUpdate(req.params.id, req.body);
+  user = await User.findByIdAndUpdate(req.params.id, userData);
 
   if (user) {
     updatedUser = await User.findById(user._id);
@@ -353,10 +370,10 @@ app.put('/users/:id', async (req, res) => {
 
   console.log(parent, passChange);
 
-  if (passChange && parent) {
+  if (passChange) {
     const to = user.email;
     const subject = 'Изменение пароля на портале Neuron-school.ru';
-    const text = `<p>Здравствуйте, </p> <h3>${user.firstName} ${user.lastName}</h3>
+    const text = `<p>Здравствуйте, </p> <h3>${updatedUser.firstName} ${updatedUser.lastName}</h3>
    <p>Вы изменили свой пароль на портале Neuron-school. Если это были не Вы, свяжитель с администрацией сайта, а если это сделати Вы:</p> 
    <br> <p>Ваш новый пароль: ${updatedUser.password} - никому не сообщайте его.</p>
    <br><p> С уважением команда портала.</p>`;
@@ -380,34 +397,9 @@ app.put('/users/:id', async (req, res) => {
       }
     );
   }
-  if (passChange && !parent) {
-    const to = user.email;
-    const subject = 'Изменение пароля на портале Neuron-school.ru';
-    const text = `<p>Здравствуйте, </p> 
-   <p>Вы изменили пароль своего ребенка на портале Neuron-school. Если это были не Вы, свяжитель с администрацией сайта, а если это сделати Вы:</p> 
-   <br> <p>Новый пароль для входа пользователя ${user.fileName} ${user.lastName}: ${updatedUser.password} - никому не сообщайте его, кроме ребенка.</p>
-   <br><p> С уважением команда портала.</p>`;
 
-    ses.send(
-      {
-        from: 'Dotschool <dotschool.team@gmail.com>',
-        to: [to],
-        replyTo: ['Dotschool <dotschool.team@gmail.com>'],
-        subject: subject,
-        body: {
-          text: 'some text',
-          html: text,
-        },
-      },
-      (err, data) => {
-        if (err) {
-          console.log('an error occured: ', err);
-        }
-        console.log('an answer data: ', data);
-      }
-    );
-  }
-
+  user = updatedUser;
+  user.password = null;
   res.json({ user });
 });
 
@@ -803,20 +795,22 @@ app.put('/lesson/delete/:id', async (req, res) => {
     console.log(theme);
   }
   let lessonToDel = await Lesson.findById(lessonId);
-  let fileName = lessonToDel.fileName;
-  if (fileName) {
-    neuronStore.deleteObject(
-      {
-        Bucket: 'neuron-bucket',
-        Key: `lessons/${lessonId}/${fileName}`,
-      },
-      (err, data) => {
-        if (err) console.log(err, err.stack);
-        // an error occurred
-        else console.log('deleted obj     ' + data); // successful response
-        res.json('successful doc delete');
-      }
-    );
+  if (lessonToDel) {
+    let fileName = lessonToDel.fileName;
+    if (fileName) {
+      neuronStore.deleteObject(
+        {
+          Bucket: 'neuron',
+          Key: `lessons/${lessonId}/${fileName}`,
+        },
+        (err, data) => {
+          if (err) console.log(err, err.stack);
+          // an error occurred
+          else console.log('deleted obj     ' + data); // successful response
+          res.json('successful doc delete');
+        }
+      );
+    }
   }
 
   const lesson = await Lesson.findByIdAndDelete(lessonId, (err, result) => {
@@ -824,7 +818,7 @@ app.put('/lesson/delete/:id', async (req, res) => {
       console.log(err);
     }
   });
-  //res.json({ lesson });
+  res.json({ lesson });
 });
 
 app.get('/lesson', async (req, res) => {
@@ -834,11 +828,11 @@ app.get('/lesson', async (req, res) => {
 
 app.get('/lesson/:id', async (req, res) => {
   const lessonId = req.params.id;
-  console.log(lessonId);
+
   const lesson = await Lesson.findById(lessonId);
   const fileName = lesson.fileName;
   if (lessonId && fileName) {
-    neuronStore.getObject(
+    /*  neuronStore.getObject(
       {
         Bucket: 'neuron-bucket',
         Key: `lessons/${lessonId}/${fileName}`,
@@ -849,7 +843,9 @@ app.get('/lesson/:id', async (req, res) => {
         //console.log(data); // successful response
         else res.json({ data });
       }
-    );
+    ); */
+    const url = `https://mgmt.airnode.ru:8080/swift/v1/3faea6fc2cd24edda555f2a7b559ac50/neuron/lessons/${lessonId}/${fileName}`;
+    res.json({ url, lesson });
   }
   //res.json({ lesson });
 });
@@ -908,7 +904,7 @@ app.put('/upload/udoc', async (req, res) => {
         neuronStore.putObject(
           {
             Body: file,
-            Bucket: 'neuron',
+            Bucket: 'neuron-bucket',
             Key: `udoc/${userId}/${userDocId}/${docName}`,
           },
           (err, data) => {
@@ -976,44 +972,38 @@ app.get('/udoc/del/:id', async (req, res) => {
   }
 });
 
-//TEST
-app.post('/test-mail', async (req, res) => {
-  /* const d = new Date().valueOf();
-  console.log(d);
-  const month = 60000 * 60 * 24 * 30;
-  console.log(month);
-  const course = d + month;
-  console.log(new Date(course).toUTCString()); */
-
-  let sender;
-  ses.listVerifiedEmailAddresses(function(result) {
-    console.log(result);
-  });
-  const linkToActiveUser = `https://neuron-school/active`;
-  const to = ['test@dotschool.bizml.ru'];
-  const subject = 'регистрация на портале Neuron-school.ru';
-  const text = `Здравствуйте, Вы зарегестрировались на портале Neuron-school. Ваш логин для входа, Ваш пароль для входа . 
-    Чтобы активировать Ваш аккаунт Вам необходимо перейти по ссылке <a href=${linkToActiveUser}>Подтвердить адрес</a> . С уважением команда портала.`;
-  console.log(sender);
-  ses.send(
+//FOR TEST
+app.put('/lessons/delete', async (req, res) => {
+  neuronStore.deleteObject(
     {
-      from: 'Dotschool <dotschool.team@gmail.com>',
-      to: to,
-      replyTo: [sender],
-      subject: subject,
-      body: {
-        text: 'some text',
-        html: text,
-      },
+      Bucket: 'neuron',
+      Key: `lessons/lessons//`,
     },
     (err, data) => {
-      if (err) {
-        console.log('an error occured: ', err);
-      }
-      console.log('an answer data: ', data);
-      res.json({ data });
+      if (err) console.log(err, err.stack);
+      // an error occurred
+      else console.log('deleted obj     ' + data); // successful response
+      res.json('successful doc delete');
     }
   );
+});
+
+app.put('/email-test', async (req, res) => {
+  console.log(req.body);
+  const mailOptions = {
+    from: `Team of Neuron-school <neuronmailsender@gmail.com>`,
+    to: 'test@dotschool.bizml.ru',
+    subject: 'hello from app',
+    html: `Hello, from smtp mail.ru <br> `,
+  };
+  transporter.sendMail(mailOptions, (error, response) => {
+    if (error) {
+      console.log(error);
+    }
+    if (response) {
+      console.log(response);
+    }
+  });
 });
 
 //APP PORT

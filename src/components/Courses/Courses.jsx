@@ -49,6 +49,7 @@ export class Courses extends Component {
   render() {
     const { display } = this.state;
     const { courses } = this.props;
+
     const course = courses.course.map(course => {
       return <Course key={course._id} {...course} />;
     });
