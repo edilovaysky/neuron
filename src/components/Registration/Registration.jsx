@@ -299,7 +299,10 @@ export class Registration extends Component {
                     <br />
                   </>
                 )}
-                <span>* пароль для входа в личный кабинет:</span>
+                {!child && <span>* пароль для входа в личный кабинет:</span>}
+                {child && (
+                  <span>* пароль для входа в личный кабинет ребенка:</span>
+                )}
                 <input
                   required
                   onChange={this.handleTextChange}

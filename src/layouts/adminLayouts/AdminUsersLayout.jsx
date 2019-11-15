@@ -14,6 +14,7 @@ class AdminUsersLayouts extends Component {
     id: this.props.user.user._id,
     instructions: '',
     allusers: '',
+    allchild: '',
     allteachers: '',
     reg: '',
     fetchStatus: '',
@@ -28,6 +29,7 @@ class AdminUsersLayouts extends Component {
       this.setState({
         instructions: 'active',
         allusers: '',
+        allchild: '',
         allteachers: '',
         reg: '',
         fetchStatus: '',
@@ -39,9 +41,22 @@ class AdminUsersLayouts extends Component {
       this.setState({
         instructions: '',
         allusers: 'active',
+        allchild: '',
         allteachers: '',
         reg: '',
         fetchStatus: 'user',
+        alladmins: '',
+        active: true,
+      });
+    }
+    if (value == 'allchild') {
+      this.setState({
+        instructions: '',
+        allusers: '',
+        allchild: 'active',
+        allteachers: '',
+        reg: '',
+        fetchStatus: 'child',
         alladmins: '',
         active: true,
       });
@@ -50,6 +65,7 @@ class AdminUsersLayouts extends Component {
       this.setState({
         instructions: '',
         allusers: '',
+        allchild: '',
         allteachers: 'active',
         reg: '',
         fetchStatus: 'teacher',
@@ -61,6 +77,7 @@ class AdminUsersLayouts extends Component {
       this.setState({
         instructions: '',
         allusers: '',
+        allchild: '',
         allteachers: '',
         reg: 'active',
         fetchStatus: '',
@@ -72,6 +89,7 @@ class AdminUsersLayouts extends Component {
       this.setState({
         instructions: '',
         allusers: '',
+        allchild: '',
         allteachers: '',
         reg: '',
         fetchStatus: 'admin',
@@ -98,6 +116,7 @@ class AdminUsersLayouts extends Component {
       status,
       instructions,
       allusers,
+      allchild,
       allteachers,
       alladmins,
       reg,
@@ -105,6 +124,7 @@ class AdminUsersLayouts extends Component {
       alert,
     } = this.state;
     const users = this.props.users;
+
     const page = 'otherPages';
     return (
       <>
@@ -118,7 +138,10 @@ class AdminUsersLayouts extends Component {
             инструкции
           </li>
           <li id="allusers" className={`${allusers}`} onClick={this.handleMenu}>
-            все пользователи
+            все родители
+          </li>
+          <li id="allchild" className={`${allchild}`} onClick={this.handleMenu}>
+            все ученики
           </li>
           <li
             id="allteachers"
@@ -144,6 +167,16 @@ class AdminUsersLayouts extends Component {
           {reg == 'active' && <Registration adminStatus={status} />}
           {instructions == 'active' && <AdminInstruction />}
           {allusers == 'active' && (
+            <Users
+              users={users}
+              status={fetchStatus}
+              page={page}
+              active={active}
+              userStatus={status}
+              userId={id}
+            />
+          )}
+          {allchild == 'active' && (
             <Users
               users={users}
               status={fetchStatus}

@@ -6,7 +6,7 @@ export class SuperSideBar extends Component {
     classes: '',
     courses: '',
     tutors: '',
-    sup: '',
+    sellBoxes: '',
   };
   handleEnter = event => {
     const { onEnter } = this.props;
@@ -18,7 +18,7 @@ export class SuperSideBar extends Component {
         classes: '',
         courses: '',
         tutors: '',
-        sup: '',
+        sellBoxes: '',
       });
     }
     if (value == 'all-classes') {
@@ -27,7 +27,7 @@ export class SuperSideBar extends Component {
         classes: 'active',
         courses: '',
         tutors: '',
-        sup: '',
+        sellBoxes: '',
       });
     }
     if (value == 'all-courses') {
@@ -36,7 +36,7 @@ export class SuperSideBar extends Component {
         classes: '',
         courses: 'active',
         tutors: '',
-        sup: '',
+        sellBoxes: '',
       });
     }
     if (value == 'all-tutors') {
@@ -45,22 +45,22 @@ export class SuperSideBar extends Component {
         classes: '',
         courses: '',
         tutors: 'active',
-        sup: '',
+        sellBoxes: '',
       });
     }
-    if (value == 'super') {
+    if (value == 'sellBoxes') {
       this.setState({
         users: '',
         classes: '',
         courses: '',
         tutors: '',
-        sup: 'active',
+        sellBoxes: 'active',
       });
     }
     event.preventDefault();
   };
   render() {
-    const { classes, users, courses, tutors, sup } = this.state;
+    const { classes, users, courses, tutors, sellBoxes } = this.state;
     return (
       <>
         <div className="side-nav-bar">
@@ -95,11 +95,11 @@ export class SuperSideBar extends Component {
               репетиторы
             </li>
             <li
-              id="super"
-              className={`side-btn-${sup}`}
+              id="sellBoxes"
+              className={`side-btn-${sellBoxes}`}
               onClick={this.handleEnter}
             >
-              i super
+              sellBoxes
             </li>
           </ul>
         </div>

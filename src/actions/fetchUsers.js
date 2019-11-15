@@ -9,7 +9,6 @@ export const fetchUsersErrorOccured = createAction(
 );
 
 export const loadUsers = fetchStatus => (dispatch, getState) => {
-  console.log(fetchStatus);
   dispatch(fetchUsersStart());
   fetch(`http://localhost:8888/users?status=${fetchStatus}`, {
     headers: {

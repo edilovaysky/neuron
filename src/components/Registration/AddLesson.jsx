@@ -37,21 +37,20 @@ export class AddLesson extends Component {
       },
     })
       .then(response => {
-        console.log(response);
         if (!response.ok) {
           throw new Error('Wrong credentials');
         }
         return response.json(response);
       })
       .then(data => {
-        console.log(data);
-        const bufferArr = data.data.Body.data;
+        const { url } = data;
+        /* const bufferArr = data.data.Body.data;
         // Obtain a blob: URL for the video data.
         const arrayBufferView = new Uint8Array(bufferArr);
         const blob = new Blob([arrayBufferView], { type: 'video/mp4' });
         const urlCreator = window.URL || window.webkitURL;
-        const videoUrl = urlCreator.createObjectURL(blob);
-        this.setState({ url: videoUrl });
+        const videoUrl = urlCreator.createObjectURL(blob); */
+        this.setState({ url: url });
       });
   };
 
@@ -106,6 +105,9 @@ export class AddLesson extends Component {
         if (response.data == 'Файл с этим именем уже существует') {
           alert(response.data);
           console.log('failed file upload');
+        }
+        if ((respose.data = 'video was uploaded')) {
+          alert('видео было успешно загружено');
         }
       })
       .catch(error => {
@@ -174,7 +176,7 @@ export class AddLesson extends Component {
     this.fetchLesson();
   };
 
-  handleGetVideoToLesson = () => {
+  handleGetLessonToVideo = () => {
     this.fetchLesson();
   };
 
@@ -294,7 +296,7 @@ export class AddLesson extends Component {
               <>
                 <span
                   className="click-span"
-                  onClick={this.handleGetVideoToLesson}
+                  onClick={this.handleGetLessonToVideo}
                 >
                   выберите урок к которому хотите добавить видео
                 </span>

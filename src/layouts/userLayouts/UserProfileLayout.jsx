@@ -119,7 +119,6 @@ class UserProfileLayouts extends Component {
       })
       .then(data => {
         this.setState({ foundChild: [...this.state.foundChild, data] });
-        console.log('the child was found');
       });
   };
   handleShowHint = () => {
@@ -182,7 +181,11 @@ class UserProfileLayouts extends Component {
     let name;
     let status;
     if (user && user.status == 'user') {
-      name = `${user.firstName} ${user.patronymic}`;
+      if (user.patronymic) {
+        name = `${user.firstName} ${user.patronymic}`;
+      } else {
+        name = `${user.firstName}`;
+      }
       status = user.status;
     }
     if (user && user.status == 'child') {
@@ -198,7 +201,9 @@ class UserProfileLayouts extends Component {
             {displayHint && <Hint />}
           </>
         )}
-        {displayChildOffice && <ChildOffice officeOfChild={officeOfChild} />}
+        {displayChildOffice && (
+          <ChildOffice officeOfChild={officeOfChild} parent={user} />
+        )}
         {status == 'child' && (
           <p className="user-profile-name"> Привет, {name}!</p>
         )}
@@ -220,13 +225,15 @@ class UserProfileLayouts extends Component {
           <li id="change" className={`${change}`} onClick={this.handleMenu}>
             изменить пароль
           </li>
-          <li
-            id="child-profile"
-            className={`${childProfile}`}
-            onClick={this.handleMenu}
-          >
-            зарегистрировать ребенка
-          </li>
+          {status !== 'child' && (
+            <li
+              id="child-profile"
+              className={`${childProfile}`}
+              onClick={this.handleMenu}
+            >
+              зарегистрировать ребенка
+            </li>
+          )}
         </ul>
         <div className="layout-wraper">
           {instructions == 'active' && <UserInstruction />}

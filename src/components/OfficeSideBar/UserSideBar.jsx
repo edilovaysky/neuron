@@ -6,6 +6,7 @@ export class UserSideBar extends Component {
     courses: '',
     tutor: '',
     userProfile: '',
+    sellPage: '',
   };
   handleEnter = event => {
     const { onEnter } = this.props;
@@ -17,6 +18,7 @@ export class UserSideBar extends Component {
         courses: '',
         tutor: '',
         userProfile: '',
+        sellPage: '',
       });
     }
     if (value == 'courses') {
@@ -25,6 +27,7 @@ export class UserSideBar extends Component {
         classRoom: '',
         tutor: '',
         userProfile: '',
+        sellPage: '',
       });
     }
     if (value == 'tutor') {
@@ -33,6 +36,7 @@ export class UserSideBar extends Component {
         classRoom: '',
         courses: '',
         userProfile: '',
+        sellPage: '',
       });
     }
     if (value == 'user-profile') {
@@ -41,13 +45,23 @@ export class UserSideBar extends Component {
         classRoom: '',
         courses: '',
         userProfile: 'active',
+        sellPage: '',
+      });
+    }
+    if (value == 'sellPage') {
+      this.setState({
+        tutor: '',
+        classRoom: '',
+        courses: '',
+        userProfile: '',
+        sellPage: 'active',
       });
     }
 
     event.preventDefault();
   };
   render() {
-    const { classRoom, courses, tutor, userProfile } = this.state;
+    const { classRoom, courses, tutor, userProfile, sellPage } = this.state;
     const { status } = this.props;
     return (
       <>
@@ -60,6 +74,13 @@ export class UserSideBar extends Component {
               onClick={this.handleEnter}
             >
               {status == 'user' ? <>профиль</> : <>мой профиль</>}
+            </li>
+            <li
+              id="sellPage"
+              className={`side-btn-${sellPage}`}
+              onClick={this.handleEnter}
+            >
+              <>все курсы</>
             </li>
             <li
               id="classRoom"

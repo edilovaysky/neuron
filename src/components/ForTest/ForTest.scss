@@ -1,0 +1,12 @@
+.for-test-wrapper {
+  margin: 2em 0;
+  display: flex;
+  justify-content: center;
+}
+.for-test-wrapper p {
+  display: block;
+  width: fit-content;
+  padding: 0.2em 0.5em;
+  border: solid 0.1em rgb(90, 203, 231);
+  border-radius: 0.2em;
+}

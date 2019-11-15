@@ -8,7 +8,7 @@ import { TutorLayout } from 'layouts/userLayouts/TutorLayout';
 
 import { ITutorLayout } from 'layouts/teacherLayouts/ITutorLayout';
 import { ClassesLayout } from 'layouts/teacherLayouts/ClassesLayout';
-
+import { SellPlate } from 'components/SellPlate';
 import { AdminClassesLayout } from 'layouts/adminLayouts/AdminClassesLayout';
 import { AdminCoursesLayout } from 'layouts/adminLayouts/AdminCoursesLayout';
 import { AdminTutorsLayout } from 'layouts/adminLayouts/AdminTutorsLayout';
@@ -17,6 +17,7 @@ import { UserProfileLayout } from 'layouts/userLayouts/UserProfileLayout';
 
 import { TeacherProfileLayout } from 'layouts/teacherLayouts/TeacherProfileLayout';
 import { AdminDefaultLayout } from 'layouts/adminLayouts/AdminDefaultLayout';
+import { AdminSellBoxesLayout } from 'layouts/adminLayouts/AdminSellBoxesLayout';
 
 export class OfficeBody extends Component {
   render() {
@@ -39,7 +40,8 @@ export class OfficeBody extends Component {
             {layout == 'all-users' && <AdminUsersLayout />}
             {layout == 'all-tutors' && <AdminTutorsLayout />}
             {layout == 'user-profile' && <UserProfileLayout />}
-
+            {layout == 'sellPage' && <SellPlate />}
+            {layout == 'sellBoxes' && <AdminSellBoxesLayout />}
             {layout == 'teacher-profile' && <TeacherProfileLayout />}
           </section>
         </div>

@@ -1,13 +1,15 @@
 import './Editing.scss';
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import io from 'socket.io-client';
 const socket = io.connect('http://localhost:8888');
 import { DragAndDrop } from 'components/DragAndDrop';
+import { reAuth } from 'actions/auth';
 
 import PropTypes from 'prop-types';
 
-export class Editing extends Component {
+export class EditingStart extends Component {
   constructor(props) {
     super(props);
     const { userToEdit } = this.props;
@@ -60,7 +62,7 @@ export class Editing extends Component {
   }
 
   handleEdit = () => {
-    const { userToEdit, reAuth } = this.props;
+    const { userToEdit } = this.props;
     const id = userToEdit._id;
     //const active = userToEdit.active;
 
@@ -78,17 +80,21 @@ export class Editing extends Component {
       gen,
       prevData,
     } = this.state;
+
     let url;
     let needToAppove = false;
     let responseMessage;
-    console.log(firstName, 'prevData:  ', prevData.firstName);
-    if (firstName == '' && lastName == '' && dateOfBirth == '') {
-      console.log('to user editing worked');
+    //console.log(firstName, 'prevData:  ', prevData.firstName);
+    if (
+      (firstName == '' && lastName == '' && dateOfBirth == '') ||
+      userToEdit.status !== 'child'
+    ) {
+      //console.log('to user editing worked');
       url = `http://localhost:8888/users/${id}`;
       responseMessage = 'Учетная запись успешно отредактирована.';
     }
     if (!firstName == '' || !lastName == '' || !dateOfBirth == '') {
-      console.log('to admin approve worked');
+      //console.log('to admin approve worked');
       needToAppove = true;
     }
 
@@ -134,12 +140,26 @@ export class Editing extends Component {
         .replace(/\s/g, '')
         .replace(/\(/, '')
         .replace(/\)/, '');
-      console.log(tel);
     }
     if (email) {
       email = email.replace(/\s/g, '');
     }
 
+    if (
+      userToEdit.firstName == firstName &&
+      userToEdit.patronymic == patronymic &&
+      userToEdit.lastName == lastName &&
+      userToEdit.active == active &&
+      userToEdit.utc == utc &&
+      userToEdit.dateOfBirth == dateOfBirth &&
+      userToEdit.tel == tel &&
+      userToEdit.email == email &&
+      userToEdit.gen == gen
+    ) {
+      responseMessage = `Отредактируйте данные прежде чем нажать "отправить".`;
+      alert(responseMessage);
+      return;
+    }
     if (url) {
       fetch(url, {
         method: 'PUT',
@@ -158,19 +178,27 @@ export class Editing extends Component {
           email,
           gen,
         }),
-      }).then(response => {
-        if (!response.ok) {
-          throw new Error('Wrong credentials');
-        }
-        console.log(responseMessage);
-        alert(responseMessage);
-        return response.json();
-      });
-      // reAuth();
-      //.then(data => {});
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Wrong credentials');
+          }
+          console.log(responseMessage);
+          alert(responseMessage);
+          return response.json();
+        })
+        .then(data => {
+          const { userReAuth } = this.props;
+          const token = this.props.user.token;
+          const { user } = data;
+          console.log(userToEdit.status);
+          if (userToEdit.status == 'user') {
+            userReAuth({ token: token, user });
+          }
+        });
     }
 
-    if (needToAppove) {
+    if (needToAppove && userToEdit.status == 'child') {
       const userId = id;
       const data = {
         userId,
@@ -251,12 +279,15 @@ export class Editing extends Component {
       displayEdit,
       prevData,
     } = this.state;
-    console.log(active);
+
     const { userStatus, userToEdit } = this.props;
+
     const docType = 'udoc';
     let userId;
+    let userGen;
     if (userToEdit) {
       userId = userToEdit._id;
+      userGen = userToEdit.gen;
     }
 
     const isActive = this.isUserActive();
@@ -264,14 +295,14 @@ export class Editing extends Component {
       <>
         <div className="editing-wrap">
           <div className="editing">
-            {userStatus == 'admin' && (
+            {userStatus == 'admin' && !child && (
               <h3 onClick={this.handelDisplayEdit}>
-                редактирование пользователей
+                редактирование данных пользователя
               </h3>
             )}
-            {userStatus == 'esquire' && (
+            {userStatus == 'esquire' && !child && (
               <h3 onClick={this.handelDisplayEdit}>
-                редактирование пользователей
+                редактирование данных пользователя
               </h3>
             )}
             {userStatus == 'user' && (
@@ -317,12 +348,17 @@ export class Editing extends Component {
                   placeholder={prevData.lastName}
                 />
                 <br />
-                <span>укажите пол</span>
-                <select name="gen" onChange={this.handleTextChange}>
-                  <option defaultValue>пол</option>
-                  <option value="m">муж</option>
-                  <option value="f">жен</option>
-                </select>
+                {!userGen && (
+                  <>
+                    {' '}
+                    <span>укажите пол</span>
+                    <select name="gen" onChange={this.handleTextChange}>
+                      <option defaultValue>пол</option>
+                      <option value="m">муж</option>
+                      <option value="f">жен</option>
+                    </select>
+                  </>
+                )}
                 <span>*Дата рождения:</span>
                 <input
                   required
@@ -363,7 +399,7 @@ export class Editing extends Component {
                   <option value="12">UTC(GTM) +12 (Новая Зеландия)</option>
                 </select>
                 <br />
-                <span>телефон родителя:</span>
+                <span>телефон:</span>
                 <input
                   required
                   onChange={this.handleTextChange}
@@ -383,7 +419,7 @@ export class Editing extends Component {
                   placeholder={prevData.email}
                 />
                 <br />
-                {child && (
+                {child && userStatus !== 'admin' && userStatus !== 'esquire' && (
                   <>
                     <span>прокомментируйте причину редактирования</span>
                     <textarea
@@ -412,3 +448,20 @@ export class Editing extends Component {
     );
   }
 }
+
+function mapStateToProps(state, props) {
+  return {
+    user: state.userAuth.entries,
+  };
+}
+
+function mapDispatchToProps(dispatch, props) {
+  return {
+    userReAuth: data => dispatch(reAuth(data)),
+  };
+}
+
+export const Editing = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(EditingStart);

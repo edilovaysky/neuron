@@ -11,7 +11,7 @@ export class MainMenu extends Component {
         <ul className="main-menu">
           <Logo />
           <li>
-            <Link to="/home">
+            <Link to="/">
               <p>главная</p>
             </Link>
           </li>

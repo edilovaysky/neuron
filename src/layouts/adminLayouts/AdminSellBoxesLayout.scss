@@ -1,0 +1,60 @@
+.sell-box-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  max-width: 100%;
+  margin-left: auto;
+}
+.sell-box-block-wrapper {
+  display: flex;
+}
+.sell-box-course-block-wrapper {
+  display: flex;
+  width: 80%;
+  margin: 1.5em 0;
+}
+.sell-box-list-block-wrapper {
+  display: flex;
+  width: 80%;
+  margin: 1.5em 0;
+}
+.sell-box-list-block-wrapper label {
+  margin: 0.2em 0 0 0;
+}
+.sell-box-wrapper input {
+  width: auto;
+  height: 3rem;
+  border: none;
+  border-bottom: 0.1em solid darkblue;
+  margin: 0.2rem;
+}
+.sell-box-wrapper input:focus {
+  outline: none;
+}
+
+.sell-box-wrapper select {
+  width: auto;
+  height: 3rem;
+  border: none;
+  border-bottom: 0.1em solid darkblue;
+  margin: 0.2rem;
+}
+.sell-box-wrapper select:focus {
+  outline: none;
+}
+.sell-box-btn {
+  width: 50%;
+  display: inline-block;
+  font: inherit;
+  background: none;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+  font-size: 1.4rem;
+  font-weight: 500;
+  line-height: 1.8;
+  border: 0.1rem solid #dbdbdb;
+  border-radius: 0.3rem;
+  padding: 0 2.4rem;
+  margin-left: 25%;
+}

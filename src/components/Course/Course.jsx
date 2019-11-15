@@ -20,12 +20,13 @@ export class Course extends Component {
   render() {
     const { studyYear } = this.props;
     const { display, edit } = this.state;
+    console.log(this.props);
 
     return (
       <>
         <div className="card-wraper">
           <div className="card-header">
-            <p onClick={this.handleDisplay}>{studyYear}-й класс</p>
+            <p onClick={this.handleDisplay}>Курс за {studyYear}-й класс</p>
           </div>
           {display && (
             <div className="card-body">
