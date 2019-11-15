@@ -7,7 +7,7 @@ export class ForTest extends Component {
     const url = `http://localhost:8888/lessons/delete`;
     const url2 = `http://localhost:8888/email-test`;
 
-    fetch(url, {
+    fetch(url2, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

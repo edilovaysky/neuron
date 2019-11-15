@@ -43,14 +43,12 @@ AWS.config.update({
   secretAccessKey: s3Airnode.secretAccessKey,
   region: s3Airnode.region,
   endpoint: s3Airnode.endpoint,
-  // queueSize: s3Mail.queueSize,
-  // timeout: s3Mail.timeout,
 });
 
 const neuronStore = new AWS.S3();
 
-const accessKeyIdAm = 'AKIAI5WNDQBR7DMETTCQ';
-const secretAccessKeyAm = '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';
+const accessKeyIdAm = process.env.ACCESS_KEY_ID_AMAZON_SES;
+const secretAccessKeyAm = process.env.SECRET_ACCESS_KEY_AMAZON_SES;
 
 var AmazonSES = require('amazon-ses');
 var ses = new AmazonSES(accessKeyIdAm, secretAccessKeyAm);
@@ -59,6 +57,7 @@ var ses = new AmazonSES(accessKeyIdAm, secretAccessKeyAm);
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
+const bodyParser = require('body-parser');
 
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -67,11 +66,18 @@ var multer = require('multer');
 var uploadFromUser = multer().single('file');
 //const formData = require('express-form-data');
 const nodemailer = require('nodemailer');
-const transporter = nodemailer.createTransport({
+/* const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
     user: 'neuronmailsender@gmail.com',
     pass: 'G*T2ntT1pYcn',
+  },
+}); */
+const transporter = nodemailer.createTransport({
+  service: 'Gmail',
+  auth: {
+    user: 'neuronmailsender@gmail.com', //process.env.MAIL_NAME,
+    pass: 'G*T2ntT1pYcn', //process.env.MAIL_PASS,
   },
 });
 
@@ -88,6 +94,11 @@ const io = socketIO(server);
 app.use(express.json());
 app.use(cors());
 
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.options('*', cors());
+
 const User = require('./models/user');
 const Class = require('./models/class');
 const Course = require('./models/course');
@@ -97,7 +108,8 @@ const Lesson = require('./models/lesson');
 const UserDoc = require('./models/userDoc');
 const Hw = require('./models/homework');
 const TempUser = require('./models/tempuser');
-const Payment = require('./models/payment');
+const Order = require('./models/order');
+const SellBox = require('./models/sellbox');
 
 /**********************************************************
  *****      AUTH SECTION            ***********************
@@ -546,6 +558,11 @@ app.get('/courses', async (req, res) => {
   res.json({ course });
 });
 
+app.get('/course/:id', async (req, res) => {
+  const course = await Course.findById(req.params.id).sort({ studyYear: 1 });
+  res.json({ course });
+});
+
 app.get('/find-course', async (req, res) => {
   const { subject } = req.query;
   const courses = await Course.find({ subject: subject });
@@ -851,6 +868,33 @@ app.get('/lesson/:id', async (req, res) => {
 });
 
 /**********************************************************
+ *****       SELL SECTION           ***********************
+ **********************************************************
+ */
+
+app.post('/new-sell-box', async (req, res) => {
+  let sellBox = new SellBox(req.body);
+  sellBox = await sellBox.save();
+  res.json(sellBox);
+});
+
+app.get('/sellboxes', async (req, res) => {
+  const sellboxes = await SellBox.find().sort({ name: 1 });
+  res.json({ sellboxes });
+});
+
+app.get('/sellbox-delete/:id', async (req, res) => {
+  const sellboxes = await SellBox.findByIdAndDelete(req.params.id);
+  res.json({ sellboxes });
+});
+
+app.post('/order', async (req, res) => {
+  let order = new Order(req.body);
+  order = await order.save();
+  res.json(order);
+});
+
+/**********************************************************
  *****       AWS SECTION            ***********************
  **********************************************************
  */
@@ -991,17 +1035,17 @@ app.put('/lessons/delete', async (req, res) => {
 app.put('/email-test', async (req, res) => {
   console.log(req.body);
   const mailOptions = {
-    from: `Team of Neuron-school <neuronmailsender@gmail.com>`,
+    from: `JEDI <neuronmailsender@gmail.com>`,
     to: 'test@dotschool.bizml.ru',
-    subject: 'hello from app',
-    html: `Hello, from smtp mail.ru <br> `,
+    subject: "Please, don't reply to this letter",
+    html: `Hello, Эд<br> Если ты видишь это письмо, то всё работает`,
   };
-  transporter.sendMail(mailOptions, (error, response) => {
+  await transporter.sendMail(mailOptions, (error, response) => {
     if (error) {
-      console.log(error);
+      res.status(200).send(error);
     }
     if (response) {
-      console.log(response);
+      res.status(200).send('Усё в ажуре, шеф :-), проверь почту');
     }
   });
 });

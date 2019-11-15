@@ -1,10 +1,14 @@
+import './AdminSellBoxesLayout.scss';
+
 import React, { Component } from 'react';
 import { SellPlate } from 'components/SellPlate';
 import { Course } from 'components/Course';
+import { InputText } from 'components/InputText';
 
 export class AdminSellBoxesLayout extends Component {
   state = {
     display: false,
+    dispDel: false,
     name: '',
     price: 0,
     number: 0,
@@ -13,7 +17,27 @@ export class AdminSellBoxesLayout extends Component {
     displaySellPlate: false,
     approve: false,
     chosenCourse: '',
+    chosenBox: '',
+    sellBoxes: [],
+    chosenBox: '',
   };
+  componentDidMount() {
+    fetch(`http://localhost:8888/sellboxes`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Wrong credentials');
+        }
+        return response.json();
+      })
+      .then(data => {
+        const { sellboxes } = data;
+        this.setState({ sellBoxes: sellboxes, displaySellPlate: true });
+      });
+  }
   handleDisp = () => {
     this.setState({ display: !this.state.display });
   };
@@ -72,8 +96,20 @@ export class AdminSellBoxesLayout extends Component {
     }
   };
 
+  handleApproveDel = ({ target: { id } }) => {
+    this.setState({ approveDel: !this.state.approveDel });
+    const approve = !this.state.approveDel;
+    if (approve === false) {
+      this.setState({ chosenBox: '' });
+    }
+    if (approve === true) {
+      this.setState({ chosenBox: id });
+    }
+  };
+
   handleCreate = () => {
-    const { name, price, number, period, chosenCourse } = this.state;
+    const { name, price, number, chosenCourse, period } = this.state;
+
     if (!name) {
       alert('Вы должны написать название для sellBox');
       return;
@@ -95,6 +131,8 @@ export class AdminSellBoxesLayout extends Component {
       return;
     }
 
+    const courses = chosenCourse;
+
     fetch('http://localhost:8888/new-sell-box', {
       method: 'POST',
       headers: {
@@ -102,10 +140,10 @@ export class AdminSellBoxesLayout extends Component {
       },
       body: JSON.stringify({
         name,
-        number,
         period,
         price,
-        chosenCourse,
+        number,
+        courses,
       }),
     })
       .then(response => {
@@ -117,25 +155,58 @@ export class AdminSellBoxesLayout extends Component {
         return response.json();
       })
       .then(data => {
-        console.log(data);
+        this.setState({ displaySellPlate: true });
       });
+  };
+
+  handleDelete = () => {
+    const { chosenBox } = this.state;
+    const id = chosenBox;
+    if (!id) {
+      alert('Выберите sellBox который необходимо удалить.');
+    }
+    if (id) {
+      fetch(`http://localhost:8888/sellbox-delete/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Wrong credentials');
+          }
+          console.log('succesful sellBox deleting');
+
+          return response.json();
+        })
+        .then(data => {
+          alert(`Вы удалили ${data.sellboxes.name}`);
+        });
+    }
+  };
+
+  handleDispDel = () => {
+    this.setState({ dispDel: !this.state.dispDel });
+  };
+  handleNameChange = (name, value) => {
+    this.setState({ [name]: value });
   };
 
   render() {
     const {
       display,
+      dispDel,
       name,
       number,
       price,
       courses,
       displaySellPlate,
-      approve,
-      chosenCourse,
+      sellBoxes,
     } = this.state;
-    console.log(chosenCourse);
+    console.log(name);
     const courseList = courses.map(i => {
       return (
-        <div className="sell-box-course-wrapper" key={i._id}>
+        <div className="sell-box-course-block-wrapper" key={i._id}>
           <input type="checkbox" id={i._id} onClick={this.handleApproveYes} />
           <label className="approve-check-lable" htmlFor={i._id}>
             <span>выбрать</span>
@@ -145,22 +216,41 @@ export class AdminSellBoxesLayout extends Component {
       );
     });
 
+    let sellBoxesList;
+    if (sellBoxes) {
+      sellBoxesList = sellBoxes.map(box => {
+        return (
+          <div className="sell-box-list-block-wrapper" key={box._id}>
+            <input
+              type="checkbox"
+              id={box._id}
+              onClick={this.handleApproveDel}
+            />
+            <label className="approve-check-lable" htmlFor={box._id}></label>
+            <li>{box.name}</li>
+          </div>
+        );
+      });
+    }
+
     return (
-      <div>
-        <p onClick={this.handleDisp}>создать sellBox</p>
+      <div className="sell-box-wrapper">
+        <p className="sell-box-h" onClick={this.handleDisp}>
+          создать sellBox
+        </p>
         {display && (
           <>
-            <span>напишите имя sellBox'а</span>
-            <input
-              type="text"
-              name="name"
-              value={name || ''}
-              onChange={this.handleTextChange}
-            />
-            <div className="period-wrapper">
+            <div className="sell-box-block-wrapper">
+              <span className="sell-box-s">напишите имя sellBox'а</span>
+              <InputText inputName={'name'} onDone={this.handleNameChange} />
+            </div>
+
+            <div className="sell-box-block-wrapper">
               <span>укажите количество:</span>
               <input
                 type="number"
+                min="1"
+                step="1"
                 name="number"
                 value={number || ''}
                 onChange={this.handleTextChange}
@@ -173,25 +263,44 @@ export class AdminSellBoxesLayout extends Component {
                 <option value="year">год</option>
               </select>
             </div>
-            <span>укажите цену за выбраный период</span>
-            <input
-              type="number"
-              min="1000"
-              max="15000"
-              name="price"
-              step="100"
-              placeholder="1000"
-              value={price || ''}
-              onChange={this.handleTextChange}
-            />
-            <div className="course-to-add">
+            <div className="sell-box-block-wrapper">
+              <span>укажите цену за выбраный период</span>
+              <input
+                type="number"
+                min="0"
+                max="15000"
+                name="price"
+                step="100"
+                placeholder="0"
+                value={price || ''}
+                onChange={this.handleTextChange}
+              />
+            </div>
+
+            <div className="sell-box-block-wrapper">
               <span onClick={this.handleFetchCourse}>
                 список доступных курсов:
               </span>
               {courseList}
-              {displaySellPlate && <SellPlate courses={courses} />}
             </div>
-            <button onClick={this.handleCreate}>создать</button>
+            <button className="sell-box-btn" onClick={this.handleCreate}>
+              создать
+            </button>
+          </>
+        )}
+        {displaySellPlate && <SellPlate sellBoxes={sellBoxes} />}
+        <p className="sell-box-h" onClick={this.handleDispDel}>
+          удалить sellBox
+        </p>
+        {dispDel && (
+          <>
+            <div className="sell-box-block-wrapper">
+              <span className="sell-box-s">список sellBox'ов:</span>
+              <ul>{sellBoxesList}</ul>
+            </div>
+            <button className="sell-box-btn" onClick={this.handleDelete}>
+              удалить
+            </button>
           </>
         )}
       </div>

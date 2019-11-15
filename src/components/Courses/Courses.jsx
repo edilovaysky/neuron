@@ -49,10 +49,14 @@ export class Courses extends Component {
   render() {
     const { display } = this.state;
     const { courses } = this.props;
+    console.log(courses);
+    let course;
+    if (courses.course) {
+      course = courses.course.map(course => {
+        return <Course key={course._id} {...course} />;
+      });
+    }
 
-    const course = courses.course.map(course => {
-      return <Course key={course._id} {...course} />;
-    });
     return (
       <div className="classes-wrap">
         <h3 onClick={this.handleDisplay}>Курсы</h3>
