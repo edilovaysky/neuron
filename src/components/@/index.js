@@ -1,1 +1,1 @@
-export { Sample } from 'components/@';
+export { Sample } from './@';

@@ -38,24 +38,24 @@
 }
 .sell-item-box-order {
   animation: order-appear 800ms;
-  width: 90%;
+  width: 100%;
   position: absolute;
   z-index: 10;
   top: 1%;
-  left: 5%;
+  left: 1%;
   box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
   -webkit-box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
   -moz-box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
 }
 
-.sell-item-box-order-rev {
-  animation: order-appear 4000ms reverse;
-  width: 90%;
+/* .sell-item-box-order-rev {
+  animation: order-appear 1000ms reverse;
+  width: 100%;
   position: absolute;
   z-index: 10;
   top: 1%;
-  left: 5%;
+  left: 1%;
   box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
   -webkit-box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
   -moz-box-shadow: 0px 0px 5px 0px rgba(3, 3, 3, 0.73);
-}
+} */

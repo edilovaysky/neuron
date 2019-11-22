@@ -22,10 +22,11 @@
   margin: 0.2em 0 0 0;
 }
 .sell-box-wrapper input {
-  width: auto;
+  width: 30%;
   height: 3rem;
   border: none;
-  border-bottom: 0.1em solid darkblue;
+  //border-bottom: 0.1em solid darkblue;
+  border-bottom: 0.1em solid rgb(84, 235, 96);
   margin: 0.2rem;
 }
 .sell-box-wrapper input:focus {
@@ -36,25 +37,10 @@
   width: auto;
   height: 3rem;
   border: none;
-  border-bottom: 0.1em solid darkblue;
+  //border-bottom: 0.1em solid darkblue;
+  border-bottom: 0.1em solid rgb(84, 235, 96);
   margin: 0.2rem;
 }
 .sell-box-wrapper select:focus {
   outline: none;
-}
-.sell-box-btn {
-  width: 50%;
-  display: inline-block;
-  font: inherit;
-  background: none;
-  color: inherit;
-  padding: 0;
-  cursor: pointer;
-  font-size: 1.4rem;
-  font-weight: 500;
-  line-height: 1.8;
-  border: 0.1rem solid #dbdbdb;
-  border-radius: 0.3rem;
-  padding: 0 2.4rem;
-  margin-left: 25%;
 }

@@ -19,7 +19,8 @@ const userSchema = new Schema({
   utc: { type: String },
   gen: { type: String },
   class: { type: Schema.ObjectId, ref: 'Class' },
-  courses: [{ type: Schema.ObjectId, ref: 'Course' }],
+  orders: [{ type: Schema.ObjectId, ref: 'Order' }],
+  tickets: [{ type: Schema.ObjectId, ret: 'Ticket' }],
   studyYear: { type: String },
   comment: { type: String },
 });

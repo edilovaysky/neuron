@@ -18,6 +18,7 @@ import { UserProfileLayout } from 'layouts/userLayouts/UserProfileLayout';
 import { TeacherProfileLayout } from 'layouts/teacherLayouts/TeacherProfileLayout';
 import { AdminDefaultLayout } from 'layouts/adminLayouts/AdminDefaultLayout';
 import { AdminSellBoxesLayout } from 'layouts/adminLayouts/AdminSellBoxesLayout';
+import { UserSellBoxesLayout } from 'layouts/userLayouts/UserSellBoxesLayout';
 
 export class OfficeBody extends Component {
   render() {
@@ -40,7 +41,7 @@ export class OfficeBody extends Component {
             {layout == 'all-users' && <AdminUsersLayout />}
             {layout == 'all-tutors' && <AdminTutorsLayout />}
             {layout == 'user-profile' && <UserProfileLayout />}
-            {layout == 'sellPage' && <SellPlate />}
+            {layout == 'sellPage' && <UserSellBoxesLayout />}
             {layout == 'sellBoxes' && <AdminSellBoxesLayout />}
             {layout == 'teacher-profile' && <TeacherProfileLayout />}
           </section>

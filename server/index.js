@@ -7,52 +7,22 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const AWS = require('aws-sdk');
-//AWS.config.loadFromPath('./config.json');
 const S3 = require('aws-sdk/clients/s3');
 
-const s3Cloudtech = {
-  accessKeyId: 'B470X0W436MO5F8C3HM5',
-  secretAccessKey: 'fQ9gEiCWHdxnKntUYyZvMwwMIBU5Pc2BO0oW8R7G',
-  endpoint: ' https://s3.Cloudtech:8080/',
-};
-
-const s3Mail = {
-  accessKeyId: 'sHGdyEex47fVtP85ghTn1K',
-  secretAccessKey: '4A6gk1f3oo7K55nWuqzBKynaTuCpJkxopbm4c3eUXzE1',
-  region: 'ru-msk',
-  endpoint: 'http://hb.bizmrg.com',
-  queueSize: '1',
-  timeout: '0',
-};
-
-const s3Airnode = {
-  accessKeyId: 'ca94494ba5544cdc90660a8ca3b40415',
-  secretAccessKey: 'd6359c336f454b439fff982cc25ba079',
-  region: 'RegionOne',
-  endpoint: 'https://mgmt.airnode.ru:8080',
-};
-
-const s3Amazon = {
-  secretAccessKey: 'syy2UQhWEzJL+HBYFEdeumEsLzJMe8aD5nRzMRQq',
-  region: 'us-east-1',
-  endpoint: 'https://s3.us-east-1.amazonaws.com',
-};
-
 AWS.config.update({
-  accessKeyId: s3Airnode.accessKeyId,
-  secretAccessKey: s3Airnode.secretAccessKey,
-  region: s3Airnode.region,
-  endpoint: s3Airnode.endpoint,
+  accessKeyId: process.env.AIRNODE_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AIRNODE_SECRET_KEY,
+  region: process.env.AIRNODE_REGION,
+  endpoint: process.env.AIRNODE_ENDPOINT,
 });
 
 const neuronStore = new AWS.S3();
 
-const accessKeyIdAm = process.env.ACCESS_KEY_ID_AMAZON_SES;
-const secretAccessKeyAm = process.env.SECRET_ACCESS_KEY_AMAZON_SES;
+const accessKeyIdAm = process.env.AMAZON_ACCESS_KEY_ID;
+const secretAccessKeyAm = process.env.AMAZON_SECRET_ACCESS_KEY;
 
 var AmazonSES = require('amazon-ses');
 var ses = new AmazonSES(accessKeyIdAm, secretAccessKeyAm);
-//ses.verifyEmailAddress('dotschool.team@gmail.com');
 
 const express = require('express');
 const socketIO = require('socket.io');
@@ -64,20 +34,13 @@ const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 var multer = require('multer');
 var uploadFromUser = multer().single('file');
-//const formData = require('express-form-data');
 const nodemailer = require('nodemailer');
-/* const transporter = nodemailer.createTransport({
-  service: 'Gmail',
-  auth: {
-    user: 'neuronmailsender@gmail.com',
-    pass: 'G*T2ntT1pYcn',
-  },
-}); */
+
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
   auth: {
-    user: 'neuronmailsender@gmail.com', //process.env.MAIL_NAME,
-    pass: 'G*T2ntT1pYcn', //process.env.MAIL_PASS,
+    user: `${process.env.MAIL_NAME}@${process.env.MAIL_HOST}`,
+    pass: process.env.MAIL_PASS,
   },
 });
 
@@ -115,7 +78,7 @@ const SellBox = require('./models/sellbox');
  *****      AUTH SECTION            ***********************
  **********************************************************
  */
-const secret = 'ludfkasdjkk23rj0f[sj99jls--dljie';
+const secret = process.env.TOKEN_SECRET;
 
 const verifyToken = (req, res, next) => {
   if (req.headers.authorization) {
@@ -849,7 +812,9 @@ app.get('/lesson/:id', async (req, res) => {
   const lesson = await Lesson.findById(lessonId);
   const fileName = lesson.fileName;
   if (lessonId && fileName) {
-    /*  neuronStore.getObject(
+    /* 
+    //to get as object
+    neuronStore.getObject(
       {
         Bucket: 'neuron-bucket',
         Key: `lessons/${lessonId}/${fileName}`,
@@ -861,7 +826,7 @@ app.get('/lesson/:id', async (req, res) => {
         else res.json({ data });
       }
     ); */
-    const url = `https://mgmt.airnode.ru:8080/swift/v1/3faea6fc2cd24edda555f2a7b559ac50/neuron/lessons/${lessonId}/${fileName}`;
+    const url = `${process.env.AIRNODE_GEROBJECT_PATH}/neuron/lessons/${lessonId}/${fileName}`;
     res.json({ url, lesson });
   }
   //res.json({ lesson });
@@ -891,6 +856,10 @@ app.get('/sellbox-delete/:id', async (req, res) => {
 app.post('/order', async (req, res) => {
   let order = new Order(req.body);
   order = await order.save();
+
+  await User.findByIdAndUpdate(req.body.customer, {
+    $push: { orders: order._id },
+  });
   res.json(order);
 });
 
@@ -948,7 +917,7 @@ app.put('/upload/udoc', async (req, res) => {
         neuronStore.putObject(
           {
             Body: file,
-            Bucket: 'neuron-bucket',
+            Bucket: 'neuron',
             Key: `udoc/${userId}/${userDocId}/${docName}`,
           },
           (err, data) => {
@@ -981,7 +950,7 @@ app.get('/udoc/:id', async (req, res) => {
   if (id) {
     neuronStore.getObject(
       {
-        Bucket: 'neuron-bucket',
+        Bucket: 'neuron',
         Key: `udoc/${userDoc.user}/${userDoc._id}/${userDoc.docName}`,
       },
       (err, data) => {
@@ -1002,7 +971,7 @@ app.get('/udoc/del/:id', async (req, res) => {
     let userDoc = await UserDoc.findById(id);
     neuronStore.deleteObject(
       {
-        Bucket: 'neuron-bucket',
+        Bucket: 'neuron',
         Key: `udoc/${userDoc.user}/${userDoc._id}/${userDoc.docName}`,
       },
       (err, data) => {
