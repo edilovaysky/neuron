@@ -17,7 +17,7 @@ export class InputText extends Component {
     const { name } = this.state;
     return (
       <input
-        className="text-input"
+        className="input-text"
         type="text"
         name={inputName}
         value={name || ''}

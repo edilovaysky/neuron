@@ -80,7 +80,7 @@ export class UserSideBar extends Component {
               className={`side-btn-${sellPage}`}
               onClick={this.handleEnter}
             >
-              <>все курсы</>
+              <>выбрать курсы</>
             </li>
             <li
               id="classRoom"

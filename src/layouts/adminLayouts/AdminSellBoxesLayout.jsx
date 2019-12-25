@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import { SellPlate } from 'components/SellPlate';
 import { Course } from 'components/Course';
 import { InputText } from 'components/InputText';
+import { Btn } from 'components/Btn';
+import { SquareCheckBox } from 'components/SquareCheckBox';
 
 export class AdminSellBoxesLayout extends Component {
   state = {
@@ -96,7 +98,7 @@ export class AdminSellBoxesLayout extends Component {
     }
   };
 
-  handleApproveDel = ({ target: { id } }) => {
+  handleApproveDel = id => {
     this.setState({ approveDel: !this.state.approveDel });
     const approve = !this.state.approveDel;
     if (approve === false) {
@@ -202,8 +204,9 @@ export class AdminSellBoxesLayout extends Component {
       courses,
       displaySellPlate,
       sellBoxes,
+      chosenBox,
     } = this.state;
-    console.log(name);
+    console.log(chosenBox);
     const courseList = courses.map(i => {
       return (
         <div className="sell-box-course-block-wrapper" key={i._id}>
@@ -221,12 +224,11 @@ export class AdminSellBoxesLayout extends Component {
       sellBoxesList = sellBoxes.map(box => {
         return (
           <div className="sell-box-list-block-wrapper" key={box._id}>
-            <input
-              type="checkbox"
-              id={box._id}
-              onClick={this.handleApproveDel}
+            <SquareCheckBox
+              onCheck={this.handleApproveDel}
+              checkBoxId={box._id}
+              checkBoxMsg={''}
             />
-            <label className="approve-check-lable" htmlFor={box._id}></label>
             <li>{box.name}</li>
           </div>
         );
@@ -283,9 +285,7 @@ export class AdminSellBoxesLayout extends Component {
               </span>
               {courseList}
             </div>
-            <button className="sell-box-btn" onClick={this.handleCreate}>
-              создать
-            </button>
+            <Btn btnName={'создать'} onBtnClick={this.handleCreate} />
           </>
         )}
         {displaySellPlate && <SellPlate sellBoxes={sellBoxes} />}
@@ -298,9 +298,7 @@ export class AdminSellBoxesLayout extends Component {
               <span className="sell-box-s">список sellBox'ов:</span>
               <ul>{sellBoxesList}</ul>
             </div>
-            <button className="sell-box-btn" onClick={this.handleDelete}>
-              удалить
-            </button>
+            <Btn btnName={'удалить'} onBtnClick={this.handleDelete} />
           </>
         )}
       </div>

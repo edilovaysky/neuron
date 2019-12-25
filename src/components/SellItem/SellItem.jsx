@@ -11,7 +11,6 @@ export class SellItem extends Component {
     courses: [],
     dispCourses: false,
     dispOrder: false,
-    reverse: '',
   };
   handleShowCourse = () => {
     const { inboxCourses, dispCourses } = this.state;
@@ -43,18 +42,14 @@ export class SellItem extends Component {
     this.setState({ dispCourses: !this.state.dispCourses });
   };
   handleMakeOrder = () => {
-    this.setState({ dispOrder: true, reverse: '' });
+    this.setState({ dispOrder: true });
   };
   handleOrderClose = () => {
-    this.setState({ reverse: '-rev' });
-    setTimeout(() => {
-      this.setState({ dispOrder: false });
-    }, 2000);
+    this.setState({ dispOrder: false });
   };
 
   render() {
-    const { dispCourses, courses, dispOrder, reverse } = this.state;
-    const orderClass = `sell-item-box-order${reverse}`;
+    const { dispCourses, courses, dispOrder } = this.state;
 
     const course = courses.map(data => {
       return <Course key={data._id} {...data} />;
@@ -109,8 +104,12 @@ export class SellItem extends Component {
           </div>
         </div>
         {dispOrder && (
-          <div className={orderClass}>
-            <Order sellItem={sellItem} onClose={this.handleOrderClose} />
+          <div className="sell-item-box-order">
+            <Order
+              sellItem={sellItem}
+              onClose={this.handleOrderClose}
+              times={times}
+            />
           </div>
         )}
       </>

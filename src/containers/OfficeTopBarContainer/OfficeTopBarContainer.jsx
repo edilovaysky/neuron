@@ -4,14 +4,16 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import { unAuth } from 'actions/auth';
+import { Btn } from 'components/Btn';
+import { Note } from 'components/Note';
 
 class ProfileSettings extends Component {
-  isUserActive = this.props.user.user.active;
   state = {
     name: '',
     status: '',
     gen: '',
-    active: this.isUserActive,
+    active: this.props.user.user.active,
+    orders: this.props.user.user.orders,
   };
   componentDidMount() {
     this.setState({
@@ -31,8 +33,15 @@ class ProfileSettings extends Component {
       onSignOut();
     }, 0);
   };
+  handleNotes = () => {
+    console.log('orders must be shown');
+  };
   render() {
-    const { name, status, gen, active } = this.state;
+    const { name, status, gen, active, orders } = this.state;
+    let noteMsg;
+    if (orders) {
+      noteMsg = `Notes: ${orders.length}`;
+    }
 
     let mapping;
     if (gen == 'm' || '') {
@@ -63,10 +72,12 @@ class ProfileSettings extends Component {
         <h5>личный кабинет</h5>
         <div className={isActive}>{status && <p>@{mapping[status]} </p>} </div>
         {name && <h3> {name}</h3>}
+
         <div className="top-nav-bar-btn-section">
-          <button className="top-btn" onClick={this.handleSignOut}>
-            ВЫХОД
-          </button>
+          <Note onNotesClick={this.handleNotes} msg={noteMsg} />
+        </div>
+        <div className="top-nav-bar-btn-section">
+          <Btn onBtnClick={this.handleSignOut} btnName={'ВЫХОД'} />
         </div>
       </div>
     );

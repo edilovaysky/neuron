@@ -1,6 +1,8 @@
 import './GetDoc.scss';
 
 import React, { Component } from 'react';
+import { SquareCheckBox } from 'components/SquareCheckBox';
+import { Btn } from 'components/Btn';
 
 export class GetDoc extends Component {
   state = {
@@ -74,17 +76,12 @@ export class GetDoc extends Component {
           <img src={url} alt="user-doc" />
 
           <div className="udoc-checkbox">
-            <input
-              type="checkbox"
-              id={this.props._id}
-              onClick={this.handleCheckDel}
+            <SquareCheckBox
+              onCheck={this.handleCheckDel}
+              checkBoxId={this.props._id}
+              labelMsg={''}
             />
-            <label htmlFor={this.props._id}>
-              <span className="udoc-checkbox-span">подтвердить удаление</span>
-              <button className="udoc-del-btn" onClick={this.handleDelete}>
-                удалить документ
-              </button>
-            </label>
+            <Btn onBtnClick={this.handleDelete} btnName={'удалить документ'} />
           </div>
         </>
       );

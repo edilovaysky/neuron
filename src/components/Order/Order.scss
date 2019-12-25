@@ -1,7 +1,24 @@
 .order-wrapper {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 100%;
   min-height: 50em;
   background-color: rgb(253, 250, 247);
+}
+.standart-btn {
+  margin: 0.3em auto;
+}
+.order-wrapper .input-email {
+  width: 50%;
+  margin: 2em 0 2em 5%;
+  border-bottom: 0.1em solid rgb(84, 235, 96);
+  background-color: rgb(253, 250, 247);
+}
+.order-child {
+  display: flex;
+  margin-left: 10%;
+}
+.order-child .square-checkbox-label::before {
+  margin: 0;
 }

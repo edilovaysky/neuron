@@ -1,0 +1,30 @@
+.btn-close {
+  position: absolute;
+  top: 5%;
+  left: 95%;
+  width: 2.5em;
+  height: 2.5em;
+}
+.btn-close:hover {
+  cursor: pointer;
+  transform: scale(1.15, 1.15);
+}
+.btn-close:active {
+  transform: scale(0.8, 0.8);
+}
+.btn-close-item-1 {
+  width: 90%;
+  height: 0.3em;
+  border: none;
+  color: rgb(72, 148, 36);
+  background-color: rgb(72, 148, 36);
+  transform: rotate(-45deg);
+}
+.btn-close-item-2 {
+  width: 90%;
+  height: 0.3em;
+  border: none;
+  color: rgb(72, 148, 36);
+  background-color: rgb(72, 148, 36);
+  transform: translate(0, -0.8em) rotate(45deg);
+}
