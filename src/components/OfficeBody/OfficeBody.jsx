@@ -19,11 +19,11 @@ import { TeacherProfileLayout } from 'layouts/teacherLayouts/TeacherProfileLayou
 import { AdminDefaultLayout } from 'layouts/adminLayouts/AdminDefaultLayout';
 import { AdminSellBoxesLayout } from 'layouts/adminLayouts/AdminSellBoxesLayout';
 import { UserSellBoxesLayout } from 'layouts/userLayouts/UserSellBoxesLayout';
+import { OrderToPay } from 'components/OrderToPay';
 
 export class OfficeBody extends Component {
   render() {
-    const { layout, status } = this.props;
-
+    const { status, layout } = this.props;
     return (
       <>
         <div className="office-body">
@@ -44,6 +44,7 @@ export class OfficeBody extends Component {
             {layout == 'sellPage' && <UserSellBoxesLayout />}
             {layout == 'sellBoxes' && <AdminSellBoxesLayout />}
             {layout == 'teacher-profile' && <TeacherProfileLayout />}
+            {layout == 'notes' && <OrderToPay />}
           </section>
         </div>
       </>

@@ -5,6 +5,7 @@ import { Btn } from 'components/Btn';
 import { BtnClose } from 'components/BtnClose';
 import { SquareCheckBox } from 'components/SquareCheckBox';
 import { InputEmail } from 'components/InputEmail';
+import { reAuth } from 'actions/auth';
 
 class OrderInit extends Component {
   state = {
@@ -70,7 +71,7 @@ class OrderInit extends Component {
     }
   };
   handleBuy = () => {
-    const { sellItem, user } = this.props;
+    /*  const { sellItem, user } = this.props;
     const { userEmail, payForUsers } = this.state;
 
     const sellBox = sellItem._id;
@@ -87,7 +88,9 @@ class OrderInit extends Component {
     if (!payForUsers.length) {
       alert('Вы должны выбрать того, для кого приобретаете данный курс.');
     }
+
     if (payForUsers.length) {
+      const orders = [];
       payForUsers.map(user => {
         const initTime = Date.now();
 
@@ -116,9 +119,16 @@ class OrderInit extends Component {
           })
           .then(data => {
             console.log(data);
+            orders.push(data._id);
           });
       });
-    }
+      const token = this.props.user.token;
+      let user = this.props.user.user;
+      const { userReAuth, onBuy } = this.props;
+      user.orders = orders;
+      userReAuth({ token: token, user });
+      onBuy();
+    } */
   };
 
   handleEmailChange = (name, value) => {
@@ -180,5 +190,10 @@ function mapStateToProps(state, props) {
     user: state.userAuth.entries,
   };
 }
+function mapDispatchToProps(dispatch, props) {
+  return {
+    userReAuth: data => dispatch(reAuth(data)),
+  };
+}
 
-export const Order = connect(mapStateToProps)(OrderInit);
+export const Order = connect(mapStateToProps, mapDispatchToProps)(OrderInit);

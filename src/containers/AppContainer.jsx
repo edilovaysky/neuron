@@ -6,7 +6,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { connect } from 'react-redux';
 
-import { MainMenu } from 'components/MainMenu';
+import { Navbar } from 'components/Navbar';
 import { Auth } from 'components/Auth';
 import { Office } from 'components/Office';
 import { Registration } from 'components/Registration';
@@ -15,7 +15,7 @@ import { MakeUserActive } from 'components/MakeUserActive';
 import { MakePassRecover } from 'components/MakePassRecover';
 import { UserFeedBack } from 'components/UserFeedBack';
 import { ForTest } from 'components/ForTest';
-import { Xcom } from 'components/Xcom';
+import { Logo } from 'components/Logo';
 
 class App extends Component {
   state = {
@@ -51,7 +51,10 @@ class App extends Component {
       <>
         <div className="navbar">
           {!token || token == '' || token == null ? (
-            <MainMenu />
+            <>
+              <Logo />
+              <Navbar />{' '}
+            </>
           ) : (
             <Redirect from="*" to="/office" />
           )}

@@ -288,7 +288,9 @@ export class AdminSellBoxesLayout extends Component {
             <Btn btnName={'создать'} onBtnClick={this.handleCreate} />
           </>
         )}
-        {displaySellPlate && <SellPlate sellBoxes={sellBoxes} />}
+        {displaySellPlate && (
+          <SellPlate sellBoxes={sellBoxes} onBuy={this.handleBuy} />
+        )}
         <p className="sell-box-h" onClick={this.handleDispDel}>
           удалить sellBox
         </p>

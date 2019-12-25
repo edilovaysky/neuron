@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 
 import { unAuth } from 'actions/auth';
 import { Btn } from 'components/Btn';
-import { Note } from 'components/Note';
 
 class ProfileSettings extends Component {
   state = {
@@ -13,7 +12,7 @@ class ProfileSettings extends Component {
     status: '',
     gen: '',
     active: this.props.user.user.active,
-    orders: this.props.user.user.orders,
+    dispOrders: false,
   };
   componentDidMount() {
     this.setState({
@@ -35,9 +34,10 @@ class ProfileSettings extends Component {
   };
   handleNotes = () => {
     console.log('orders must be shown');
+    this.setState({ dispOrders: !this.state.dispOrders });
   };
   render() {
-    const { name, status, gen, active, orders } = this.state;
+    const { name, status, gen, active, orders, dispOrders } = this.state;
     let noteMsg;
     if (orders) {
       noteMsg = `Notes: ${orders.length}`;
@@ -68,18 +68,18 @@ class ProfileSettings extends Component {
       isActive = 'top-nav-bar-status';
     }
     return (
-      <div className="top-nav-bar">
-        <h5>личный кабинет</h5>
-        <div className={isActive}>{status && <p>@{mapping[status]} </p>} </div>
-        {name && <h3> {name}</h3>}
-
-        <div className="top-nav-bar-btn-section">
-          <Note onNotesClick={this.handleNotes} msg={noteMsg} />
+      <>
+        <div className="top-nav-bar">
+          <h5>личный кабинет</h5>
+          <div className={isActive}>
+            {status && <p>@{mapping[status]} </p>}{' '}
+          </div>
+          {name && <h3> {name}</h3>}
+          <div className="top-nav-bar-btn-section">
+            <Btn onBtnClick={this.handleSignOut} btnName={'ВЫХОД'} />
+          </div>
         </div>
-        <div className="top-nav-bar-btn-section">
-          <Btn onBtnClick={this.handleSignOut} btnName={'ВЫХОД'} />
-        </div>
-      </div>
+      </>
     );
   }
 }
