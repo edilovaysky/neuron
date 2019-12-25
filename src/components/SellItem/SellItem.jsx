@@ -47,6 +47,9 @@ export class SellItem extends Component {
   handleOrderClose = () => {
     this.setState({ dispOrder: false });
   };
+  handleOrderBuy = () => {
+    this.setState({ dispOrder: false });
+  };
 
   render() {
     const { dispCourses, courses, dispOrder } = this.state;
@@ -109,6 +112,7 @@ export class SellItem extends Component {
               sellItem={sellItem}
               onClose={this.handleOrderClose}
               times={times}
+              onBuy={this.handleOrderBuy}
             />
           </div>
         )}

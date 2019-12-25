@@ -863,6 +863,19 @@ app.post('/order', async (req, res) => {
   res.json(order);
 });
 
+app.get('/order/:id', async (req, res) => {
+  const order = await Order.findById(req.params.id);
+  res.json(order);
+});
+app.get('/order-delete/:id', async (req, res) => {
+  const order = await Order.findByIdAndDelete(req.params.id);
+  const customer = order.customer;
+  const user = await User.findByIdAndUpdate(customer, {
+    $pull: { orders: order._id },
+  });
+  res.json(order);
+});
+
 /**********************************************************
  *****       AWS SECTION            ***********************
  **********************************************************
@@ -883,6 +896,7 @@ app.put('/upload/udoc', async (req, res) => {
       userId = req.body.body[0];
       docName = req.body.body[1];
       file = req.file.buffer;
+      console.log('размер файла: ', file.length);
       resolve(() => {
         console.log('promise done');
       });
@@ -956,8 +970,10 @@ app.get('/udoc/:id', async (req, res) => {
       (err, data) => {
         if (err) console.log(err, err.stack);
         // an error occurred
-        //console.log(data); // successful response
-        else res.json({ data });
+        if (data) {
+          //console.log(data); // successful response
+        }
+        res.json({ data });
       }
     );
   }

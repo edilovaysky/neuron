@@ -1,0 +1,32 @@
+.navbar-item {
+  display: inline-block;
+  min-height: 100%;
+  margin: 0 2em 0 0;
+  font-weight: 300;
+}
+
+.navbar-item .sky {
+  text-decoration: none;
+  color: var(--sky);
+}
+.navbar-item .teal {
+  text-decoration: none;
+  color: var(--teal);
+}
+
+.navbar-item .orange {
+  text-decoration: none;
+  color: var(--orange);
+}
+.navbar-item .danger {
+  text-decoration: none;
+  color: var(--danger);
+}
+.navbar-item .gray {
+  text-decoration: none;
+  color: var(--gray);
+}
+.navbar-item .nav-item-active {
+  color: var(--sky);
+  border-bottom: 0.05em solid var(--teal);
+}

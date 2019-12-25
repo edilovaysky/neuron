@@ -1,0 +1,11 @@
+.navbar {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: row;
+  list-style: none;
+  padding: 0;
+}
+.navbar a {
+  font-size: 0.8em;
+}

@@ -23,6 +23,7 @@ export class OfficeSideBar extends Component {
   };
   defineSideBar = () => {
     const { status } = this.state.status;
+    const { dispOrderToPay } = this.state;
     if (status == 'user') {
       return <UserSideBar onEnter={this.handleEnter} status={status} />;
     }
